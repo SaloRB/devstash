@@ -1,16 +1,16 @@
-import { Star, Pin } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { getItemTypeInfo } from "@/lib/item-types";
+import { Star, Pin } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
+import { getItemTypeInfo } from '@/lib/item-types'
 
 interface ItemRowProps {
-  title: string;
-  description?: string;
-  itemTypeId: string;
-  isFavorite: boolean;
-  isPinned: boolean;
-  tags: string[];
-  createdAt: string;
+  title: string
+  description?: string
+  itemTypeId: string
+  isFavorite: boolean
+  isPinned: boolean
+  tags: string[]
+  createdAt: string
 }
 
 export default function ItemRow({
@@ -22,15 +22,15 @@ export default function ItemRow({
   tags,
   createdAt,
 }: ItemRowProps) {
-  const { icon: Icon, color: iconColor } = getItemTypeInfo(itemTypeId);
+  const { icon: Icon, color: iconColor } = getItemTypeInfo(itemTypeId)
 
-  const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  })
 
   return (
-    <Card className="border-l-2" style={{ borderLeftColor: iconColor }}>
+    <Card className="border-l-4" style={{ borderLeftColor: iconColor }}>
       <CardContent className="flex items-center gap-3">
         <div
           className="flex size-8 shrink-0 items-center justify-center rounded-md"
@@ -68,5 +68,5 @@ export default function ItemRow({
         </span>
       </CardContent>
     </Card>
-  );
+  )
 }

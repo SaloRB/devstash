@@ -1,4 +1,4 @@
-import { Star, MoreHorizontal } from "lucide-react";
+import { Star, MoreHorizontal } from 'lucide-react'
 import {
   Card,
   CardHeader,
@@ -6,20 +6,20 @@ import {
   CardDescription,
   CardContent,
   CardAction,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { getItemTypeInfo } from "@/lib/item-types";
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { getItemTypeInfo } from '@/lib/item-types'
 
 interface CollectionItem {
-  itemTypeId: string;
+  itemTypeId: string
 }
 
 interface CollectionCardProps {
-  name: string;
-  description?: string;
-  itemCount: number;
-  isFavorite: boolean;
-  items: CollectionItem[];
+  name: string
+  description?: string
+  itemCount: number
+  isFavorite: boolean
+  items: CollectionItem[]
 }
 
 export default function CollectionCard({
@@ -30,23 +30,30 @@ export default function CollectionCard({
   items,
 }: CollectionCardProps) {
   // Derive border color from first item's type
-  const firstItemType = items.length > 0 ? getItemTypeInfo(items[0].itemTypeId) : null;
-  const borderColor = firstItemType?.color ?? "#6b7280";
+  const firstItemType =
+    items.length > 0 ? getItemTypeInfo(items[0].itemTypeId) : null
+  const borderColor = firstItemType?.color ?? '#6b7280'
 
   // Get unique type icons from items (up to 4)
-  const seenTypes = new Set<string>();
-  const typeIcons: { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; color: string }[] = [];
+  const seenTypes = new Set<string>()
+  const typeIcons: {
+    icon: React.ComponentType<{
+      className?: string
+      style?: React.CSSProperties
+    }>
+    color: string
+  }[] = []
   for (const item of items) {
-    if (seenTypes.has(item.itemTypeId)) continue;
-    seenTypes.add(item.itemTypeId);
-    typeIcons.push(getItemTypeInfo(item.itemTypeId));
-    if (typeIcons.length >= 4) break;
+    if (seenTypes.has(item.itemTypeId)) continue
+    seenTypes.add(item.itemTypeId)
+    typeIcons.push(getItemTypeInfo(item.itemTypeId))
+    if (typeIcons.length >= 4) break
   }
 
   return (
     <Card
       size="sm"
-      className="border-l-2 bg-teal-950/20 ring-teal-900/30 transition-colors hover:bg-teal-950/30"
+      className="border-l-4 bg-teal-950/20 ring-teal-900/30 transition-colors hover:bg-teal-950/30"
       style={{ borderLeftColor: borderColor }}
     >
       <CardHeader>
@@ -61,9 +68,7 @@ export default function CollectionCard({
             <MoreHorizontal className="size-4 text-muted-foreground" />
           </Button>
         </CardAction>
-        <CardDescription className="text-xs">
-          {itemCount} items
-        </CardDescription>
+        <CardDescription className="text-xs">{itemCount} items</CardDescription>
         {description && (
           <CardDescription className="line-clamp-1 text-xs text-muted-foreground/70">
             {description}
@@ -84,5 +89,5 @@ export default function CollectionCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
