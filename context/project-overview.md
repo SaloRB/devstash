@@ -290,6 +290,18 @@ Item Content (text/code)
 - Syntax highlighting for all code items
 - Minimal chrome — content is the focus
 
+### Design References
+
+- [Notion](https://www.notion.so/) — clean, flexible content layout
+- [Linear](https://linear.app/) — sleek UI, sidebar navigation
+- [Raycast](https://www.raycast.com/) — command palette, quick actions
+
+### Screenshots
+
+Refer to the screenshots below as a base for the dashboard UI. It does not have to be exact. Use it as a reference:
+- [Dashboard UI Main](./screenshots/dashboard-ui-main.png)
+- [Dashboard UI Drawer](./screenshots/dashboard-ui-drawer.png)
+
 ### Layout
 
 ```
