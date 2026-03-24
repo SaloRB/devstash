@@ -16,4 +16,4 @@
 
 ## History
 
-<!-- Keep this updated. Earliest to latest -->
+- **2026-03-23** - Initial Next.js setup with Tailwind CSS. Removed default boilerplate.
