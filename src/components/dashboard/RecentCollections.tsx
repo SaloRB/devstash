@@ -1,8 +1,10 @@
-import Link from "next/link";
-import { mockCollections, mockItems } from "@/lib/mock-data";
-import CollectionCard from "./CollectionCard";
+import Link from 'next/link'
+import { getRecentCollections, type CollectionWithItems } from '@/lib/db/collections'
+import CollectionCard from './CollectionCard'
 
-export default function RecentCollections() {
+export default async function RecentCollections() {
+  const collections = await getRecentCollections()
+
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
@@ -15,22 +17,17 @@ export default function RecentCollections() {
         </Link>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {mockCollections.map((col) => {
-          const collectionItems = mockItems.filter(
-            (item) => item.collectionId === col.id
-          );
-          return (
-            <CollectionCard
-              key={col.id}
-              name={col.name}
-              description={col.description}
-              itemCount={col.itemCount}
-              isFavorite={col.isFavorite}
-              items={collectionItems}
-            />
-          );
-        })}
+        {collections.map((col: CollectionWithItems) => (
+          <CollectionCard
+            key={col.id}
+            name={col.name}
+            description={col.description}
+            itemCount={col._count.items}
+            isFavorite={col.isFavorite}
+            items={col.items.map(({ item }) => ({ itemType: item.itemType }))}
+          />
+        ))}
       </div>
     </section>
-  );
+  )
 }

@@ -8,15 +8,21 @@ import {
   CardAction,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { getItemTypeInfo } from '@/lib/item-types'
+import { ICON_MAP } from '@/lib/item-types'
+
+interface CollectionItemType {
+  id: string
+  icon: string
+  color: string
+}
 
 interface CollectionItem {
-  itemTypeId: string
+  itemType: CollectionItemType
 }
 
 interface CollectionCardProps {
   name: string
-  description?: string
+  description?: string | null
   itemCount: number
   isFavorite: boolean
   items: CollectionItem[]
@@ -29,26 +35,24 @@ export default function CollectionCard({
   isFavorite,
   items,
 }: CollectionCardProps) {
-  // Derive border color from first item's type
-  const firstItemType =
-    items.length > 0 ? getItemTypeInfo(items[0].itemTypeId) : null
-  const borderColor = firstItemType?.color ?? '#6b7280'
-
-  // Get unique type icons from items (up to 4)
-  const seenTypes = new Set<string>()
-  const typeIcons: {
-    icon: React.ComponentType<{
-      className?: string
-      style?: React.CSSProperties
-    }>
-    color: string
-  }[] = []
-  for (const item of items) {
-    if (seenTypes.has(item.itemTypeId)) continue
-    seenTypes.add(item.itemTypeId)
-    typeIcons.push(getItemTypeInfo(item.itemTypeId))
-    if (typeIcons.length >= 4) break
+  // Derive border color from most-used item type
+  const typeCounts: Record<string, { count: number; color: string }> = {}
+  for (const { itemType } of items) {
+    if (!typeCounts[itemType.id]) {
+      typeCounts[itemType.id] = { count: 0, color: itemType.color }
+    }
+    typeCounts[itemType.id].count++
   }
+  const dominant = Object.values(typeCounts).sort((a, b) => b.count - a.count)[0]
+  const borderColor = dominant?.color ?? '#6b7280'
+
+  // Get unique type icons sorted by usage (most to least)
+  const typeIcons = Object.entries(typeCounts)
+    .sort(([, a], [, b]) => b.count - a.count)
+    .map(([id, { color }]) => {
+      const iconName = items.find(({ itemType }) => itemType.id === id)!.itemType.icon
+      return { icon: ICON_MAP[iconName] ?? ICON_MAP['Code'], color }
+    })
 
   return (
     <Card
