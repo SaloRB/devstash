@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { FolderOpen } from 'lucide-react'
 import { getRecentCollections, type CollectionWithItems } from '@/lib/db/collections'
 import CollectionCard from './CollectionCard'
+import EmptyState from '@/components/ui/empty-state'
 
 export default async function RecentCollections() {
   const collections = await getRecentCollections()
@@ -16,18 +18,26 @@ export default async function RecentCollections() {
           View all
         </Link>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {collections.map((col: CollectionWithItems) => (
-          <CollectionCard
-            key={col.id}
-            name={col.name}
-            description={col.description}
-            itemCount={col._count.items}
-            isFavorite={col.isFavorite}
-            items={col.items.map(({ item }) => ({ itemType: item.itemType }))}
-          />
-        ))}
-      </div>
+      {collections.length === 0 ? (
+        <EmptyState
+          icon={FolderOpen}
+          title="No collections yet"
+          description="Create a collection to organize your items."
+        />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {collections.map((col: CollectionWithItems) => (
+            <CollectionCard
+              key={col.id}
+              name={col.name}
+              description={col.description}
+              itemCount={col._count.items}
+              isFavorite={col.isFavorite}
+              items={col.items.map(({ item }) => ({ itemType: item.itemType }))}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }

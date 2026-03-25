@@ -1,10 +1,22 @@
-# Current Feature
+# Current Feature: Add Empty State to Collections and Recent Items
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Create a reusable `EmptyState` component using shadcn/ui primitives (icon, heading, subtext)
+- Display `EmptyState` in `RecentCollections` when the user has no collections
+- Display `EmptyState` in `RecentItems` when there are no recent items
+- Display `EmptyState` in `PinnedItems` when there are no pinned items
+- Component should accept configurable message and optional icon
+
 ## Notes
+
+- Use shadcn/ui for styling; no raw HTML divs
+- Empty state should feel intentional — not an error — so tone should be neutral/inviting
+- Only shown when data arrays are empty (length === 0); loading/error states are out of scope
 
 ## History
 
