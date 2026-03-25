@@ -1,22 +1,10 @@
-# Current Feature: Add Empty State to Collections and Recent Items
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Create a reusable `EmptyState` component using shadcn/ui primitives (icon, heading, subtext)
-- Display `EmptyState` in `RecentCollections` when the user has no collections
-- Display `EmptyState` in `RecentItems` when there are no recent items
-- Display `EmptyState` in `PinnedItems` when there are no pinned items
-- Component should accept configurable message and optional icon
-
 ## Notes
-
-- Use shadcn/ui for styling; no raw HTML divs
-- Empty state should feel intentional — not an error — so tone should be neutral/inviting
-- Only shown when data arrays are empty (length === 0); loading/error states are out of scope
 
 ## History
 
@@ -31,3 +19,4 @@ In Progress
 - **2026-03-25** - Completed Dashboard Items: created src/lib/db/items.ts, updated PinnedItems/RecentItems/StatsCards to async server components fetching from Neon via Prisma, updated ItemRow to use itemType directly, removed mock-data dependency from item-types.ts.
 - **2026-03-25** - Completed Stats & Sidebar: added getItemTypesWithCounts/getSidebarCollections, AppSidebar converted to async server component with live item types/counts/collections, favorites show star, recents show colored circle, "View all collections" link added, seeded React Patterns and AI Workflows as favorites.
 - **2026-03-25** - Completed Add Pro Badge to Sidebar: added ShadCN Badge (secondary variant, small) to file and image item types in AppSidebar, displaying "PRO" inline next to the type label.
+- **2026-03-25** - Completed Add Empty State to Collections and Recent Items: created reusable EmptyState component (icon, title, description), used in RecentCollections, RecentItems, and PinnedItems when data arrays are empty.
