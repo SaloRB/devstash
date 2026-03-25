@@ -57,11 +57,12 @@ async function main() {
   // ── React Patterns ──────────────────────────────────────────────
   const reactPatterns = await prisma.collection.upsert({
     where: { id: "seed-react-patterns" },
-    update: {},
+    update: { isFavorite: true },
     create: {
       id: "seed-react-patterns",
       name: "React Patterns",
       description: "Reusable React patterns and hooks",
+      isFavorite: true,
       userId: user.id,
       defaultTypeId: snippetType.id,
     },
@@ -230,11 +231,12 @@ export const sleep = (ms: number) =>
   // ── AI Workflows ────────────────────────────────────────────────
   const aiWorkflows = await prisma.collection.upsert({
     where: { id: "seed-ai-workflows" },
-    update: {},
+    update: { isFavorite: true },
     create: {
       id: "seed-ai-workflows",
       name: "AI Workflows",
       description: "AI prompts and workflow automations",
+      isFavorite: true,
       userId: user.id,
       defaultTypeId: promptType.id,
     },

@@ -34,4 +34,14 @@ export async function getDashboardStats() {
   return { totalItems, totalCollections, favoriteItems, favoriteCollections }
 }
 
+export async function getItemTypesWithCounts() {
+  return prisma.itemType.findMany({
+    orderBy: { id: 'asc' },
+    include: {
+      _count: { select: { items: true } },
+    },
+  })
+}
+
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number]
+export type ItemTypeWithCount = Awaited<ReturnType<typeof getItemTypesWithCounts>>[number]

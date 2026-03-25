@@ -1,25 +1,10 @@
-"use client";
-
-import Link from "next/link";
-import {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link as LinkIcon,
-  Star,
-  FolderOpen,
-  Settings,
-  ChevronRight,
-  type LucideIcon,
-} from "lucide-react";
+import Link from 'next/link'
+import { Star, Settings, ChevronRight } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from '@/components/ui/collapsible'
 import {
   Sidebar,
   SidebarContent,
@@ -32,29 +17,38 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/sidebar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { ICON_MAP } from '@/lib/item-types'
+import { mockUser } from '@/lib/mock-data'
+import { getItemTypesWithCounts } from '@/lib/db/items'
 import {
-  mockItemTypes,
-  mockItemTypeCounts,
-  mockCollections,
-  mockUser,
-} from "@/lib/mock-data";
+  getSidebarCollections,
+  type SidebarCollection,
+} from '@/lib/db/collections'
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-};
+function getDominantColor(col: SidebarCollection): string {
+  const counts: Record<string, { count: number; color: string }> = {}
+  for (const { item } of col.items) {
+    const { id, color } = item.itemType
+    if (!counts[id]) counts[id] = { count: 0, color }
+    counts[id].count++
+  }
+  return (
+    Object.values(counts).sort((a, b) => b.count - a.count)[0]?.color ??
+    '#6b7280'
+  )
+}
 
-export default function AppSidebar() {
-  const favoriteCollections = mockCollections.filter((c) => c.isFavorite);
-  const allCollections = mockCollections.filter((c) => !c.isFavorite);
+export default async function AppSidebar() {
+  const [itemTypes, collections] = await Promise.all([
+    getItemTypesWithCounts(),
+    getSidebarCollections(),
+  ])
+
+  const favorites = collections.filter((c) => c.isFavorite)
+  const recents = collections.filter((c) => !c.isFavorite)
 
   return (
     <Sidebar collapsible="icon">
@@ -62,17 +56,13 @@ export default function AppSidebar() {
         <Collapsible defaultOpen className="group/collapsible">
           <SidebarGroup>
             <SidebarGroupLabel render={<CollapsibleTrigger />}>
-              Types
+              TYPES
               <ChevronRight className="ml-auto transition-transform group-data-open/collapsible:rotate-90" />
             </SidebarGroupLabel>
             <CollapsibleContent>
               <SidebarMenu>
-                {mockItemTypes.map((type) => {
-                  const Icon = ICON_MAP[type.icon] ?? Code;
-                  const count =
-                    mockItemTypeCounts[
-                      type.name as keyof typeof mockItemTypeCounts
-                    ] ?? 0;
+                {itemTypes.map((type) => {
+                  const Icon = ICON_MAP[type.icon] ?? ICON_MAP['Code']
                   return (
                     <SidebarMenuItem key={type.id}>
                       <SidebarMenuButton
@@ -82,9 +72,9 @@ export default function AppSidebar() {
                         <Icon style={{ color: type.color }} />
                         <span className="capitalize">{type.name}s</span>
                       </SidebarMenuButton>
-                      <SidebarMenuBadge>{count}</SidebarMenuBadge>
+                      <SidebarMenuBadge>{type._count.items}</SidebarMenuBadge>
                     </SidebarMenuItem>
-                  );
+                  )
                 })}
               </SidebarMenu>
             </CollapsibleContent>
@@ -93,20 +83,23 @@ export default function AppSidebar() {
 
         <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 
-        <Collapsible defaultOpen className="group/collapsible group-data-[collapsible=icon]:hidden">
+        <Collapsible
+          defaultOpen
+          className="group/collapsible group-data-[collapsible=icon]:hidden"
+        >
           <SidebarGroup>
             <SidebarGroupLabel render={<CollapsibleTrigger />}>
-              Collections
+              COLLECTIONS
               <ChevronRight className="ml-auto transition-transform group-data-open/collapsible:rotate-90" />
             </SidebarGroupLabel>
             <CollapsibleContent>
-              {favoriteCollections.length > 0 && (
+              {favorites.length > 0 && (
                 <>
                   <p className="px-2 pt-1 pb-1 text-[0.65rem] font-medium uppercase tracking-wider text-sidebar-foreground/40">
                     Favorites
                   </p>
                   <SidebarMenu>
-                    {favoriteCollections.map((col) => (
+                    {favorites.map((col) => (
                       <SidebarMenuItem key={col.id}>
                         <SidebarMenuButton
                           render={<Link href={`/collections/${col.id}`} />}
@@ -121,27 +114,44 @@ export default function AppSidebar() {
                 </>
               )}
 
-              {allCollections.length > 0 && (
+              {recents.length > 0 && (
                 <>
                   <p className="px-2 pt-3 pb-1 text-[0.65rem] font-medium uppercase tracking-wider text-sidebar-foreground/40">
-                    All Collections
+                    Recent
                   </p>
                   <SidebarMenu>
-                    {allCollections.map((col) => (
-                      <SidebarMenuItem key={col.id}>
-                        <SidebarMenuButton
-                          render={<Link href={`/collections/${col.id}`} />}
-                          tooltip={col.name}
-                        >
-                          <FolderOpen className="text-muted-foreground" />
-                          <span>{col.name}</span>
-                        </SidebarMenuButton>
-                        <SidebarMenuBadge>{col.itemCount}</SidebarMenuBadge>
-                      </SidebarMenuItem>
-                    ))}
+                    {recents.map((col) => {
+                      const color = getDominantColor(col)
+                      return (
+                        <SidebarMenuItem key={col.id}>
+                          <SidebarMenuButton
+                            render={<Link href={`/collections/${col.id}`} />}
+                            tooltip={col.name}
+                          >
+                            <span
+                              className="size-3.5 rounded-full shrink-0"
+                              style={{ backgroundColor: color }}
+                            />
+                            <span>{col.name}</span>
+                          </SidebarMenuButton>
+                          <SidebarMenuBadge>
+                            {col._count.items}
+                          </SidebarMenuBadge>
+                        </SidebarMenuItem>
+                      )
+                    })}
                   </SidebarMenu>
                 </>
               )}
+
+              <div className="px-2 pt-3">
+                <Link
+                  href="/collections"
+                  className="text-[0.7rem] text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+                >
+                  VIEW ALL COLLECTIONS
+                </Link>
+              </div>
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
@@ -154,9 +164,9 @@ export default function AppSidebar() {
           <Avatar size="sm">
             <AvatarFallback>
               {mockUser.name
-                .split(" ")
+                .split(' ')
                 .map((n) => n[0])
-                .join("")}
+                .join('')}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
@@ -177,5 +187,5 @@ export default function AppSidebar() {
 
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }
