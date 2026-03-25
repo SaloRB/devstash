@@ -21,7 +21,6 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ICON_MAP } from '@/lib/item-types'
-import { mockUser } from '@/lib/mock-data'
 import { getItemTypesWithCounts } from '@/lib/db/items'
 import {
   getSidebarCollections,
@@ -163,16 +162,13 @@ export default async function AppSidebar() {
         <div className="flex items-center gap-2.5">
           <Avatar size="sm">
             <AvatarFallback>
-              {mockUser.name
-                .split(' ')
-                .map((n) => n[0])
-                .join('')}
+              G
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
-            <p className="truncate text-sm font-medium">{mockUser.name}</p>
+            <p className="truncate text-sm font-medium">Guest</p>
             <p className="truncate text-xs text-muted-foreground">
-              {mockUser.email}
+              guest@devstash.io
             </p>
           </div>
           <Button
