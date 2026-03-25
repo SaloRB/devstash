@@ -1,28 +1,34 @@
 import { Star, Pin } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { getItemTypeInfo } from '@/lib/item-types'
+import { ICON_MAP } from '@/lib/item-types'
+
+interface ItemType {
+  icon: string
+  color: string
+}
 
 interface ItemRowProps {
   title: string
-  description?: string
-  itemTypeId: string
+  description?: string | null
+  itemType: ItemType
   isFavorite: boolean
   isPinned: boolean
   tags: string[]
-  createdAt: string
+  createdAt: Date | string
 }
 
 export default function ItemRow({
   title,
   description,
-  itemTypeId,
+  itemType,
   isFavorite,
   isPinned,
   tags,
   createdAt,
 }: ItemRowProps) {
-  const { icon: Icon, color: iconColor } = getItemTypeInfo(itemTypeId)
+  const Icon = ICON_MAP[itemType.icon] ?? ICON_MAP['Code']
+  const iconColor = itemType.color
 
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     month: 'short',

@@ -1,9 +1,9 @@
 import { Pin } from "lucide-react";
-import { mockItems } from "@/lib/mock-data";
+import { getPinnedItems, type ItemWithType } from "@/lib/db/items";
 import ItemRow from "./ItemRow";
 
-export default function PinnedItems() {
-  const pinnedItems = mockItems.filter((item) => item.isPinned);
+export default async function PinnedItems() {
+  const pinnedItems = await getPinnedItems();
 
   if (pinnedItems.length === 0) return null;
 
@@ -14,15 +14,15 @@ export default function PinnedItems() {
         <h2 className="text-lg font-semibold">Pinned</h2>
       </div>
       <div className="flex flex-col gap-2">
-        {pinnedItems.map((item) => (
+        {pinnedItems.map((item: ItemWithType) => (
           <ItemRow
             key={item.id}
             title={item.title}
             description={item.description}
-            itemTypeId={item.itemTypeId}
+            itemType={item.itemType}
             isFavorite={item.isFavorite}
             isPinned={item.isPinned}
-            tags={item.tags}
+            tags={item.tags.map((t) => t.name)}
             createdAt={item.createdAt}
           />
         ))}

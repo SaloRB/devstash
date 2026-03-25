@@ -5,36 +5,39 @@ import {
   FolderHeart,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { mockItems, mockCollections } from "@/lib/mock-data";
+import { getDashboardStats } from "@/lib/db/items";
 
-const stats = [
-  {
-    label: "Total Items",
-    value: mockItems.length,
-    icon: LayoutGrid,
-    color: "#3b82f6",
-  },
-  {
-    label: "Collections",
-    value: mockCollections.length,
-    icon: FolderOpen,
-    color: "#8b5cf6",
-  },
-  {
-    label: "Favorite Items",
-    value: mockItems.filter((i) => i.isFavorite).length,
-    icon: Star,
-    color: "#f59e0b",
-  },
-  {
-    label: "Favorite Collections",
-    value: mockCollections.filter((c) => c.isFavorite).length,
-    icon: FolderHeart,
-    color: "#ec4899",
-  },
-];
+export default async function StatsCards() {
+  const { totalItems, totalCollections, favoriteItems, favoriteCollections } =
+    await getDashboardStats();
 
-export default function StatsCards() {
+  const stats = [
+    {
+      label: "Total Items",
+      value: totalItems,
+      icon: LayoutGrid,
+      color: "#3b82f6",
+    },
+    {
+      label: "Collections",
+      value: totalCollections,
+      icon: FolderOpen,
+      color: "#8b5cf6",
+    },
+    {
+      label: "Favorite Items",
+      value: favoriteItems,
+      icon: Star,
+      color: "#f59e0b",
+    },
+    {
+      label: "Favorite Collections",
+      value: favoriteCollections,
+      icon: FolderHeart,
+      color: "#ec4899",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {stats.map((stat) => (

@@ -1,13 +1,8 @@
-import { mockItems } from "@/lib/mock-data";
+import { getRecentItems, type ItemWithType } from "@/lib/db/items";
 import ItemRow from "./ItemRow";
 
-export default function RecentItems() {
-  const recentItems = [...mockItems]
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-    .slice(0, 10);
+export default async function RecentItems() {
+  const recentItems = await getRecentItems();
 
   return (
     <section>
@@ -15,15 +10,15 @@ export default function RecentItems() {
         <h2 className="text-lg font-semibold">Recent Items</h2>
       </div>
       <div className="flex flex-col gap-2">
-        {recentItems.map((item) => (
+        {recentItems.map((item: ItemWithType) => (
           <ItemRow
             key={item.id}
             title={item.title}
             description={item.description}
-            itemTypeId={item.itemTypeId}
+            itemType={item.itemType}
             isFavorite={item.isFavorite}
             isPinned={item.isPinned}
-            tags={item.tags}
+            tags={item.tags.map((t) => t.name)}
             createdAt={item.createdAt}
           />
         ))}
