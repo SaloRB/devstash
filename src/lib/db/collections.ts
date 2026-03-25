@@ -1,37 +1,42 @@
 import { prisma } from '@/lib/prisma'
 
 export async function getRecentCollections(limit = 6) {
-  const collections = await prisma.collection.findMany({
+  return prisma.collection.findMany({
     take: limit,
     orderBy: { updatedAt: 'desc' },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      isFavorite: true,
       items: {
-        include: {
+        select: {
           item: {
-            include: {
-              itemType: true,
+            select: {
+              itemType: { select: { id: true, icon: true, color: true } },
             },
           },
         },
       },
-      _count: {
-        select: { items: true },
-      },
+      _count: { select: { items: true } },
     },
   })
-
-  return collections
 }
 
 export async function getSidebarCollections(limit = 8) {
   return prisma.collection.findMany({
     take: limit,
     orderBy: [{ isFavorite: 'desc' }, { updatedAt: 'desc' }],
-    include: {
+    select: {
+      id: true,
+      name: true,
+      isFavorite: true,
       items: {
-        include: {
+        select: {
           item: {
-            include: { itemType: true },
+            select: {
+              itemType: { select: { id: true, color: true } },
+            },
           },
         },
       },

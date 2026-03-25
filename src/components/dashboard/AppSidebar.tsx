@@ -23,23 +23,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ICON_MAP } from '@/lib/item-types'
 import { getItemTypesWithCounts } from '@/lib/db/items'
-import {
-  getSidebarCollections,
-  type SidebarCollection,
-} from '@/lib/db/collections'
-
-function getDominantColor(col: SidebarCollection): string {
-  const counts: Record<string, { count: number; color: string }> = {}
-  for (const { item } of col.items) {
-    const { id, color } = item.itemType
-    if (!counts[id]) counts[id] = { count: 0, color }
-    counts[id].count++
-  }
-  return (
-    Object.values(counts).sort((a, b) => b.count - a.count)[0]?.color ??
-    '#6b7280'
-  )
-}
+import { getSidebarCollections } from '@/lib/db/collections'
+import { getDominantTypeColor } from '@/lib/collection-utils'
 
 export default async function AppSidebar() {
   const [itemTypes, collections] = await Promise.all([
@@ -126,7 +111,7 @@ export default async function AppSidebar() {
                   </p>
                   <SidebarMenu>
                     {recents.map((col) => {
-                      const color = getDominantColor(col)
+                      const color = getDominantTypeColor(col.items.map(({ item }) => item.itemType))
                       return (
                         <SidebarMenuItem key={col.id}>
                           <SidebarMenuButton

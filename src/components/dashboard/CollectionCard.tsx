@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ICON_MAP } from '@/lib/item-types'
+import { getDominantTypeColor } from '@/lib/collection-utils'
 
 interface CollectionItemType {
   id: string
@@ -36,6 +37,8 @@ export default function CollectionCard({
   items,
 }: CollectionCardProps) {
   // Derive border color from most-used item type
+  const borderColor = getDominantTypeColor(items.map(({ itemType }) => itemType))
+
   const typeCounts: Record<string, { count: number; color: string }> = {}
   for (const { itemType } of items) {
     if (!typeCounts[itemType.id]) {
@@ -43,15 +46,13 @@ export default function CollectionCard({
     }
     typeCounts[itemType.id].count++
   }
-  const dominant = Object.values(typeCounts).sort((a, b) => b.count - a.count)[0]
-  const borderColor = dominant?.color ?? '#6b7280'
 
   // Get unique type icons sorted by usage (most to least)
   const typeIcons = Object.entries(typeCounts)
     .sort(([, a], [, b]) => b.count - a.count)
     .map(([id, { color }]) => {
       const iconName = items.find(({ itemType }) => itemType.id === id)!.itemType.icon
-      return { icon: ICON_MAP[iconName] ?? ICON_MAP['Code'], color }
+      return { id, icon: ICON_MAP[iconName] ?? ICON_MAP['Code'], color }
     })
 
   return (
@@ -81,9 +82,9 @@ export default function CollectionCard({
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-1.5">
-          {typeIcons.map(({ icon: Icon, color }) => (
+          {typeIcons.map(({ id, icon: Icon, color }) => (
             <div
-              key={color}
+              key={id}
               className="flex size-5 items-center justify-center rounded-full"
               style={{ backgroundColor: `${color}20` }}
             >

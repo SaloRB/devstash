@@ -1,10 +1,23 @@
-# Current Feature
+# Current Feature: Quick Win Code Quality Fixes
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Remove unnecessary `'use client'` directive from `TopBar` (no state/hooks/handlers)
+- Fix React list key collision in `CollectionCard` — use `itemType.id` instead of `color`
+- Add explicit `DATABASE_URL` guard in `src/lib/prisma.ts` instead of non-null assertion
+- Extract shared `getDominantTypeColor` utility to `src/lib/utils/collections.ts` to eliminate duplication between `CollectionCard` and `AppSidebar`
+- Use `select` instead of `include` in `getRecentCollections` and `getSidebarCollections` to avoid over-fetching full item rows
+
 ## Notes
+
+- Skipping the `url` field in `prisma/schema.prisma` — Prisma 7 adapter-based setup does not require it
+- Skipping unscoped DB queries (`userId` filtering) — that belongs in the auth feature, not here
+- Skipping `PinnedItems`/`RecentItems` abstraction — deferred, not a quick win
+- All changes are isolated refactors with no behavior change expected
 
 ## History
 
