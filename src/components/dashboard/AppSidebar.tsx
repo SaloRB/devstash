@@ -19,6 +19,7 @@ import {
   SidebarSeparator,
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ICON_MAP } from '@/lib/item-types'
 import { getItemTypesWithCounts } from '@/lib/db/items'
@@ -70,6 +71,11 @@ export default async function AppSidebar() {
                       >
                         <Icon style={{ color: type.color }} />
                         <span className="capitalize">{type.name}s</span>
+                        {(type.name === 'file' || type.name === 'image') && (
+                          <Badge variant="secondary" className="text-[0.6rem] px-1 py-0 h-4 font-medium">
+                            PRO
+                          </Badge>
+                        )}
                       </SidebarMenuButton>
                       <SidebarMenuBadge>{type._count.items}</SidebarMenuBadge>
                     </SidebarMenuItem>
