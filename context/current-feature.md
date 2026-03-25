@@ -1,23 +1,10 @@
-# Current Feature: Quick Win Code Quality Fixes
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Remove unnecessary `'use client'` directive from `TopBar` (no state/hooks/handlers)
-- Fix React list key collision in `CollectionCard` — use `itemType.id` instead of `color`
-- Add explicit `DATABASE_URL` guard in `src/lib/prisma.ts` instead of non-null assertion
-- Extract shared `getDominantTypeColor` utility to `src/lib/utils/collections.ts` to eliminate duplication between `CollectionCard` and `AppSidebar`
-- Use `select` instead of `include` in `getRecentCollections` and `getSidebarCollections` to avoid over-fetching full item rows
-
 ## Notes
-
-- Skipping the `url` field in `prisma/schema.prisma` — Prisma 7 adapter-based setup does not require it
-- Skipping unscoped DB queries (`userId` filtering) — that belongs in the auth feature, not here
-- Skipping `PinnedItems`/`RecentItems` abstraction — deferred, not a quick win
-- All changes are isolated refactors with no behavior change expected
 
 ## History
 
@@ -33,3 +20,4 @@ In Progress
 - **2026-03-25** - Completed Stats & Sidebar: added getItemTypesWithCounts/getSidebarCollections, AppSidebar converted to async server component with live item types/counts/collections, favorites show star, recents show colored circle, "View all collections" link added, seeded React Patterns and AI Workflows as favorites.
 - **2026-03-25** - Completed Add Pro Badge to Sidebar: added ShadCN Badge (secondary variant, small) to file and image item types in AppSidebar, displaying "PRO" inline next to the type label.
 - **2026-03-25** - Completed Add Empty State to Collections and Recent Items: created reusable EmptyState component (icon, title, description), used in RecentCollections, RecentItems, and PinnedItems when data arrays are empty.
+- **2026-03-25** - Completed Quick Win Code Quality Fixes: removed 'use client' from TopBar, fixed React key collision in CollectionCard (id vs color), added DATABASE_URL guard in prisma.ts, extracted getDominantTypeColor to collection-utils.ts eliminating duplication between CollectionCard and AppSidebar, switched getRecentCollections/getSidebarCollections from include to select.
