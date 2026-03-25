@@ -1,6 +1,6 @@
 # Current Feature
 
-Prisma + Neon PostgreSQL Setup — configure the ORM, create the initial schema, run the first migration, and seed system item types.
+Seed Data — populate the development database with a demo user, system item types, and sample collections/items per `context/features/seed-spec.md`.
 
 ## Status
 
@@ -8,20 +8,21 @@ Completed
 
 ## Goals
 
-- Install and configure Prisma 7 (review upgrade guide for breaking changes)
-- Set up Neon PostgreSQL as the database provider (serverless)
-- Create `prisma/schema.prisma` with all models from the data architecture: User, Item, ItemType, Collection, ItemCollection, Tag, and NextAuth models (Account, Session, VerificationToken)
-- Add appropriate indexes and cascade deletes per the schema in project-overview.md
-- Create the initial migration with `prisma migrate dev` (never use `prisma db push`)
-- Create `prisma/seed.ts` and seed the 7 system item types
-- Create `src/lib/prisma.ts` singleton client
+- Create demo user (`demo@devstash.io`, password hashed with bcryptjs 12 rounds)
+- Upsert all 7 system item types (idempotent)
+- Create 5 collections with realistic items:
+  - **React Patterns** — 3 TypeScript snippets (hooks, component patterns, utilities)
+  - **AI Workflows** — 3 prompts (code review, documentation, refactoring)
+  - **DevOps** — 1 snippet (GitHub Actions CI), 1 command (deploy script), 2 links
+  - **Terminal Commands** — 4 commands (git, docker, process management, npm)
+  - **Design Resources** — 4 links (Tailwind, shadcn/ui, Radix UI, Lucide)
+- All upserts use stable seed IDs so the script is safely re-runnable
 
 ## Notes
 
-- Use the `DATABASE_URL` env var pointing to the Neon development branch; production uses a separate branch
-- Always create migrations — never push directly to the database
-- Prisma 7 has breaking changes; read the full upgrade guide before implementing
-- `@db.Text` annotations required for long-form fields (content, description, refresh_token, access_token, id_token)
+- Run with `npm run seed` (uses `tsx` via `ts-node`)
+- All item IDs are prefixed with `seed-` to distinguish from user-created data
+- `bcryptjs` and `@types/bcryptjs` must be installed (done)
 
 ## History
 
@@ -30,3 +31,4 @@ Completed
 - **2026-03-24** - Completed Dashboard UI Phase 2: Collapsible sidebar with item types, favorite/all collections, user avatar, mobile drawer, shadcn Sidebar/Sheet/Avatar/Collapsible components.
 - **2026-03-24** - Completed Dashboard UI Phase 3: Stats cards, collection cards, pinned items, recent items, full-width TopBar component, sidebar offset below topbar, shadcn Card/Badge components.
 - **2026-03-24** - Completed Prisma + Neon PostgreSQL setup: schema.prisma (all models), prisma.config.ts, src/lib/prisma.ts singleton with PrismaNeon adapter, prisma/seed.ts, scripts/test-db.ts. Initial migration applied, all 7 system item types seeded and verified.
+- **2026-03-24** - Rewrote prisma/seed.ts: added demo user, 5 collections, and 15 items (snippets, prompts, commands, links) per seed-spec.md. Installed bcryptjs.
