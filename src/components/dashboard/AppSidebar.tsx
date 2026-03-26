@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Star, Settings, ChevronRight } from 'lucide-react'
+import { Star, ChevronRight } from 'lucide-react'
+import { auth } from '@/auth'
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,16 +19,16 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from '@/components/ui/sidebar'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { SidebarUserMenu } from '@/components/dashboard/SidebarUserMenuClient'
 import { ICON_MAP } from '@/lib/item-types'
 import { getItemTypesWithCounts } from '@/lib/db/items'
 import { getSidebarCollections } from '@/lib/db/collections'
 import { getDominantTypeColor } from '@/lib/collection-utils'
 
 export default async function AppSidebar() {
-  const [itemTypes, collections] = await Promise.all([
+  const [session, itemTypes, collections] = await Promise.all([
+    auth(),
     getItemTypesWithCounts(),
     getSidebarCollections(),
   ])
@@ -150,26 +151,11 @@ export default async function AppSidebar() {
       <SidebarSeparator />
 
       <SidebarFooter>
-        <div className="flex items-center gap-2.5">
-          <Avatar size="sm">
-            <AvatarFallback>
-              G
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
-            <p className="truncate text-sm font-medium">Guest</p>
-            <p className="truncate text-xs text-muted-foreground">
-              guest@devstash.io
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            className="group-data-[collapsible=icon]:hidden"
-          >
-            <Settings className="size-4 text-muted-foreground" />
-          </Button>
-        </div>
+        <SidebarUserMenu
+          name={session?.user?.name}
+          email={session?.user?.email}
+          image={session?.user?.image}
+        />
       </SidebarFooter>
 
       <SidebarRail />
