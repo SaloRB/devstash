@@ -1,23 +1,18 @@
-# Current Feature: Delete Users Script
+# Current Feature
+
+<!-- Feature Name -->
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Create `scripts/delete-users.ts` using Prisma
-- Delete all users and their associated content (cascade)
-- Preserve `demo@devstash.io` user and all their content
-- Script should be safe to run repeatedly (idempotent)
-- Log what was deleted for confirmation
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Use existing Prisma client from `src/lib/prisma.ts`
-- Run with `npx ts-node scripts/delete-users.ts` or similar
-- Content to delete includes: items, collections, verification tokens, accounts, sessions for non-demo users
-- Check schema for cascade delete behavior vs manual deletion order
+<!-- Any extra notes -->
 
 ## History
 
@@ -42,3 +37,4 @@ In Progress
 - **2026-03-26** - Completed Filter Queries by User ID: added userId param to all db queries (collections, items, stats, sidebar counts), added jwt/session callbacks to auth.ts to populate session.user.id from JWT. Each server component calls auth() and passes userId to queries.
 - **2026-03-26** - Completed Email Verification on Register: installed Resend, created src/lib/email.ts helper, added /api/auth/verify-email route (validates token, stamps emailVerified, redirects), added /check-email page, updated register route to generate VerificationToken + send email (rollback on failure), blocked unverified credentials sign-in via custom EmailNotVerified error, updated SignInForm to show verification feedback.
 - **2026-03-26** - Completed Fix Build - Suspense Boundary on Sign-In: wrapped SignInForm in Suspense on /sign-in page to resolve useSearchParams() prerender error. Build now passes.
+- **2026-03-26** - Completed Delete Users Script: added scripts/delete-users.ts to delete all non-demo users and their content via Prisma cascade, with manual VerificationToken cleanup by email. Added db:delete-users npm script.
