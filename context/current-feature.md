@@ -1,23 +1,18 @@
-# Current Feature: Email Verification Toggle
+# Current Feature
+
+<!-- Feature Name -->
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Add a flag (env var) to enable/disable email verification on registration
-- When disabled, skip token generation, email sending, and skip the `emailVerified` check on sign-in
-- When enabled, existing flow works as-is
-- No code paths should break regardless of flag value
-- Flag should be easy to flip in `.env.local` without code changes
+<!-- Goals & requirements -->
 
 ## Notes
 
-- No custom domain linked to Resend yet → only the Resend account email can receive verification emails
-- Proposed var: `EMAIL_VERIFICATION_ENABLED=true|false` (default `false` so dev works out of the box)
-- Touch points: register API route (skip token/email), credentials sign-in check (skip `emailVerified` gate), possibly `/check-email` redirect
-- Consider fallback: if `RESEND_API_KEY` is missing, treat verification as disabled
+<!-- Any extra notes -->
 
 ## History
 
@@ -43,3 +38,4 @@ In Progress
 - **2026-03-26** - Completed Email Verification on Register: installed Resend, created src/lib/email.ts helper, added /api/auth/verify-email route (validates token, stamps emailVerified, redirects), added /check-email page, updated register route to generate VerificationToken + send email (rollback on failure), blocked unverified credentials sign-in via custom EmailNotVerified error, updated SignInForm to show verification feedback.
 - **2026-03-26** - Completed Fix Build - Suspense Boundary on Sign-In: wrapped SignInForm in Suspense on /sign-in page to resolve useSearchParams() prerender error. Build now passes.
 - **2026-03-26** - Completed Delete Users Script: added scripts/delete-users.ts to delete all non-demo users and their content via Prisma cascade, with manual VerificationToken cleanup by email. Added db:delete-users npm script.
+- **2026-03-26** - Completed Email Verification Toggle: added EMAIL_VERIFICATION_ENABLED env var (default false). When false, register stamps emailVerified immediately and auto signs in; credentials sign-in skips emailVerified gate. When true, full Resend verification flow active. No code paths break regardless of flag value.
