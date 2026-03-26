@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,10 +19,14 @@ import { Separator } from '@/components/ui/separator'
 
 export function SignInForm() {
   const router = useRouter()
+  const params = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const verified = params.get('verified') === 'true'
+  const invalidToken = params.get('error') === 'invalid_token'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -38,7 +42,11 @@ export function SignInForm() {
     setLoading(false)
 
     if (result?.error) {
-      setError('Invalid email or password')
+      if (result.code === 'email_not_verified') {
+        setError('Please verify your email before signing in.')
+      } else {
+        setError('Invalid email or password')
+      }
     } else {
       router.push('/dashboard')
     }
@@ -58,6 +66,12 @@ export function SignInForm() {
           </CardHeader>
 
           <CardContent className="space-y-4">
+            {verified && (
+              <p className="text-sm text-green-500">Email verified! You can now sign in.</p>
+            )}
+            {invalidToken && (
+              <p className="text-sm text-destructive">Verification link is invalid or expired.</p>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
