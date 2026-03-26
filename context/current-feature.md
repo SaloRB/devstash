@@ -1,25 +1,18 @@
-# Current Feature: Email Verification on Register
+# Current Feature
+
+<!-- Feature Name -->
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Send verification email via Resend after user registers
-- Email contains a unique, time-limited verification link
-- Clicking the link marks the user as verified in the DB
-- Unverified users cannot access /dashboard (redirected to a "check your email" page)
-- Verified users sign in normally
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Using Resend for email delivery; RESEND_API_KEY already in .env
-- Need to add `emailVerified` and `verificationToken`/`tokenExpiry` fields to User model (or use NextAuth's built-in Account/VerificationToken table)
-- NextAuth already uses @auth/prisma-adapter which has a VerificationToken model — can leverage that
-- Verification token should expire (e.g. 24h)
-- Auto sign-in after register (current flow) should be paused until email is verified
-- Need a /verify-email route to handle token validation
+<!-- Any extra notes -->
 
 ## History
 
@@ -42,3 +35,4 @@ In Progress
 - **2026-03-26** - Completed UI Folder Cleanup: moved EmptyState and UserAvatar from components/ui/ to components/shared/, renamed empty-state.tsx to EmptyState.tsx (PascalCase), updated all import paths. ui/ now contains only shadcn-generated primitives.
 - **2026-03-26** - Completed Auto Sign-In After Registration: after successful user creation, RegisterForm calls signIn('credentials', { email, password, redirectTo: '/dashboard' }) instead of redirecting to /sign-in. Register → auto sign in → dashboard in one flow.
 - **2026-03-26** - Completed Filter Queries by User ID: added userId param to all db queries (collections, items, stats, sidebar counts), added jwt/session callbacks to auth.ts to populate session.user.id from JWT. Each server component calls auth() and passes userId to queries.
+- **2026-03-26** - Completed Email Verification on Register: installed Resend, created src/lib/email.ts helper, added /api/auth/verify-email route (validates token, stamps emailVerified, redirects), added /check-email page, updated register route to generate VerificationToken + send email (rollback on failure), blocked unverified credentials sign-in via custom EmailNotVerified error, updated SignInForm to show verification feedback.
