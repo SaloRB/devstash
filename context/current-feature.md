@@ -1,21 +1,18 @@
-# Current Feature: UI Folder Cleanup
+# Current Feature
+
+<!-- Feature Name -->
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Review all files in `src/components/ui/`
-- Identify components that are NOT shadcn/ui generated (custom-built divs, raw HTML wrappers, etc.)
-- Remove non-shadcn components from the `ui/` folder
-- Relocate or inline any removed components if still needed elsewhere
+<!-- Goals & requirements -->
 
 ## Notes
 
-- shadcn/ui components are generated via CLI and follow a specific pattern (use Radix primitives, `cn()` utility, slot-based APIs)
-- Custom components belong outside `ui/` (e.g., `src/components/` root or feature subfolders)
-- Do not remove components still actively used without migrating their usage first
+<!-- Any extra notes -->
 
 ## History
 
@@ -35,3 +32,4 @@ In Progress
 - **2026-03-25** - Completed Auth Setup Phase 1: installed next-auth@beta + @auth/prisma-adapter, split config (auth.config.ts edge-safe + auth.ts with Prisma adapter/JWT), GitHub OAuth provider, proxy.ts middleware protecting /dashboard/*, session type augmentation.
 - **2026-03-25** - Completed Auth Credentials Phase 2: added Credentials provider (edge-safe placeholder in auth.config.ts, bcrypt validation in auth.ts), POST /api/auth/register route (validate/hash/create), redirect callback to /dashboard after sign-in.
 - **2026-03-26** - Completed Auth UI Phase 3: custom /sign-in (credentials + GitHub) and /register pages in (auth) route group, reusable UserAvatar (image or initials), SidebarUserMenu client component with live session data and sign-out dropdown, proxy.ts redirects to /sign-in, ssr:false wrapper to fix Base UI hydration mismatch.
+- **2026-03-26** - Completed UI Folder Cleanup: moved EmptyState and UserAvatar from components/ui/ to components/shared/, renamed empty-state.tsx to EmptyState.tsx (PascalCase), updated all import paths. ui/ now contains only shadcn-generated primitives.
