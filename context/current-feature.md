@@ -1,18 +1,21 @@
-# Current Feature
-
-<!-- Feature Name -->
+# Current Feature: Auto Sign-In After Registration
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- After successful registration, automatically sign in the new user
+- Redirect to /dashboard after sign-in (no manual login step)
+- No UX interruption — register → signed in → dashboard in one flow
 
 ## Notes
 
-<!-- Any extra notes -->
+- Register route is POST /api/auth/register (creates user via Prisma)
+- After user creation, call signIn() with credentials (email + password)
+- signIn from next-auth/react or server-side signIn from auth.ts
+- Avoid exposing plain-text password beyond the single request cycle
 
 ## History
 
