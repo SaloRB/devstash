@@ -21,6 +21,10 @@ Always use these IDs for every Neon MCP call — no lookups, no exceptions:
 
 Never call `list_projects`, `list_organizations`, or any discovery tool before a Neon MCP call.
 
+## Communication Style
+
+Be extremely concise. Sacrifice grammar for brevity. Drop articles, use symbols (→, /), collapse noun phrases, cut implied info. Shorter always wins.
+
 ## Commands
 
 - `npm run dev` — start dev server
