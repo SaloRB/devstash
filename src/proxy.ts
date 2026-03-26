@@ -9,7 +9,7 @@ export const proxy = auth(function middleware(req) {
   const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
 
   if (isDashboard && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+    return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
   return NextResponse.next();
