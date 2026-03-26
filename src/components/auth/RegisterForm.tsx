@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -54,13 +55,22 @@ export function RegisterForm() {
 
     setLoading(false)
 
+    const data = await res.json()
+
     if (!res.ok) {
-      const data = await res.json()
       setError(data.error ?? 'Registration failed')
       return
     }
 
-    router.push('/check-email')
+    if (data.pendingVerification) {
+      router.push('/check-email')
+    } else {
+      await signIn('credentials', {
+        email: form.email,
+        password: form.password,
+        redirectTo: '/dashboard',
+      })
+    }
   }
 
   return (

@@ -1,18 +1,23 @@
-# Current Feature
-
-<!-- Feature Name -->
+# Current Feature: Email Verification Toggle
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Add a flag (env var) to enable/disable email verification on registration
+- When disabled, skip token generation, email sending, and skip the `emailVerified` check on sign-in
+- When enabled, existing flow works as-is
+- No code paths should break regardless of flag value
+- Flag should be easy to flip in `.env.local` without code changes
 
 ## Notes
 
-<!-- Any extra notes -->
+- No custom domain linked to Resend yet → only the Resend account email can receive verification emails
+- Proposed var: `EMAIL_VERIFICATION_ENABLED=true|false` (default `false` so dev works out of the box)
+- Touch points: register API route (skip token/email), credentials sign-in check (skip `emailVerified` gate), possibly `/check-email` redirect
+- Consider fallback: if `RESEND_API_KEY` is missing, treat verification as disabled
 
 ## History
 

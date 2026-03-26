@@ -20,7 +20,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "User already exists" }, { status: 400 });
   }
 
+  const verificationEnabled = process.env.EMAIL_VERIFICATION_ENABLED === "true";
   const hashed = await bcrypt.hash(password, 10);
+
+  if (!verificationEnabled) {
+    await prisma.user.create({
+      data: { name, email, password: hashed, emailVerified: new Date() },
+    });
+    return NextResponse.json({ pendingVerification: false }, { status: 201 });
+  }
+
   await prisma.user.create({ data: { name, email, password: hashed } });
 
   const token = randomBytes(32).toString("hex");
