@@ -25,14 +25,6 @@ Never call `list_projects`, `list_organizations`, or any discovery tool before a
 
 Be extremely concise. Sacrifice grammar for brevity. Drop articles, use symbols (→, /), collapse noun phrases, cut implied info. Shorter always wins.
 
-## Node / npm
-
-Always use Node v24 via fnm before running npm commands:
-
-```bash
-eval "$(fnm env --shell zsh)" && fnm use 24 && npm <command>
-```
-
 ## Commands
 
 - `npm run dev` — start dev server
