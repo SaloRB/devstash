@@ -16,6 +16,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (url.startsWith(baseUrl)) return url;
       return `${baseUrl}/dashboard`;
     },
+    jwt({ token, user }) {
+      if (user) token.id = user.id;
+      return token;
+    },
+    session({ session, token }) {
+      if (token.id) session.user.id = token.id as string;
+      return session;
+    },
   },
   providers: [
     GitHub,

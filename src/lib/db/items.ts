@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma'
 
-export async function getPinnedItems() {
+export async function getPinnedItems(userId: string) {
   return prisma.item.findMany({
-    where: { isPinned: true },
+    where: { isPinned: true, userId },
     orderBy: { updatedAt: 'desc' },
     include: {
       itemType: true,
@@ -11,8 +11,9 @@ export async function getPinnedItems() {
   })
 }
 
-export async function getRecentItems(limit = 10) {
+export async function getRecentItems(userId: string, limit = 10) {
   return prisma.item.findMany({
+    where: { userId },
     take: limit,
     orderBy: { createdAt: 'desc' },
     include: {
@@ -22,23 +23,24 @@ export async function getRecentItems(limit = 10) {
   })
 }
 
-export async function getDashboardStats() {
+export async function getDashboardStats(userId: string) {
   const [totalItems, totalCollections, favoriteItems, favoriteCollections] =
     await prisma.$transaction([
-      prisma.item.count(),
-      prisma.collection.count(),
-      prisma.item.count({ where: { isFavorite: true } }),
-      prisma.collection.count({ where: { isFavorite: true } }),
+      prisma.item.count({ where: { userId } }),
+      prisma.collection.count({ where: { userId } }),
+      prisma.item.count({ where: { isFavorite: true, userId } }),
+      prisma.collection.count({ where: { isFavorite: true, userId } }),
     ])
 
   return { totalItems, totalCollections, favoriteItems, favoriteCollections }
 }
 
-export async function getItemTypesWithCounts() {
+export async function getItemTypesWithCounts(userId: string) {
   return prisma.itemType.findMany({
+    where: { OR: [{ isSystem: true }, { userId }] },
     orderBy: { id: 'asc' },
     include: {
-      _count: { select: { items: true } },
+      _count: { select: { items: { where: { userId } } } },
     },
   })
 }

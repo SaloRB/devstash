@@ -1,10 +1,12 @@
 import { Clock } from "lucide-react";
+import { auth } from "@/auth";
 import { getRecentItems, type ItemWithType } from "@/lib/db/items";
 import ItemRow from "./ItemRow";
 import EmptyState from "@/components/shared/EmptyState";
 
 export default async function RecentItems() {
-  const recentItems = await getRecentItems();
+  const session = await auth();
+  const recentItems = await getRecentItems(session!.user!.id!);
 
   return (
     <section>

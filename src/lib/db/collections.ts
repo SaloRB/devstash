@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
 
-export async function getRecentCollections(limit = 6) {
+export async function getRecentCollections(userId: string, limit = 6) {
   return prisma.collection.findMany({
+    where: { userId },
     take: limit,
     orderBy: { updatedAt: 'desc' },
     select: {
@@ -23,8 +24,9 @@ export async function getRecentCollections(limit = 6) {
   })
 }
 
-export async function getSidebarCollections(limit = 8) {
+export async function getSidebarCollections(userId: string, limit = 8) {
   return prisma.collection.findMany({
+    where: { userId },
     take: limit,
     orderBy: [{ isFavorite: 'desc' }, { updatedAt: 'desc' }],
     select: {

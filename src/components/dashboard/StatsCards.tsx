@@ -5,11 +5,13 @@ import {
   FolderHeart,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { auth } from "@/auth";
 import { getDashboardStats } from "@/lib/db/items";
 
 export default async function StatsCards() {
+  const session = await auth();
   const { totalItems, totalCollections, favoriteItems, favoriteCollections } =
-    await getDashboardStats();
+    await getDashboardStats(session!.user!.id!);
 
   const stats = [
     {

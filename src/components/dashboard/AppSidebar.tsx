@@ -27,10 +27,11 @@ import { getSidebarCollections } from '@/lib/db/collections'
 import { getDominantTypeColor } from '@/lib/collection-utils'
 
 export default async function AppSidebar() {
-  const [session, itemTypes, collections] = await Promise.all([
-    auth(),
-    getItemTypesWithCounts(),
-    getSidebarCollections(),
+  const session = await auth()
+  const userId = session!.user!.id!
+  const [itemTypes, collections] = await Promise.all([
+    getItemTypesWithCounts(userId),
+    getSidebarCollections(userId),
   ])
 
   const favorites = collections.filter((c) => c.isFavorite)

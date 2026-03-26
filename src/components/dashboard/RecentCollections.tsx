@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { FolderOpen } from 'lucide-react'
+import { auth } from '@/auth'
 import { getRecentCollections, type CollectionWithItems } from '@/lib/db/collections'
 import CollectionCard from './CollectionCard'
 import EmptyState from '@/components/shared/EmptyState'
 
 export default async function RecentCollections() {
-  const collections = await getRecentCollections()
+  const session = await auth()
+  const collections = await getRecentCollections(session!.user!.id!)
 
   return (
     <section>
