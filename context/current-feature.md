@@ -1,21 +1,18 @@
-# Current Feature: Auto Sign-In After Registration
+# Current Feature
+
+<!-- Feature Name -->
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- After successful registration, automatically sign in the new user
-- Redirect to /dashboard after sign-in (no manual login step)
-- No UX interruption — register → signed in → dashboard in one flow
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Register route is POST /api/auth/register (creates user via Prisma)
-- After user creation, call signIn() with credentials (email + password)
-- signIn from next-auth/react or server-side signIn from auth.ts
-- Avoid exposing plain-text password beyond the single request cycle
+<!-- Any extra notes -->
 
 ## History
 
@@ -36,3 +33,4 @@ In Progress
 - **2026-03-25** - Completed Auth Credentials Phase 2: added Credentials provider (edge-safe placeholder in auth.config.ts, bcrypt validation in auth.ts), POST /api/auth/register route (validate/hash/create), redirect callback to /dashboard after sign-in.
 - **2026-03-26** - Completed Auth UI Phase 3: custom /sign-in (credentials + GitHub) and /register pages in (auth) route group, reusable UserAvatar (image or initials), SidebarUserMenu client component with live session data and sign-out dropdown, proxy.ts redirects to /sign-in, ssr:false wrapper to fix Base UI hydration mismatch.
 - **2026-03-26** - Completed UI Folder Cleanup: moved EmptyState and UserAvatar from components/ui/ to components/shared/, renamed empty-state.tsx to EmptyState.tsx (PascalCase), updated all import paths. ui/ now contains only shadcn-generated primitives.
+- **2026-03-26** - Completed Auto Sign-In After Registration: after successful user creation, RegisterForm calls signIn('credentials', { email, password, redirectTo: '/dashboard' }) instead of redirecting to /sign-in. Register → auto sign in → dashboard in one flow.
