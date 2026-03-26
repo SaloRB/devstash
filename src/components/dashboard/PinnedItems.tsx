@@ -1,7 +1,7 @@
 import { Pin } from "lucide-react";
 import { getPinnedItems, type ItemWithType } from "@/lib/db/items";
 import ItemRow from "./ItemRow";
-import EmptyState from "@/components/ui/empty-state";
+import EmptyState from "@/components/shared/EmptyState";
 
 export default async function PinnedItems() {
   const pinnedItems = await getPinnedItems();

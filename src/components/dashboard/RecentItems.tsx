@@ -1,7 +1,7 @@
 import { Clock } from "lucide-react";
 import { getRecentItems, type ItemWithType } from "@/lib/db/items";
 import ItemRow from "./ItemRow";
-import EmptyState from "@/components/ui/empty-state";
+import EmptyState from "@/components/shared/EmptyState";
 
 export default async function RecentItems() {
   const recentItems = await getRecentItems();

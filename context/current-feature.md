@@ -1,18 +1,21 @@
-# Current Feature
-
-<!-- Feature Name -->
+# Current Feature: UI Folder Cleanup
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Review all files in `src/components/ui/`
+- Identify components that are NOT shadcn/ui generated (custom-built divs, raw HTML wrappers, etc.)
+- Remove non-shadcn components from the `ui/` folder
+- Relocate or inline any removed components if still needed elsewhere
 
 ## Notes
 
-<!-- Any extra notes -->
+- shadcn/ui components are generated via CLI and follow a specific pattern (use Radix primitives, `cn()` utility, slot-based APIs)
+- Custom components belong outside `ui/` (e.g., `src/components/` root or feature subfolders)
+- Do not remove components still actively used without migrating their usage first
 
 ## History
 

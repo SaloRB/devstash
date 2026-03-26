@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { UserAvatar } from '@/components/ui/UserAvatar'
+import { UserAvatar } from '@/components/shared/UserAvatar'
 
 interface SidebarUserMenuProps {
   name?: string | null

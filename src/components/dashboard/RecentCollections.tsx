@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { FolderOpen } from 'lucide-react'
 import { getRecentCollections, type CollectionWithItems } from '@/lib/db/collections'
 import CollectionCard from './CollectionCard'
-import EmptyState from '@/components/ui/empty-state'
+import EmptyState from '@/components/shared/EmptyState'
 
 export default async function RecentCollections() {
   const collections = await getRecentCollections()
