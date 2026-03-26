@@ -1,18 +1,23 @@
-# Current Feature
-
-<!-- Feature Name -->
+# Current Feature: Delete Users Script
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Create `scripts/delete-users.ts` using Prisma
+- Delete all users and their associated content (cascade)
+- Preserve `demo@devstash.io` user and all their content
+- Script should be safe to run repeatedly (idempotent)
+- Log what was deleted for confirmation
 
 ## Notes
 
-<!-- Any extra notes -->
+- Use existing Prisma client from `src/lib/prisma.ts`
+- Run with `npx ts-node scripts/delete-users.ts` or similar
+- Content to delete includes: items, collections, verification tokens, accounts, sessions for non-demo users
+- Check schema for cascade delete behavior vs manual deletion order
 
 ## History
 
