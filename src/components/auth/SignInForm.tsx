@@ -27,6 +27,7 @@ export function SignInForm() {
 
   const verified = params.get('verified') === 'true'
   const invalidToken = params.get('error') === 'invalid_token'
+  const passwordReset = params.get('reset') === 'true'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -69,6 +70,9 @@ export function SignInForm() {
             {verified && (
               <p className="text-sm text-green-500">Email verified! You can now sign in.</p>
             )}
+            {passwordReset && (
+              <p className="text-sm text-green-500">Password reset! You can now sign in.</p>
+            )}
             {invalidToken && (
               <p className="text-sm text-destructive">Verification link is invalid or expired.</p>
             )}
@@ -94,6 +98,11 @@ export function SignInForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <div className="text-right">
+                  <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground">
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
 
               {error && (

@@ -22,3 +22,24 @@ export async function sendVerificationEmail(email: string, token: string) {
 
   if (error) throw new Error(error.message)
 }
+
+export async function sendPasswordResetEmail(email: string, token: string) {
+  const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+  const resetUrl = `${baseUrl}/reset-password?token=${token}`
+
+  const { error } = await resend.emails.send({
+    from: 'DevStash <onboarding@resend.dev>',
+    to: email,
+    subject: 'Reset your password',
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
+        <h2 style="margin-bottom:8px">Reset your password</h2>
+        <p style="color:#555;margin-bottom:24px">Click the button below to reset your DevStash password.</p>
+        <a href="${resetUrl}" style="display:inline-block;background:#3b82f6;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600">Reset Password</a>
+        <p style="color:#999;font-size:12px;margin-top:24px">Link expires in 1 hour. If you didn't request a password reset, ignore this email.</p>
+      </div>
+    `,
+  })
+
+  if (error) throw new Error(error.message)
+}
