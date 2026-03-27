@@ -45,6 +45,8 @@ export function SignInForm() {
     if (result?.error) {
       if (result.code === 'email_not_verified') {
         setError('Please verify your email before signing in.')
+      } else if (result.code === 'rate_limit_exceeded') {
+        setError('Too many login attempts. Please try again in 15 minutes.')
       } else {
         setError('Invalid email or password')
       }

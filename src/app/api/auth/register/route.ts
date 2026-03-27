@@ -3,8 +3,13 @@ import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
+import { applyRateLimit, getIP } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const ip = getIP(req);
+  const limited = await applyRateLimit(`register:${ip}`, 3, "1 h");
+  if (limited) return limited;
+
   const { name, email, password, confirmPassword } = await req.json();
 
   if (!name || !email || !password || !confirmPassword) {

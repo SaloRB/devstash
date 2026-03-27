@@ -4,10 +4,15 @@ import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getIP } from "@/lib/rate-limit";
 import authConfig from "./auth.config";
 
 class EmailNotVerified extends CredentialsSignin {
   code = "email_not_verified";
+}
+
+class LoginRateLimited extends CredentialsSignin {
+  code = "rate_limit_exceeded";
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -36,11 +41,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, req) => {
         const { email, password } = credentials as {
           email: string;
           password: string;
         };
+
+        const ip = getIP(req as Request);
+        const { allowed } = await checkRateLimit(
+          `login:${ip}:${email}`,
+          5,
+          "15 m"
+        );
+        if (!allowed) throw new LoginRateLimited();
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.password) return null;
