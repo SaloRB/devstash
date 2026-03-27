@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
+import { signInWithGitHub } from '@/actions/auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,10 +54,6 @@ export function SignInForm() {
     } else {
       router.push('/dashboard')
     }
-  }
-
-  async function handleGitHub() {
-    await signIn('github', { redirectTo: '/dashboard' })
   }
 
   return (
@@ -122,9 +119,11 @@ export function SignInForm() {
               <Separator className="flex-1" />
             </div>
 
-            <Button variant="outline" className="w-full" onClick={handleGitHub}>
-              Sign in with GitHub
-            </Button>
+            <form action={signInWithGitHub}>
+              <Button type="submit" variant="outline" className="w-full">
+                Sign in with GitHub
+              </Button>
+            </form>
           </CardContent>
 
           <CardFooter className="justify-center">
