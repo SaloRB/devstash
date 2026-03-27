@@ -1,23 +1,12 @@
-# Current Feature: Item Delete
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Delete item server action w/ Zod validation + ownership check → removes item from DB
-- Wire delete button in ItemDrawer to trigger AlertDialog confirmation
-- Sonner toast on successful delete
-- Close drawer + router.refresh() after delete to update lists
-- Unit tests for delete server action
-
 ## Notes
-
-- Follow existing updateItem pattern in src/actions/items.ts — same { success, data, error } return shape
-- ItemDrawer already has Trash2 icon button in action bar — just needs wiring
-- AlertDialog already installed (used on profile page)
-- Sonner toast already set up (used in edit mode)
 
 ## History
 
@@ -53,3 +42,4 @@ In Progress
 - **2026-03-27** - Completed Items List 3-Column Grid: added lg:grid-cols-3 to /items/[type] grid — responsive 1-col → 2-col (md) → 3-col (lg+). Also set up Vitest for unit testing of server actions and utilities.
 - **2026-03-27** - Completed Item Drawer: Sheet (shadcn) opens from right on ItemCard click, fetches full detail via /api/items/[id] on demand. ItemDrawerProvider context manages open/loading state across dashboard and items list pages. Action bar with favorite/pin/copy/edit/delete. Skeleton loading state. getItemById DB query with userId ownership check.
 - **2026-03-27** - Completed Item Drawer Edit Mode: inline edit mode toggled via pencil button, Save/Cancel replace action bar. Editable fields: title, description, tags (comma-separated), plus type-specific (content, language, url). Zod-validated updateItem server action + DB query with tag disconnect/reconnect. Sonner toast on save/error, router.refresh() after save. 10 unit tests with 100% coverage on server action.
+- **2026-03-27** - Completed Item Delete: deleteItem server action with Zod validation + ownership check, AlertDialog confirmation on Trash2 button in ItemDrawer, Sonner toast on success/error, drawer close + router.refresh() after delete. 4 unit tests for the server action.
