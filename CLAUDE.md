@@ -31,3 +31,5 @@ Be extremely concise. Sacrifice grammar for brevity. Drop articles, use symbols 
 - `npm run build` — production build
 - `npm run lint` — run ESLint
 - `npm start` — serve production build
+- `npm test` — run unit tests (watch mode)
+- `npm run test:coverage` — run tests with coverage report

@@ -90,6 +90,15 @@ Example v4 configuration:
 - Return `{ success, data, error }` pattern from actions
 - Display user-friendly error messages via toast
 
+## Testing
+
+- Use Vitest for unit tests (`npm test`)
+- Test server actions (`src/actions/**`) and utilities (`src/lib/**`) only — no component tests
+- Test files: `src/**/*.test.ts` alongside the file being tested
+- Mock Prisma for DB-dependent code: `vi.mock('@/lib/prisma')`
+- Mock Next.js server APIs (`next/headers`, `next/navigation`) as needed
+- Run `npm run build` AND `npm test` before committing
+
 ## Code Quality
 
 - No commented-out code unless specified
