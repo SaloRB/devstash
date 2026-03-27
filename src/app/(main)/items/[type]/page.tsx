@@ -13,7 +13,7 @@ function getLabel(type: string) {
 
 export async function generateMetadata({ params }: ItemsPageProps) {
   const { type } = await params
-  return { title: getLabel(type) }
+  return { title: `DevStash - ${getLabel(type)}` }
 }
 
 export default async function ItemsPage({ params }: ItemsPageProps) {
@@ -27,7 +27,9 @@ export default async function ItemsPage({ params }: ItemsPageProps) {
     <div className="mx-auto max-w-6xl space-y-6 lg:px-8 xl:px-12">
       <div>
         <h1 className="text-2xl font-bold">{label}</h1>
-        <p className="text-sm text-muted-foreground">{items.length} item{items.length !== 1 ? 's' : ''}</p>
+        <p className="text-sm text-muted-foreground">
+          {items.length} item{items.length !== 1 ? 's' : ''}
+        </p>
       </div>
 
       {items.length === 0 ? (
