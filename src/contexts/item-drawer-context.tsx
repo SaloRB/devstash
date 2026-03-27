@@ -10,6 +10,7 @@ interface ItemDrawerContextValue {
   loading: boolean
   openDrawer: (id: string) => void
   closeDrawer: () => void
+  refreshItem: (updated: ItemDetail) => void
 }
 
 const ItemDrawerContext = createContext<ItemDrawerContextValue | null>(null)
@@ -45,8 +46,12 @@ export function ItemDrawerProvider({ children }: { children: React.ReactNode }) 
     setIsOpen(false)
   }
 
+  function refreshItem(updated: ItemDetail) {
+    setItem(updated)
+  }
+
   return (
-    <ItemDrawerContext.Provider value={{ selectedId, isOpen, item, loading, openDrawer, closeDrawer }}>
+    <ItemDrawerContext.Provider value={{ selectedId, isOpen, item, loading, openDrawer, closeDrawer, refreshItem }}>
       {children}
     </ItemDrawerContext.Provider>
   )

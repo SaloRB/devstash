@@ -69,6 +69,41 @@ export async function getItemById(id: string, userId: string) {
   })
 }
 
+export async function updateItem(
+  id: string,
+  userId: string,
+  data: {
+    title: string
+    description: string | null
+    content: string | null
+    url: string | null
+    language: string | null
+    tags: string[]
+  }
+) {
+  const { tags, ...fields } = data
+  return prisma.item.update({
+    where: { id, userId },
+    data: {
+      ...fields,
+      tags: {
+        set: [],
+        connectOrCreate: tags.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+    include: {
+      itemType: true,
+      tags: true,
+      collections: {
+        include: { collection: { select: { id: true, name: true } } },
+      },
+    },
+  })
+}
+
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number]
 export type ItemTypeWithCount = Awaited<ReturnType<typeof getItemTypesWithCounts>>[number]
 export type ItemDetail = NonNullable<Awaited<ReturnType<typeof getItemById>>>
