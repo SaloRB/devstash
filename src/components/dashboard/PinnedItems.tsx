@@ -1,7 +1,7 @@
 import { Pin } from "lucide-react";
 import { auth } from "@/auth";
 import { getPinnedItems, type ItemWithType } from "@/lib/db/items";
-import ItemRow from "./ItemRow";
+import ItemCard from "@/components/shared/ItemCard";
 import EmptyState from "@/components/shared/EmptyState";
 
 export default async function PinnedItems() {
@@ -23,7 +23,7 @@ export default async function PinnedItems() {
       ) : (
         <div className="flex flex-col gap-2">
           {pinnedItems.map((item: ItemWithType) => (
-            <ItemRow
+            <ItemCard
               key={item.id}
               title={item.title}
               description={item.description}

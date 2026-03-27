@@ -1,7 +1,7 @@
 import { Clock } from "lucide-react";
 import { auth } from "@/auth";
 import { getRecentItems, type ItemWithType } from "@/lib/db/items";
-import ItemRow from "./ItemRow";
+import ItemCard from "@/components/shared/ItemCard";
 import EmptyState from "@/components/shared/EmptyState";
 
 export default async function RecentItems() {
@@ -22,7 +22,7 @@ export default async function RecentItems() {
       ) : (
         <div className="flex flex-col gap-2">
           {recentItems.map((item: ItemWithType) => (
-            <ItemRow
+            <ItemCard
               key={item.id}
               title={item.title}
               description={item.description}

@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Items List View
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Create dynamic route `/items/[type]` (e.g., /items/snippets, /items/notes)
+- Fetch and display items filtered by type
+- Responsive grid of ItemCard components
+- Two columns on medium and up
+- Each card has left border colored by item type
+- Follow existing codebase patterns
 
 ## Notes
 
-<!-- Any extra notes -->
+- Route: `/items/[type]` — type param maps to item type slug
+- ItemCard is a new component (doesn't exist yet)
+- Left border color should reuse existing item type color logic
 
 ## History
 

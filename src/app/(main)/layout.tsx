@@ -2,7 +2,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/dashboard/AppSidebar'
 import TopBar from '@/components/layout/TopBar'
 
-export default function ProfileLayout({
+export default function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (

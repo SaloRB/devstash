@@ -45,5 +45,16 @@ export async function getItemTypesWithCounts(userId: string) {
   })
 }
 
+export async function getItemsByType(userId: string, type: string) {
+  return prisma.item.findMany({
+    where: { userId, itemType: { name: type } },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      itemType: true,
+      tags: true,
+    },
+  })
+}
+
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number]
 export type ItemTypeWithCount = Awaited<ReturnType<typeof getItemTypesWithCounts>>[number]

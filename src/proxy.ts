@@ -5,13 +5,13 @@ import { NextResponse } from "next/server";
 const { auth } = NextAuth(authConfig);
 
 const AUTH_ROUTES = ["/sign-in", "/register", "/forgot-password", "/reset-password"];
+const PROTECTED_ROUTES = ["/dashboard", "/profile", "/items"];
 
 export const proxy = auth(function middleware(req) {
   const isLoggedIn = !!req.auth;
   const { pathname } = req.nextUrl;
 
-  const isProtected =
-    pathname.startsWith("/dashboard") || pathname.startsWith("/profile");
+  const isProtected = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
@@ -31,6 +31,7 @@ export const config = {
     "/dashboard/:path*",
     "/profile/:path*",
     "/profile",
+    "/items/:path*",
     "/sign-in",
     "/register",
     "/forgot-password",

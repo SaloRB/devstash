@@ -1,0 +1,56 @@
+import { auth } from '@/auth'
+import { getItemsByType } from '@/lib/db/items'
+import ItemCard from '@/components/shared/ItemCard'
+import EmptyState from '@/components/shared/EmptyState'
+
+interface ItemsPageProps {
+  params: Promise<{ type: string }>
+}
+
+function getLabel(type: string) {
+  return `${type[0].toUpperCase()}${type.slice(1)}s`
+}
+
+export async function generateMetadata({ params }: ItemsPageProps) {
+  const { type } = await params
+  return { title: getLabel(type) }
+}
+
+export default async function ItemsPage({ params }: ItemsPageProps) {
+  const { type } = await params
+  const session = await auth()
+  const items = await getItemsByType(session!.user!.id!, type)
+
+  const label = getLabel(type)
+
+  return (
+    <div className="mx-auto max-w-6xl space-y-6 lg:px-8 xl:px-12">
+      <div>
+        <h1 className="text-2xl font-bold">{label}</h1>
+        <p className="text-sm text-muted-foreground">{items.length} item{items.length !== 1 ? 's' : ''}</p>
+      </div>
+
+      {items.length === 0 ? (
+        <EmptyState
+          title={`No ${label.toLowerCase()} yet`}
+          description={`Items of type "${type}" will appear here.`}
+        />
+      ) : (
+        <div className="grid gap-3 md:grid-cols-2">
+          {items.map((item) => (
+            <ItemCard
+              key={item.id}
+              title={item.title}
+              description={item.description}
+              itemType={item.itemType}
+              isFavorite={item.isFavorite}
+              isPinned={item.isPinned}
+              tags={item.tags.map((t) => t.name)}
+              createdAt={item.createdAt}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

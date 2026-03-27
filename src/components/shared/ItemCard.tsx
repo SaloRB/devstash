@@ -8,7 +8,7 @@ interface ItemType {
   color: string
 }
 
-interface ItemRowProps {
+interface ItemCardProps {
   title: string
   description?: string | null
   itemType: ItemType
@@ -18,7 +18,7 @@ interface ItemRowProps {
   createdAt: Date | string
 }
 
-export default function ItemRow({
+export default function ItemCard({
   title,
   description,
   itemType,
@@ -26,7 +26,7 @@ export default function ItemRow({
   isPinned,
   tags,
   createdAt,
-}: ItemRowProps) {
+}: ItemCardProps) {
   const Icon = ICON_MAP[itemType.icon] ?? ICON_MAP['Code']
   const iconColor = itemType.color
 
