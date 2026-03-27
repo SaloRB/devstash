@@ -2,15 +2,11 @@
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+Not Started
 
 ## Goals
 
-<!-- Goals & requirements -->
-
 ## Notes
-
-<!-- Any extra notes -->
 
 ## History
 
@@ -44,3 +40,4 @@
 - **2026-03-27** - Completed Protect Auth Routes: extended proxy.ts middleware to redirect authenticated users from /sign-in, /register, /forgot-password, /reset-password → /dashboard. Expanded matcher to include all auth routes.
 - **2026-03-27** - Completed Items List View: dynamic /items/[type] route with type-filtered 2-col grid, ItemCard shared component (replaces ItemRow on dashboard too), (main) route group consolidating dashboard/items/profile into single shared layout, getItemsByType DB query, PROTECTED_ROUTES constant, dynamic page title via generateMetadata.
 - **2026-03-27** - Completed Items List 3-Column Grid: added lg:grid-cols-3 to /items/[type] grid — responsive 1-col → 2-col (md) → 3-col (lg+). Also set up Vitest for unit testing of server actions and utilities.
+- **2026-03-27** - Completed Item Drawer: Sheet (shadcn) opens from right on ItemCard click, fetches full detail via /api/items/[id] on demand. ItemDrawerProvider context manages open/loading state across dashboard and items list pages. Action bar with favorite/pin/copy/edit/delete. Skeleton loading state. getItemById DB query with userId ownership check.
