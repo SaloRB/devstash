@@ -1,22 +1,12 @@
-# Current Feature: Item Create
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Modal dialog via shadcn Dialog, triggered from "New Item" button in top bar
-- Type selector (snippet, prompt, command, note, link)
-- Dynamic fields based on type: title (required) + description + tags for all; content + language for snippet/command; content for prompt/note; URL (required) for link
-- Server action `createItem` with Zod validation
-- Query function `createItem` in `lib/db/items.ts`
-- Toast on success, close modal, refresh data
-
 ## Notes
-
-- Reuse existing Zod patterns from updateItem action
-- Follow same server action + DB query split as edit/delete
 
 ## History
 
@@ -53,3 +43,4 @@ In Progress
 - **2026-03-27** - Completed Item Drawer: Sheet (shadcn) opens from right on ItemCard click, fetches full detail via /api/items/[id] on demand. ItemDrawerProvider context manages open/loading state across dashboard and items list pages. Action bar with favorite/pin/copy/edit/delete. Skeleton loading state. getItemById DB query with userId ownership check.
 - **2026-03-27** - Completed Item Drawer Edit Mode: inline edit mode toggled via pencil button, Save/Cancel replace action bar. Editable fields: title, description, tags (comma-separated), plus type-specific (content, language, url). Zod-validated updateItem server action + DB query with tag disconnect/reconnect. Sonner toast on save/error, router.refresh() after save. 10 unit tests with 100% coverage on server action.
 - **2026-03-27** - Completed Item Delete: deleteItem server action with Zod validation + ownership check, AlertDialog confirmation on Trash2 button in ItemDrawer, Sonner toast on success/error, drawer close + router.refresh() after delete. 4 unit tests for the server action.
+- **2026-03-27** - Completed Item Create: shadcn Dialog from TopBar "New Item" button, type selector (snippet/prompt/command/note/link) with dynamic fields, createItem server action + DB query with Zod validation, tag connectOrCreate, toast/close/refresh on success. shadcn Select component added. 8 unit tests with 100% coverage on server action.
