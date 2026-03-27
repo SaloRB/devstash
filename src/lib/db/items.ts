@@ -104,6 +104,42 @@ export async function updateItem(
   })
 }
 
+export async function createItem(
+  userId: string,
+  itemTypeId: string,
+  data: {
+    title: string
+    description: string | null
+    content: string | null
+    url: string | null
+    language: string | null
+    tags: string[]
+  }
+) {
+  const { tags, ...fields } = data
+  return prisma.item.create({
+    data: {
+      ...fields,
+      contentType: 'TEXT',
+      userId,
+      itemTypeId,
+      tags: {
+        connectOrCreate: tags.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+    include: {
+      itemType: true,
+      tags: true,
+      collections: {
+        include: { collection: { select: { id: true, name: true } } },
+      },
+    },
+  })
+}
+
 export async function deleteItem(id: string, userId: string) {
   return prisma.item.delete({
     where: { id, userId },

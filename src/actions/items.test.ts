@@ -5,15 +5,21 @@ vi.mock('@/auth', () => ({
 }))
 
 vi.mock('@/lib/db/items', () => ({
+  createItem: vi.fn(),
   updateItem: vi.fn(),
   deleteItem: vi.fn(),
 }))
 
-import { updateItem, deleteItem } from './items'
+import { createItem, updateItem, deleteItem } from './items'
 import { auth } from '@/auth'
-import { updateItem as updateItemDb, deleteItem as deleteItemDb } from '@/lib/db/items'
+import {
+  createItem as createItemDb,
+  updateItem as updateItemDb,
+  deleteItem as deleteItemDb,
+} from '@/lib/db/items'
 
 const mockAuth = vi.mocked(auth)
+const mockCreateDb = vi.mocked(createItemDb)
 const mockUpdateDb = vi.mocked(updateItemDb)
 const mockDeleteDb = vi.mocked(deleteItemDb)
 
@@ -140,6 +146,116 @@ describe('updateItem', () => {
     const result = await updateItem('item-1', validInput)
 
     expect(result).toEqual({ success: false, error: 'Failed to update item' })
+  })
+})
+
+const validCreateInput = {
+  itemTypeId: 'type-1',
+  title: 'New Snippet',
+  description: 'A description',
+  content: 'console.log("hi")',
+  url: null,
+  language: 'javascript',
+  tags: ['react', 'hooks'],
+}
+
+const mockCreatedItem = {
+  id: 'item-new',
+  title: 'New Snippet',
+  description: 'A description',
+  content: 'console.log("hi")',
+  url: null,
+  language: 'javascript',
+  tags: [{ id: 't1', name: 'react' }, { id: 't2', name: 'hooks' }],
+  itemType: { id: 'type-1', name: 'Snippet', icon: 'Code', color: '#3b82f6', isSystem: true, userId: null },
+  collections: [],
+}
+
+describe('createItem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAuth.mockResolvedValue({ user: { id: 'user-1' } } as never)
+    mockCreateDb.mockResolvedValue(mockCreatedItem as never)
+  })
+
+  it('returns unauthorized when no session', async () => {
+    mockAuth.mockResolvedValue(null as never)
+
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: false, error: 'Unauthorized' })
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('returns validation error when title is empty', async () => {
+    const result = await createItem({ ...validCreateInput, title: '' })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toHaveProperty('title')
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('returns validation error when itemTypeId is empty', async () => {
+    const result = await createItem({ ...validCreateInput, itemTypeId: '' })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toHaveProperty('itemTypeId')
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('returns validation error for invalid URL', async () => {
+    const result = await createItem({
+      ...validCreateInput,
+      url: 'not-a-url',
+    })
+
+    expect(result.success).toBe(false)
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('filters out empty tags', async () => {
+    await createItem({
+      ...validCreateInput,
+      tags: ['react', '', '  ', 'hooks'],
+    })
+
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({ tags: ['react', 'hooks'] })
+    )
+  })
+
+  it('transforms empty description to null', async () => {
+    await createItem({ ...validCreateInput, description: '' })
+
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({ description: null })
+    )
+  })
+
+  it('returns created item on success', async () => {
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: true, data: mockCreatedItem })
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({
+        title: 'New Snippet',
+        tags: ['react', 'hooks'],
+      })
+    )
+  })
+
+  it('returns error when DB throws', async () => {
+    mockCreateDb.mockRejectedValue(new Error('DB error'))
+
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: false, error: 'Failed to create item' })
   })
 })
 

@@ -1,9 +1,17 @@
-import { Search, Plus, FolderPlus } from "lucide-react";
+import { Search, FolderPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { auth } from "@/auth";
+import { getItemTypesWithCounts } from "@/lib/db/items";
+import CreateItemDialog from "@/components/shared/CreateItemDialog";
 
-export default function TopBar() {
+export default async function TopBar() {
+  const session = await auth();
+  const itemTypes = session?.user?.id
+    ? await getItemTypesWithCounts(session.user.id)
+    : [];
+
   return (
     <header className="fixed top-0 left-0 right-0 z-20 flex h-(--topbar-height,57px) items-center gap-3 border-b border-border bg-background px-4 py-3">
       <SidebarTrigger />
@@ -24,10 +32,7 @@ export default function TopBar() {
           <FolderPlus className="size-4" />
           New Collection
         </Button>
-        <Button>
-          <Plus className="size-4" />
-          New Item
-        </Button>
+        <CreateItemDialog itemTypes={itemTypes} />
       </div>
     </header>
   );
