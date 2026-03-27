@@ -8,7 +8,7 @@ Review the codebase for cleanup tasks:
 
 1. Make sure that the history in @context/current-feature.md is in order from oldest to newest
 2. Find unnecessary console.log statements in src/
-3. Find unused imports
+3. Find unused imports — run `npx eslint src/ --ext .ts,.tsx 2>&1 | grep -E "no-unused"` to catch what static analysis misses
 4. Check for stale TODO comments
 5. Find orphaned/unused files
 6. Check that context files match actual project state
