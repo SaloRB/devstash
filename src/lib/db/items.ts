@@ -56,5 +56,19 @@ export async function getItemsByType(userId: string, type: string) {
   })
 }
 
+export async function getItemById(id: string, userId: string) {
+  return prisma.item.findFirst({
+    where: { id, userId },
+    include: {
+      itemType: true,
+      tags: true,
+      collections: {
+        include: { collection: { select: { id: true, name: true } } },
+      },
+    },
+  })
+}
+
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number]
 export type ItemTypeWithCount = Awaited<ReturnType<typeof getItemTypesWithCounts>>[number]
+export type ItemDetail = NonNullable<Awaited<ReturnType<typeof getItemById>>>

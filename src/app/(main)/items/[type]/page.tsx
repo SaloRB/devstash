@@ -40,6 +40,7 @@ export default async function ItemsPage({ params }: ItemsPageProps) {
           {items.map((item) => (
             <ItemCard
               key={item.id}
+              id={item.id}
               title={item.title}
               description={item.description}
               itemType={item.itemType}

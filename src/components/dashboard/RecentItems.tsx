@@ -24,6 +24,7 @@ export default async function RecentItems() {
           {recentItems.map((item: ItemWithType) => (
             <ItemCard
               key={item.id}
+              id={item.id}
               title={item.title}
               description={item.description}
               itemType={item.itemType}

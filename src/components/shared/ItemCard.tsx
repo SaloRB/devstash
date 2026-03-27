@@ -1,7 +1,10 @@
+'use client'
+
 import { Star, Pin } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { ICON_MAP } from '@/lib/item-types'
+import { useItemDrawer } from '@/contexts/item-drawer-context'
 
 interface ItemType {
   icon: string
@@ -9,6 +12,7 @@ interface ItemType {
 }
 
 interface ItemCardProps {
+  id: string
   title: string
   description?: string | null
   itemType: ItemType
@@ -19,6 +23,7 @@ interface ItemCardProps {
 }
 
 export default function ItemCard({
+  id,
   title,
   description,
   itemType,
@@ -27,6 +32,7 @@ export default function ItemCard({
   tags,
   createdAt,
 }: ItemCardProps) {
+  const { openDrawer } = useItemDrawer()
   const Icon = ICON_MAP[itemType.icon] ?? ICON_MAP['Code']
   const iconColor = itemType.color
 
@@ -36,7 +42,11 @@ export default function ItemCard({
   })
 
   return (
-    <Card className="border-l-4" style={{ borderLeftColor: iconColor }}>
+    <Card
+      className="cursor-pointer border-l-4 transition-colors hover:bg-muted/50"
+      style={{ borderLeftColor: iconColor }}
+      onClick={() => openDrawer(id)}
+    >
       <CardContent className="flex items-center gap-3">
         <div
           className="flex size-8 shrink-0 items-center justify-center rounded-md"

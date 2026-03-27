@@ -25,6 +25,7 @@ export default async function PinnedItems() {
           {pinnedItems.map((item: ItemWithType) => (
             <ItemCard
               key={item.id}
+              id={item.id}
               title={item.title}
               description={item.description}
               itemType={item.itemType}
