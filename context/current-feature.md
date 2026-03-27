@@ -1,27 +1,12 @@
-# Current Feature: Item Drawer Edit Mode
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Edit button toggles drawer from view → edit mode inline (same drawer stays open)
-- Action bar replaced with Save / Cancel buttons in edit mode
-- Editable fields: title (required), description, tags (comma-separated → array), plus type-specific (content, language, url)
-- Non-editable display: item type, collections, dates
-- Zod validation in server action, errors returned to client
-- `updateItem` server action in `src/actions/items.ts` — validates, checks ownership, persists
-- `updateItem` query in `lib/db/items.ts` — disconnect/reconnect tags, return `ItemDetail`
-- Toast on save success/error, `router.refresh()` after save
-- Controlled inputs with local state, no form library
-
 ## Notes
-
-- Content textarea = plain textarea, not code editor (later)
-- Disable Save when title empty (client UX guard)
-- Tag handling: disconnect all existing, connect-or-create new ones
-- Server action follows `{ success, data, error }` pattern
 
 ## History
 
@@ -56,3 +41,4 @@ In Progress
 - **2026-03-27** - Completed Items List View: dynamic /items/[type] route with type-filtered 2-col grid, ItemCard shared component (replaces ItemRow on dashboard too), (main) route group consolidating dashboard/items/profile into single shared layout, getItemsByType DB query, PROTECTED_ROUTES constant, dynamic page title via generateMetadata.
 - **2026-03-27** - Completed Items List 3-Column Grid: added lg:grid-cols-3 to /items/[type] grid — responsive 1-col → 2-col (md) → 3-col (lg+). Also set up Vitest for unit testing of server actions and utilities.
 - **2026-03-27** - Completed Item Drawer: Sheet (shadcn) opens from right on ItemCard click, fetches full detail via /api/items/[id] on demand. ItemDrawerProvider context manages open/loading state across dashboard and items list pages. Action bar with favorite/pin/copy/edit/delete. Skeleton loading state. getItemById DB query with userId ownership check.
+- **2026-03-27** - Completed Item Drawer Edit Mode: inline edit mode toggled via pencil button, Save/Cancel replace action bar. Editable fields: title, description, tags (comma-separated), plus type-specific (content, language, url). Zod-validated updateItem server action + DB query with tag disconnect/reconnect. Sonner toast on save/error, router.refresh() after save. 10 unit tests with 100% coverage on server action.
