@@ -1,33 +1,16 @@
-# Current Feature: Rate Limiting for Auth
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Add rate limiting to auth-related API routes
-- Use Upstash Redis with `@upstash/ratelimit` for serverless-compatible limiting
-- Create reusable `src/lib/rate-limit.ts` utility
-- Return 429 responses with `Retry-After` header and user-friendly error message
-- Display error messages on frontend via toast
+<!-- Goals & requirements -->
 
 ## Notes
 
-Endpoints and limits:
-| Endpoint | Limit | Window | Key By |
-|----------|-------|--------|--------|
-| `/api/auth/callback/credentials` (login) | 5 | 15 min | IP + email |
-| `/api/auth/register` | 3 | 1 hour | IP |
-| `/api/auth/forgot-password` | 3 | 1 hour | IP |
-| `/api/auth/reset-password` | 5 | 15 min | IP |
-| `/api/auth/resend-verification` | 3 | 15 min | IP + email |
-
-- Sliding window algorithm
-- Extract IP from `x-forwarded-for` or request
-- Fail open if Upstash unavailable
-- Requires `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` env vars
-- Login limiting is tricky with NextAuth credentials — may need custom sign-in handler
+<!-- Any extra notes -->
 
 ## History
 
@@ -56,3 +39,4 @@ Endpoints and limits:
 - **2026-03-26** - Completed Email Verification Toggle: added EMAIL_VERIFICATION_ENABLED env var (default false). When false, register stamps emailVerified immediately and auto signs in; credentials sign-in skips emailVerified gate. When true, full Resend verification flow active. No code paths break regardless of flag value.
 - **2026-03-26** - Completed Forgot Password: added /forgot-password and /reset-password pages with forms, POST /api/auth/forgot-password (generates VerificationToken with reset: prefix, sends email via Resend), POST /api/auth/reset-password (validates token, updates bcrypt hash, deletes token, 1hr expiry), sendPasswordResetEmail helper, Forgot password? link on sign-in page.
 - **2026-03-26** - Completed Profile Page: added /profile route (protected via middleware), user info card with avatar/email/member-since and inline change-password dialog (email users only), usage stats card with item/collection counts and per-type progress bars with colored Lucide icons, danger zone card with delete account AlertDialog. New files: src/app/profile/, src/lib/db/profile.ts, src/components/profile/, src/app/api/auth/change-password/, src/app/api/user/delete-account/, shadcn alert-dialog and dialog components.
+- **2026-03-26** - Completed Rate Limiting for Auth: installed @upstash/ratelimit + @upstash/redis, created src/lib/rate-limit.ts (getIP, checkRateLimit, applyRateLimit — sliding window, fail-open). Protected register (3/1h IP), forgot-password (3/1h IP), reset-password (5/15m IP), and credentials login (5/15m IP+email via authorize callback). SignInForm handles rate_limit_exceeded error code. Requires UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN env vars.
