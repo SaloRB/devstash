@@ -1,20 +1,16 @@
-# Current Feature: Items List 3-Column Grid
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- `/items/[type]` grid is 1-col on mobile, 2-col on tablet (md), 3-col on large screens (lg+)
-- `ItemCard` renders well at narrower widths in a 3-col layout
-- Dashboard uses of `ItemCard` (PinnedItems, RecentItems) are unaffected
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Change is isolated to the grid class in `src/app/(main)/items/[type]/page.tsx`
-- Currently: `grid gap-3 md:grid-cols-2` → target: `grid gap-3 md:grid-cols-2 lg:grid-cols-3`
-- `ItemCard` is a horizontal row layout — verify it doesn't look cramped at ~33% viewport width
+<!-- Any extra notes -->
 
 ## History
 
@@ -47,3 +43,4 @@ In Progress
 - **2026-03-26** - Completed Fix GitHub OAuth Redirect: created src/actions/auth.ts with signInWithGitHub server action, updated SignInForm to use <form action={signInWithGitHub}> replacing client-side signIn. Eliminates double-click issue — GitHub OAuth now redirects reliably in one click.
 - **2026-03-27** - Completed Protect Auth Routes: extended proxy.ts middleware to redirect authenticated users from /sign-in, /register, /forgot-password, /reset-password → /dashboard. Expanded matcher to include all auth routes.
 - **2026-03-27** - Completed Items List View: dynamic /items/[type] route with type-filtered 2-col grid, ItemCard shared component (replaces ItemRow on dashboard too), (main) route group consolidating dashboard/items/profile into single shared layout, getItemsByType DB query, PROTECTED_ROUTES constant, dynamic page title via generateMetadata.
+- **2026-03-27** - Completed Items List 3-Column Grid: added lg:grid-cols-3 to /items/[type] grid — responsive 1-col → 2-col (md) → 3-col (lg+). Also set up Vitest for unit testing of server actions and utilities.
