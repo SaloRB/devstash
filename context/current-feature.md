@@ -1,23 +1,16 @@
-# Current Feature: Profile Page
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Create profile page at `/profile` route (protected)
-- Display user info: email, name, avatar (GitHub or initials), account creation date
-- Show usage stats: total items, total collections, breakdown by item type (snippets, prompts, notes, commands, links, files, images)
-- Add change password action (email/password users only, not GitHub OAuth)
-- Add delete account action with confirmation dialog
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Avatar: GitHub avatar from OAuth if available, else generate initials from name/email (reuse UserAvatar component)
-- Change password button hidden for GitHub OAuth users
-- Delete account needs confirmation dialog to prevent accidental deletion
-- Follow existing db query patterns (src/lib/db/), server components, auth() for userId
+<!-- Any extra notes -->
 
 ## History
 
@@ -45,3 +38,4 @@ In Progress
 - **2026-03-26** - Completed Delete Users Script: added scripts/delete-users.ts to delete all non-demo users and their content via Prisma cascade, with manual VerificationToken cleanup by email. Added db:delete-users npm script.
 - **2026-03-26** - Completed Email Verification Toggle: added EMAIL_VERIFICATION_ENABLED env var (default false). When false, register stamps emailVerified immediately and auto signs in; credentials sign-in skips emailVerified gate. When true, full Resend verification flow active. No code paths break regardless of flag value.
 - **2026-03-26** - Completed Forgot Password: added /forgot-password and /reset-password pages with forms, POST /api/auth/forgot-password (generates VerificationToken with reset: prefix, sends email via Resend), POST /api/auth/reset-password (validates token, updates bcrypt hash, deletes token, 1hr expiry), sendPasswordResetEmail helper, Forgot password? link on sign-in page.
+- **2026-03-26** - Completed Profile Page: added /profile route (protected via middleware), user info card with avatar/email/member-since and inline change-password dialog (email users only), usage stats card with item/collection counts and per-type progress bars with colored Lucide icons, danger zone card with delete account AlertDialog. New files: src/app/profile/, src/lib/db/profile.ts, src/components/profile/, src/app/api/auth/change-password/, src/app/api/user/delete-account/, shadcn alert-dialog and dialog components.
