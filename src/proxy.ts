@@ -6,9 +6,11 @@ const { auth } = NextAuth(authConfig);
 
 export const proxy = auth(function middleware(req) {
   const isLoggedIn = !!req.auth;
-  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
+  const isProtected =
+    req.nextUrl.pathname.startsWith("/dashboard") ||
+    req.nextUrl.pathname.startsWith("/profile");
 
-  if (isDashboard && !isLoggedIn) {
+  if (isProtected && !isLoggedIn) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
@@ -16,5 +18,5 @@ export const proxy = auth(function middleware(req) {
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/profile/:path*", "/profile"],
 };
