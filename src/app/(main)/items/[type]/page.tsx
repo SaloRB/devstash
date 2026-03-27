@@ -36,7 +36,7 @@ export default async function ItemsPage({ params }: ItemsPageProps) {
           description={`Items of type "${type}" will appear here.`}
         />
       ) : (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <ItemCard
               key={item.id}

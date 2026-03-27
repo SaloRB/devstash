@@ -1,16 +1,20 @@
-# Current Feature
+# Current Feature: Items List 3-Column Grid
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- `/items/[type]` grid is 1-col on mobile, 2-col on tablet (md), 3-col on large screens (lg+)
+- `ItemCard` renders well at narrower widths in a 3-col layout
+- Dashboard uses of `ItemCard` (PinnedItems, RecentItems) are unaffected
 
 ## Notes
 
-<!-- Any extra notes -->
+- Change is isolated to the grid class in `src/app/(main)/items/[type]/page.tsx`
+- Currently: `grid gap-3 md:grid-cols-2` → target: `grid gap-3 md:grid-cols-2 lg:grid-cols-3`
+- `ItemCard` is a horizontal row layout — verify it doesn't look cramped at ~33% viewport width
 
 ## History
 
