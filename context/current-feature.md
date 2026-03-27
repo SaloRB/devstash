@@ -1,23 +1,16 @@
-# Current Feature: Items List View
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Create dynamic route `/items/[type]` (e.g., /items/snippets, /items/notes)
-- Fetch and display items filtered by type
-- Responsive grid of ItemCard components
-- Two columns on medium and up
-- Each card has left border colored by item type
-- Follow existing codebase patterns
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Route: `/items/[type]` — type param maps to item type slug
-- ItemCard is a new component (doesn't exist yet)
-- Left border color should reuse existing item type color logic
+<!-- Any extra notes -->
 
 ## History
 
@@ -49,3 +42,4 @@ In Progress
 - **2026-03-26** - Completed Rate Limiting for Auth: installed @upstash/ratelimit + @upstash/redis, created src/lib/rate-limit.ts (getIP, checkRateLimit, applyRateLimit — sliding window, fail-open). Protected register (3/1h IP), forgot-password (3/1h IP), reset-password (5/15m IP), and credentials login (5/15m IP+email via authorize callback). SignInForm handles rate_limit_exceeded error code. Requires UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN env vars.
 - **2026-03-26** - Completed Fix GitHub OAuth Redirect: created src/actions/auth.ts with signInWithGitHub server action, updated SignInForm to use <form action={signInWithGitHub}> replacing client-side signIn. Eliminates double-click issue — GitHub OAuth now redirects reliably in one click.
 - **2026-03-27** - Completed Protect Auth Routes: extended proxy.ts middleware to redirect authenticated users from /sign-in, /register, /forgot-password, /reset-password → /dashboard. Expanded matcher to include all auth routes.
+- **2026-03-27** - Completed Items List View: dynamic /items/[type] route with type-filtered 2-col grid, ItemCard shared component (replaces ItemRow on dashboard too), (main) route group consolidating dashboard/items/profile into single shared layout, getItemsByType DB query, PROTECTED_ROUTES constant, dynamic page title via generateMetadata.
