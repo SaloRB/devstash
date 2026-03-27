@@ -1,12 +1,23 @@
-# Current Feature
+# Current Feature: Item Delete
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- Delete item server action w/ Zod validation + ownership check → removes item from DB
+- Wire delete button in ItemDrawer to trigger AlertDialog confirmation
+- Sonner toast on successful delete
+- Close drawer + router.refresh() after delete to update lists
+- Unit tests for delete server action
+
 ## Notes
+
+- Follow existing updateItem pattern in src/actions/items.ts — same { success, data, error } return shape
+- ItemDrawer already has Trash2 icon button in action bar — just needs wiring
+- AlertDialog already installed (used on profile page)
+- Sonner toast already set up (used in edit mode)
 
 ## History
 

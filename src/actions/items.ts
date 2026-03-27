@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import { auth } from '@/auth'
-import { updateItem as updateItemDb } from '@/lib/db/items'
+import { updateItem as updateItemDb, deleteItem as deleteItemDb } from '@/lib/db/items'
 
 const updateItemSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
@@ -22,6 +22,29 @@ const updateItemSchema = z.object({
 })
 
 export type UpdateItemInput = z.infer<typeof updateItemSchema>
+
+const deleteItemSchema = z.object({
+  itemId: z.string().min(1, 'Item ID is required'),
+})
+
+export async function deleteItem(itemId: string) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'Unauthorized' }
+  }
+
+  const parsed = deleteItemSchema.safeParse({ itemId })
+  if (!parsed.success) {
+    return { success: false as const, error: 'Invalid item ID' }
+  }
+
+  try {
+    await deleteItemDb(parsed.data.itemId, session.user.id)
+    return { success: true as const }
+  } catch {
+    return { success: false as const, error: 'Failed to delete item' }
+  }
+}
 
 export async function updateItem(itemId: string, data: UpdateItemInput) {
   const session = await auth()

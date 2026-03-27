@@ -104,6 +104,12 @@ export async function updateItem(
   })
 }
 
+export async function deleteItem(id: string, userId: string) {
+  return prisma.item.delete({
+    where: { id, userId },
+  })
+}
+
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number]
 export type ItemTypeWithCount = Awaited<ReturnType<typeof getItemTypesWithCounts>>[number]
 export type ItemDetail = NonNullable<Awaited<ReturnType<typeof getItemById>>>

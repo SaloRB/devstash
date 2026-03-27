@@ -29,9 +29,20 @@ import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
-import { updateItem } from '@/actions/items'
+import { updateItem, deleteItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
 
 const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
@@ -65,7 +76,17 @@ function DrawerSkeleton() {
   )
 }
 
-function ViewMode({ item, onEdit }: { item: ItemDetail; onEdit: () => void }) {
+function ViewMode({
+  item,
+  onEdit,
+  onDelete,
+  deleting,
+}: {
+  item: ItemDetail
+  onEdit: () => void
+  onDelete: () => void
+  deleting: boolean
+}) {
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
@@ -133,13 +154,37 @@ function ViewMode({ item, onEdit }: { item: ItemDetail; onEdit: () => void }) {
           Edit
         </Button>
         <div className="ml-auto">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="size-4" />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="text-destructive hover:text-destructive"
+                  disabled={deleting}
+                />
+              }
+            >
+              <Trash2 className="size-4" />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this item?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete &quot;{item.title}&quot;. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={onDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? 'Deleting…' : 'Delete'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -436,6 +481,7 @@ export default function ItemDrawer() {
   const { isOpen, item, loading, closeDrawer, refreshItem } = useItemDrawer()
   const router = useRouter()
   const [editing, setEditing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (!isOpen) setEditing(false)
@@ -447,6 +493,20 @@ export default function ItemDrawer() {
     refreshItem(updated)
     setEditing(false)
     router.refresh()
+  }
+
+  async function handleDelete() {
+    if (!item) return
+    setDeleting(true)
+    const result = await deleteItem(item.id)
+    setDeleting(false)
+    if (result.success) {
+      toast.success('Item deleted')
+      closeDrawer()
+      router.refresh()
+    } else {
+      toast.error(result.error ?? 'Failed to delete item')
+    }
   }
 
   return (
@@ -495,7 +555,7 @@ export default function ItemDrawer() {
                 onSaved={handleSaved}
               />
             ) : (
-              <ViewMode item={item} onEdit={() => setEditing(true)} />
+              <ViewMode item={item} onEdit={() => setEditing(true)} onDelete={handleDelete} deleting={deleting} />
             )}
           </>
         ) : null}
