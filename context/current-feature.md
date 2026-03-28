@@ -1,12 +1,21 @@
-# Current Feature
+# Current Feature: Create New Item Dialog Polish
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- Add padding between items in the Type combo/select dropdown
+- Show the item type icon to the left of the "Create New Item" dialog title
+- Default the Type selector to "Snippet" when the dialog opens
+- Constrain the Type selector width (not 100%)
+
 ## Notes
+
+- Type selector uses shadcn Select component
+- Icons are Lucide icons mapped from item-types.ts
+- Dialog is triggered from TopBar "New Item" button
 
 ## History
 

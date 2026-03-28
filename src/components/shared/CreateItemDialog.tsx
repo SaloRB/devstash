@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Plus } from 'lucide-react'
+import { Plus, Code } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -40,7 +40,9 @@ export default function CreateItemDialog({
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  const [selectedTypeId, setSelectedTypeId] = useState('')
+  const defaultTypeId =
+    itemTypes.find((t) => t.name.toLowerCase() === 'snippet')?.id ?? ''
+  const [selectedTypeId, setSelectedTypeId] = useState(defaultTypeId)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [content, setContent] = useState('')
@@ -55,7 +57,7 @@ export default function CreateItemDialog({
   const showUrl = URL_TYPES.has(typeName)
 
   function resetForm() {
-    setSelectedTypeId('')
+    setSelectedTypeId(defaultTypeId)
     setTitle('')
     setDescription('')
     setContent('')
@@ -124,7 +126,23 @@ export default function CreateItemDialog({
       />
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create New Item</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            {(() => {
+              const Icon = selectedType
+                ? (ICON_MAP[selectedType.icon] ?? Code)
+                : Code
+              const color = selectedType?.color ?? '#888'
+              return (
+                <span
+                  className="inline-flex size-7 items-center justify-center rounded-full"
+                  style={{ backgroundColor: `${color}25` }}
+                >
+                  <Icon className="size-4" style={{ color }} />
+                </span>
+              )
+            })()}
+            Create New Item
+          </DialogTitle>
           <DialogDescription>
             Add a new item to your stash.
           </DialogDescription>
@@ -137,7 +155,7 @@ export default function CreateItemDialog({
               value={selectedTypeId}
               onValueChange={(v) => setSelectedTypeId(v ?? '')}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-50">
                 {selectedType ? (
                   <span className="flex items-center gap-1.5">
                     {(() => {
@@ -154,7 +172,7 @@ export default function CreateItemDialog({
                 {creatableTypes.map((type) => {
                   const Icon = ICON_MAP[type.icon] ?? ICON_MAP['Code']
                   return (
-                    <SelectItem key={type.id} value={type.id}>
+                    <SelectItem key={type.id} value={type.id} className="py-2.5">
                       <Icon
                         className="size-4"
                         style={{ color: type.color }}
