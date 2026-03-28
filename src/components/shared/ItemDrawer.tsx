@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
@@ -44,6 +44,7 @@ import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
 import { updateItem, deleteItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
+import { CodeEditor } from '@/components/shared/CodeEditor'
 
 const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
 const LANGUAGE_TYPES = new Set(['snippet', 'command'])
@@ -205,9 +206,17 @@ function ViewMode({
             <p className="text-xs font-medium text-muted-foreground">
               Content
             </p>
-            <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
-              <code>{item.content}</code>
-            </pre>
+            {LANGUAGE_TYPES.has(item.itemType.name.toLowerCase()) ? (
+              <CodeEditor
+                value={item.content}
+                language={item.language ?? undefined}
+                readOnly
+              />
+            ) : (
+              <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
+                <code>{item.content}</code>
+              </pre>
+            )}
           </div>
         )}
 
@@ -392,15 +401,23 @@ function EditMode({
 
         {showContent && (
           <div className="space-y-1.5">
-            <Label htmlFor="edit-content">Content</Label>
-            <Textarea
-              id="edit-content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Content"
-              rows={8}
-              className="font-mono text-xs"
-            />
+            <Label>Content</Label>
+            {showLanguage ? (
+              <CodeEditor
+                value={content}
+                language={language || undefined}
+                onChange={setContent}
+              />
+            ) : (
+              <Textarea
+                id="edit-content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Content"
+                rows={8}
+                className="font-mono text-xs"
+              />
+            )}
           </div>
         )}
 
@@ -483,9 +500,6 @@ export default function ItemDrawer() {
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
-  useEffect(() => {
-    if (!isOpen) setEditing(false)
-  }, [isOpen])
 
   const Icon = item ? (ICON_MAP[item.itemType.icon] ?? ICON_MAP['Code']) : null
 
@@ -510,7 +524,7 @@ export default function ItemDrawer() {
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && closeDrawer()}>
+    <Sheet open={isOpen} onOpenChange={(open) => { if (!open) { setEditing(false); closeDrawer() } }}>
       <SheetContent
         side="right"
         className="flex flex-col gap-0 overflow-y-auto p-0"

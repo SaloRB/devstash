@@ -1,7 +1,8 @@
 import { auth } from '@/auth'
-import { getItemsByType } from '@/lib/db/items'
+import { getItemsByType, getItemTypesWithCounts } from '@/lib/db/items'
 import ItemCard from '@/components/shared/ItemCard'
 import EmptyState from '@/components/shared/EmptyState'
+import CreateItemDialog from '@/components/shared/CreateItemDialog'
 
 interface ItemsPageProps {
   params: Promise<{ type: string }>
@@ -19,17 +20,23 @@ export async function generateMetadata({ params }: ItemsPageProps) {
 export default async function ItemsPage({ params }: ItemsPageProps) {
   const { type } = await params
   const session = await auth()
-  const items = await getItemsByType(session!.user!.id!, type)
+  const [items, itemTypes] = await Promise.all([
+    getItemsByType(session!.user!.id!, type),
+    getItemTypesWithCounts(session!.user!.id!),
+  ])
 
   const label = getLabel(type)
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 lg:px-8 xl:px-12">
-      <div>
-        <h1 className="text-2xl font-bold">{label}</h1>
-        <p className="text-sm text-muted-foreground">
-          {items.length} item{items.length !== 1 ? 's' : ''}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{label}</h1>
+          <p className="text-sm text-muted-foreground">
+            {items.length} item{items.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        <CreateItemDialog itemTypes={itemTypes} defaultTypeName={type} />
       </div>
 
       {items.length === 0 ? (

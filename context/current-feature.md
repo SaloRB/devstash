@@ -1,12 +1,26 @@
-# Current Feature
+# Current Feature: Code Editor
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- Create CodeEditor component using Monaco Editor with dark theme
+- Replace Textarea with CodeEditor for snippets and commands only (ItemDrawer and CreateItemDialog)
+- Keep Textarea for notes, prompts, and other non-code types
+- Add macOS-style window dots (red/yellow/green) at top of editor
+- Add quick copy button in editor header
+- Show language label in editor header next to copy button
+- Support both display (readonly) and edit modes
+- Fluid height with max-height 400px and themed scrollbar
+
 ## Notes
+
+- CodeEditor replaces Textarea only for `snippet` and `command` item types
+- All other types (notes, prompts, links, etc.) continue using Textarea
+- Display mode = readonly; edit mode = editable inline
+- Scrollbar styling must match the dark Monaco theme
 
 ## History
 

@@ -26,6 +26,7 @@ import {
 import { ICON_MAP } from '@/lib/item-types'
 import { createItem } from '@/actions/items'
 import type { ItemTypeWithCount } from '@/lib/db/items'
+import { CodeEditor } from '@/components/shared/CodeEditor'
 
 const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
 const LANGUAGE_TYPES = new Set(['snippet', 'command'])
@@ -33,15 +34,19 @@ const URL_TYPES = new Set(['link'])
 
 export default function CreateItemDialog({
   itemTypes,
+  defaultTypeName,
 }: {
   itemTypes: ItemTypeWithCount[]
+  defaultTypeName?: string
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
 
   const defaultTypeId =
-    itemTypes.find((t) => t.name.toLowerCase() === 'snippet')?.id ?? ''
+    itemTypes.find(
+      (t) => t.name.toLowerCase() === (defaultTypeName ?? 'snippet')
+    )?.id ?? ''
   const [selectedTypeId, setSelectedTypeId] = useState(defaultTypeId)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -57,7 +62,7 @@ export default function CreateItemDialog({
   const showUrl = URL_TYPES.has(typeName)
 
   function resetForm() {
-    setSelectedTypeId(defaultTypeId)
+    setSelectedTypeId(defaultTypeId ?? '')
     setTitle('')
     setDescription('')
     setContent('')
@@ -120,7 +125,9 @@ export default function CreateItemDialog({
         render={
           <Button>
             <Plus className="size-4" />
-            New Item
+            {defaultTypeName
+              ? `Add ${defaultTypeName.charAt(0).toUpperCase()}${defaultTypeName.slice(1)}`
+              : 'New Item'}
           </Button>
         }
       />
@@ -210,15 +217,23 @@ export default function CreateItemDialog({
 
           {showContent && (
             <div className="space-y-1.5">
-              <Label htmlFor="create-content">Content</Label>
-              <Textarea
-                id="create-content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Content"
-                rows={6}
-                className="font-mono text-xs"
-              />
+              <Label>Content</Label>
+              {showLanguage ? (
+                <CodeEditor
+                  value={content}
+                  language={language || undefined}
+                  onChange={setContent}
+                />
+              ) : (
+                <Textarea
+                  id="create-content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Content"
+                  rows={6}
+                  className="font-mono text-xs"
+                />
+              )}
             </div>
           )}
 
