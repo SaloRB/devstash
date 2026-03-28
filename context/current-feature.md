@@ -1,26 +1,12 @@
-# Current Feature: Code Editor
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Create CodeEditor component using Monaco Editor with dark theme
-- Replace Textarea with CodeEditor for snippets and commands only (ItemDrawer and CreateItemDialog)
-- Keep Textarea for notes, prompts, and other non-code types
-- Add macOS-style window dots (red/yellow/green) at top of editor
-- Add quick copy button in editor header
-- Show language label in editor header next to copy button
-- Support both display (readonly) and edit modes
-- Fluid height with max-height 400px and themed scrollbar
-
 ## Notes
-
-- CodeEditor replaces Textarea only for `snippet` and `command` item types
-- All other types (notes, prompts, links, etc.) continue using Textarea
-- Display mode = readonly; edit mode = editable inline
-- Scrollbar styling must match the dark Monaco theme
 
 ## History
 
@@ -59,3 +45,4 @@ In Progress
 - **2026-03-27** - Completed Item Delete: deleteItem server action with Zod validation + ownership check, AlertDialog confirmation on Trash2 button in ItemDrawer, Sonner toast on success/error, drawer close + router.refresh() after delete. 4 unit tests for the server action.
 - **2026-03-27** - Completed Item Create: shadcn Dialog from TopBar "New Item" button, type selector (snippet/prompt/command/note/link) with dynamic fields, createItem server action + DB query with Zod validation, tag connectOrCreate, toast/close/refresh on success. shadcn Select component added. 8 unit tests with 100% coverage on server action.
 - **2026-03-28** - Completed Create New Item Dialog Polish: type icon in colored circle left of dialog title, Snippet selected by default on open/reset, py-2.5 padding on SelectItem dropdown, Type selector constrained to w-50.
+- **2026-03-28** - Completed Code Editor: new CodeEditor component (Monaco vs-dark, macOS dots, copy button, language label, fluid height 80–400px, 6px themed scrollbar). Replaces Textarea for snippet/command in ItemDrawer (view + edit modes) and CreateItemDialog. Items type pages gain a type-specific "Add {Type}" button that preselects the type in the dialog. Excluded coverage/ from ESLint; fixed setState-in-effect in ItemDrawer.
