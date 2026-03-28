@@ -1,21 +1,12 @@
-# Current Feature: Create New Item Dialog Polish
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add padding between items in the Type combo/select dropdown
-- Show the item type icon to the left of the "Create New Item" dialog title
-- Default the Type selector to "Snippet" when the dialog opens
-- Constrain the Type selector width (not 100%)
-
 ## Notes
-
-- Type selector uses shadcn Select component
-- Icons are Lucide icons mapped from item-types.ts
-- Dialog is triggered from TopBar "New Item" button
 
 ## History
 
@@ -53,3 +44,4 @@ In Progress
 - **2026-03-27** - Completed Item Drawer Edit Mode: inline edit mode toggled via pencil button, Save/Cancel replace action bar. Editable fields: title, description, tags (comma-separated), plus type-specific (content, language, url). Zod-validated updateItem server action + DB query with tag disconnect/reconnect. Sonner toast on save/error, router.refresh() after save. 10 unit tests with 100% coverage on server action.
 - **2026-03-27** - Completed Item Delete: deleteItem server action with Zod validation + ownership check, AlertDialog confirmation on Trash2 button in ItemDrawer, Sonner toast on success/error, drawer close + router.refresh() after delete. 4 unit tests for the server action.
 - **2026-03-27** - Completed Item Create: shadcn Dialog from TopBar "New Item" button, type selector (snippet/prompt/command/note/link) with dynamic fields, createItem server action + DB query with Zod validation, tag connectOrCreate, toast/close/refresh on success. shadcn Select component added. 8 unit tests with 100% coverage on server action.
+- **2026-03-28** - Completed Create New Item Dialog Polish: type icon in colored circle left of dialog title, Snippet selected by default on open/reset, py-2.5 padding on SelectItem dropdown, Type selector constrained to w-50.
