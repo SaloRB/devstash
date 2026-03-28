@@ -104,8 +104,8 @@ export default function CreateItemDialog({
   // Filter to only the 5 create-eligible types
   const creatableTypes = itemTypes.filter((t) =>
     ['snippet', 'prompt', 'command', 'note', 'link'].includes(
-      t.name.toLowerCase()
-    )
+      t.name.toLowerCase(),
+    ),
   )
 
   return (
@@ -143,9 +143,7 @@ export default function CreateItemDialog({
             })()}
             Create New Item
           </DialogTitle>
-          <DialogDescription>
-            Add a new item to your stash.
-          </DialogDescription>
+          <DialogDescription>Add a new item to your stash.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -159,10 +157,17 @@ export default function CreateItemDialog({
                 {selectedType ? (
                   <span className="flex items-center gap-1.5">
                     {(() => {
-                      const Icon = ICON_MAP[selectedType.icon] ?? ICON_MAP['Code']
-                      return <Icon className="size-4" style={{ color: selectedType.color }} />
+                      const Icon =
+                        ICON_MAP[selectedType.icon] ?? ICON_MAP['Code']
+                      return (
+                        <Icon
+                          className="size-4"
+                          style={{ color: selectedType.color }}
+                        />
+                      )
                     })()}
-                    {selectedType.name.charAt(0).toUpperCase() + selectedType.name.slice(1)}
+                    {selectedType.name.charAt(0).toUpperCase() +
+                      selectedType.name.slice(1)}
                   </span>
                 ) : (
                   <span className="text-muted-foreground">Select a type</span>
@@ -172,11 +177,8 @@ export default function CreateItemDialog({
                 {creatableTypes.map((type) => {
                   const Icon = ICON_MAP[type.icon] ?? ICON_MAP['Code']
                   return (
-                    <SelectItem key={type.id} value={type.id} className="py-2.5">
-                      <Icon
-                        className="size-4"
-                        style={{ color: type.color }}
-                      />
+                    <SelectItem key={type.id} value={type.id} className="p-2">
+                      <Icon className="size-4" style={{ color: type.color }} />
                       {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
                     </SelectItem>
                   )
@@ -256,10 +258,7 @@ export default function CreateItemDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            disabled={!canSubmit}
-            onClick={handleCreate}
-          >
+          <Button disabled={!canSubmit} onClick={handleCreate}>
             {saving ? 'Creating...' : 'Create Item'}
           </Button>
         </DialogFooter>
