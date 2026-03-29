@@ -10,6 +10,7 @@ Not Started
 
 
 
+
 ## History
 
 - **2026-03-23** - Initial Next.js setup with Tailwind CSS. Removed default boilerplate.
@@ -50,3 +51,4 @@ Not Started
 - **2026-03-28** - Completed Code Editor: new CodeEditor component (Monaco vs-dark, macOS dots, copy button, language label, fluid height 80–400px, 6px themed scrollbar). Replaces Textarea for snippet/command in ItemDrawer (view + edit modes) and CreateItemDialog. Items type pages gain a type-specific "Add {Type}" button that preselects the type in the dialog. Excluded coverage/ from ESLint; fixed setState-in-effect in ItemDrawer.
 - **2026-03-28** - Completed Markdown Editor: new MarkdownEditor component (Write/Preview tabs, macOS header, copy button, react-markdown + remark-gfm, fluid height 200–400px). Replaces Textarea for note/prompt content in CreateItemDialog and ItemDrawer (view + edit modes). Added .markdown-preview CSS for dark theme styling and thin 6px themed scrollbars matching Monaco across editor, drawer, and dialog.
 - **2026-03-29** - Completed File Upload with Cloudflare R2: R2 S3 client (lib/r2.ts), POST /api/upload route (validates type/size, uploads to R2), GET /api/download/[id] proxy route (ownership check, streams from R2). FileUpload component with drag-and-drop, progress bar (shadcn Progress), image preview, file info card. CreateItemDialog updated for file/image types with FileUpload and required-file gate. ItemDrawer shows image preview, file info badge, and Download button. deleteItem action deletes R2 object on item removal (non-fatal on failure). db/items.ts createItem accepts fileUrl/fileName/fileSize and sets contentType FILE.
+- **2026-03-29** - Completed Image Gallery View: new ImageCard component (aspect-video thumbnail, object-cover, 5% hover zoom/300ms). Items page renders ImageCard for image type, ItemCard for all others. 3-col grid already in place.
