@@ -8,6 +8,8 @@ Not Started
 
 ## Notes
 
+
+
 ## History
 
 - **2026-03-23** - Initial Next.js setup with Tailwind CSS. Removed default boilerplate.
@@ -46,3 +48,4 @@ Not Started
 - **2026-03-27** - Completed Item Create: shadcn Dialog from TopBar "New Item" button, type selector (snippet/prompt/command/note/link) with dynamic fields, createItem server action + DB query with Zod validation, tag connectOrCreate, toast/close/refresh on success. shadcn Select component added. 8 unit tests with 100% coverage on server action.
 - **2026-03-28** - Completed Create New Item Dialog Polish: type icon in colored circle left of dialog title, Snippet selected by default on open/reset, py-2.5 padding on SelectItem dropdown, Type selector constrained to w-50.
 - **2026-03-28** - Completed Code Editor: new CodeEditor component (Monaco vs-dark, macOS dots, copy button, language label, fluid height 80–400px, 6px themed scrollbar). Replaces Textarea for snippet/command in ItemDrawer (view + edit modes) and CreateItemDialog. Items type pages gain a type-specific "Add {Type}" button that preselects the type in the dialog. Excluded coverage/ from ESLint; fixed setState-in-effect in ItemDrawer.
+- **2026-03-28** - Completed Markdown Editor: new MarkdownEditor component (Write/Preview tabs, macOS header, copy button, react-markdown + remark-gfm, fluid height 200–400px). Replaces Textarea for note/prompt content in CreateItemDialog and ItemDrawer (view + edit modes). Added .markdown-preview CSS for dark theme styling and thin 6px themed scrollbars matching Monaco across editor, drawer, and dialog.
