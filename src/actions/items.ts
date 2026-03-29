@@ -1,12 +1,14 @@
 'use server'
 
 import { z } from 'zod'
+import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { auth } from '@/auth'
 import {
   createItem as createItemDb,
   updateItem as updateItemDb,
   deleteItem as deleteItemDb,
 } from '@/lib/db/items'
+import { r2, R2_BUCKET, keyFromUrl } from '@/lib/r2'
 
 const updateItemSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
@@ -47,6 +49,9 @@ const createItemSchema = z.object({
   tags: z
     .array(z.string().trim())
     .transform((arr) => arr.filter((t) => t.length > 0)),
+  fileUrl: z.string().nullable().optional().transform((v) => v || null),
+  fileName: z.string().nullable().optional().transform((v) => v || null),
+  fileSize: z.number().nullable().optional(),
 })
 
 export type CreateItemInput = z.infer<typeof createItemSchema>
@@ -84,7 +89,21 @@ export async function deleteItem(itemId: string) {
   }
 
   try {
-    await deleteItemDb(parsed.data.itemId, session.user.id)
+    const deleted = await deleteItemDb(parsed.data.itemId, session.user.id)
+
+    if (deleted.fileUrl) {
+      try {
+        await r2.send(
+          new DeleteObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: keyFromUrl(deleted.fileUrl),
+          })
+        )
+      } catch {
+        // R2 delete failure is non-fatal — item is already removed from DB
+      }
+    }
+
     return { success: true as const }
   } catch {
     return { success: false as const, error: 'Failed to delete item' }

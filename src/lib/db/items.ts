@@ -114,13 +114,20 @@ export async function createItem(
     url: string | null
     language: string | null
     tags: string[]
+    fileUrl?: string | null
+    fileName?: string | null
+    fileSize?: number | null
   }
 ) {
-  const { tags, ...fields } = data
+  const { tags, fileUrl, fileName, fileSize, ...fields } = data
+  const contentType = fileUrl ? ('FILE' as const) : ('TEXT' as const)
   return prisma.item.create({
     data: {
       ...fields,
-      contentType: 'TEXT',
+      contentType,
+      fileUrl: fileUrl ?? null,
+      fileName: fileName ?? null,
+      fileSize: fileSize ?? null,
       userId,
       itemTypeId,
       tags: {
@@ -143,6 +150,7 @@ export async function createItem(
 export async function deleteItem(id: string, userId: string) {
   return prisma.item.delete({
     where: { id, userId },
+    select: { id: true, fileUrl: true },
   })
 }
 
