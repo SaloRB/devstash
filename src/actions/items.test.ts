@@ -10,6 +10,18 @@ vi.mock('@/lib/db/items', () => ({
   deleteItem: vi.fn(),
 }))
 
+vi.mock('@/lib/r2', () => ({
+  r2: { send: vi.fn() },
+  R2_BUCKET: 'test-bucket',
+  keyFromUrl: vi.fn((url: string) => url.replace('https://pub-test.r2.dev/', '')),
+}))
+
+vi.mock('@aws-sdk/client-s3', () => ({
+  DeleteObjectCommand: class DeleteObjectCommand {
+    constructor(public params: unknown) {}
+  },
+}))
+
 import { createItem, updateItem, deleteItem } from './items'
 import { auth } from '@/auth'
 import {
@@ -17,11 +29,13 @@ import {
   updateItem as updateItemDb,
   deleteItem as deleteItemDb,
 } from '@/lib/db/items'
+import { r2 } from '@/lib/r2'
 
 const mockAuth = vi.mocked(auth)
 const mockCreateDb = vi.mocked(createItemDb)
 const mockUpdateDb = vi.mocked(updateItemDb)
 const mockDeleteDb = vi.mocked(deleteItemDb)
+const mockR2Send = vi.mocked(r2.send)
 
 const validInput = {
   title: 'Updated Title',
@@ -157,6 +171,9 @@ const validCreateInput = {
   url: null,
   language: 'javascript',
   tags: ['react', 'hooks'],
+  fileUrl: null,
+  fileName: null,
+  fileSize: null,
 }
 
 const mockCreatedItem = {
@@ -257,13 +274,43 @@ describe('createItem', () => {
 
     expect(result).toEqual({ success: false, error: 'Failed to create item' })
   })
+
+  it('passes file fields to DB when provided', async () => {
+    await createItem({
+      ...validCreateInput,
+      fileUrl: 'https://pub-test.r2.dev/user-1/abc.pdf',
+      fileName: 'abc.pdf',
+      fileSize: 12345,
+    })
+
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({
+        fileUrl: 'https://pub-test.r2.dev/user-1/abc.pdf',
+        fileName: 'abc.pdf',
+        fileSize: 12345,
+      })
+    )
+  })
+
+  it('passes null file fields when not a file item', async () => {
+    await createItem(validCreateInput)
+
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({ fileUrl: null, fileName: null })
+    )
+  })
 })
 
 describe('deleteItem', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockAuth.mockResolvedValue({ user: { id: 'user-1' } } as never)
-    mockDeleteDb.mockResolvedValue({} as never)
+    mockDeleteDb.mockResolvedValue({ id: 'item-1', fileUrl: null } as never)
+    mockR2Send.mockResolvedValue({} as never)
   })
 
   it('returns unauthorized when no session', async () => {
@@ -282,11 +329,36 @@ describe('deleteItem', () => {
     expect(mockDeleteDb).not.toHaveBeenCalled()
   })
 
-  it('deletes item and returns success', async () => {
+  it('deletes item without file and returns success', async () => {
     const result = await deleteItem('item-1')
 
     expect(result).toEqual({ success: true })
     expect(mockDeleteDb).toHaveBeenCalledWith('item-1', 'user-1')
+    expect(mockR2Send).not.toHaveBeenCalled()
+  })
+
+  it('deletes R2 file when item has fileUrl', async () => {
+    mockDeleteDb.mockResolvedValue({
+      id: 'item-1',
+      fileUrl: 'https://pub-test.r2.dev/user-1/abc.pdf',
+    } as never)
+
+    const result = await deleteItem('item-1')
+
+    expect(result).toEqual({ success: true })
+    expect(mockR2Send).toHaveBeenCalledTimes(1)
+  })
+
+  it('returns success even when R2 delete fails', async () => {
+    mockDeleteDb.mockResolvedValue({
+      id: 'item-1',
+      fileUrl: 'https://pub-test.r2.dev/user-1/abc.pdf',
+    } as never)
+    mockR2Send.mockRejectedValue(new Error('R2 error'))
+
+    const result = await deleteItem('item-1')
+
+    expect(result).toEqual({ success: true })
   })
 
   it('returns error when DB throws', async () => {

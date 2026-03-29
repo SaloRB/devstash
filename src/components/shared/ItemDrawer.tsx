@@ -15,6 +15,7 @@ import {
   CalendarDays,
   Save,
   X,
+  Download,
 } from 'lucide-react'
 import {
   Sheet,
@@ -51,6 +52,13 @@ const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
 const LANGUAGE_TYPES = new Set(['snippet', 'command'])
 const MARKDOWN_TYPES = new Set(['note', 'prompt'])
 const URL_TYPES = new Set(['link'])
+const FILE_TYPES = new Set(['file', 'image'])
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 function DrawerSkeleton() {
   return (
@@ -147,6 +155,17 @@ function ViewMode({
           )}
           Copy
         </Button>
+        {FILE_TYPES.has(item.itemType.name.toLowerCase()) && item.fileUrl && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-1.5 text-sm"
+            onClick={() => window.open(`/api/download/${item.id}`, '_blank')}
+          >
+            <Download className="size-4" />
+            Download
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -200,6 +219,40 @@ function ViewMode({
               Description
             </p>
             <p className="text-sm">{item.description}</p>
+          </div>
+        )}
+
+        {item.itemType.name.toLowerCase() === 'image' && item.fileUrl && (
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Image</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.fileUrl}
+              alt={item.fileName ?? item.title}
+              className="w-full rounded-md border object-contain"
+            />
+            {item.fileName && (
+              <p className="text-xs text-muted-foreground">
+                {item.fileName}{item.fileSize ? ` · ${formatBytes(item.fileSize)}` : ''}
+              </p>
+            )}
+          </div>
+        )}
+
+        {item.itemType.name.toLowerCase() === 'file' && item.fileUrl && (
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">File</p>
+            <div className="flex items-center gap-2 rounded-md border bg-muted/40 px-3 py-2">
+              <Badge variant="secondary" className="text-xs">
+                {item.fileName?.split('.').pop()?.toUpperCase() ?? 'FILE'}
+              </Badge>
+              <span className="min-w-0 flex-1 truncate text-sm">{item.fileName}</span>
+              {item.fileSize && (
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {formatBytes(item.fileSize)}
+                </span>
+              )}
+            </div>
           </div>
         )}
 

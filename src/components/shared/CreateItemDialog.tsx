@@ -28,11 +28,13 @@ import { createItem } from '@/actions/items'
 import type { ItemTypeWithCount } from '@/lib/db/items'
 import { CodeEditor } from '@/components/shared/CodeEditor'
 import { MarkdownEditor } from '@/components/shared/MarkdownEditor'
+import { FileUpload, type UploadedFile } from '@/components/shared/FileUpload'
 
 const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
 const LANGUAGE_TYPES = new Set(['snippet', 'command'])
 const MARKDOWN_TYPES = new Set(['note', 'prompt'])
 const URL_TYPES = new Set(['link'])
+const FILE_TYPES = new Set(['file', 'image'])
 
 export default function CreateItemDialog({
   itemTypes,
@@ -56,6 +58,7 @@ export default function CreateItemDialog({
   const [language, setLanguage] = useState('')
   const [url, setUrl] = useState('')
   const [tagsInput, setTagsInput] = useState('')
+  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null)
 
   const selectedType = itemTypes.find((t) => t.id === selectedTypeId)
   const typeName = selectedType?.name.toLowerCase() ?? ''
@@ -63,6 +66,7 @@ export default function CreateItemDialog({
   const showLanguage = LANGUAGE_TYPES.has(typeName)
   const showMarkdown = MARKDOWN_TYPES.has(typeName)
   const showUrl = URL_TYPES.has(typeName)
+  const showFileUpload = FILE_TYPES.has(typeName)
 
   function resetForm() {
     setSelectedTypeId(defaultTypeId ?? '')
@@ -72,6 +76,7 @@ export default function CreateItemDialog({
     setLanguage('')
     setUrl('')
     setTagsInput('')
+    setUploadedFile(null)
   }
 
   async function handleCreate() {
@@ -88,6 +93,9 @@ export default function CreateItemDialog({
       content: showContent ? content || null : null,
       language: showLanguage ? language || null : null,
       url: showUrl ? url || null : null,
+      fileUrl: showFileUpload ? (uploadedFile?.fileUrl ?? null) : null,
+      fileName: showFileUpload ? (uploadedFile?.fileName ?? null) : null,
+      fileSize: showFileUpload ? (uploadedFile?.fileSize ?? null) : null,
       tags,
     })
 
@@ -107,11 +115,14 @@ export default function CreateItemDialog({
     }
   }
 
-  const canSubmit = selectedTypeId && title.trim() && !saving
+  const canSubmit =
+    selectedTypeId &&
+    title.trim() &&
+    !saving &&
+    (!showFileUpload || uploadedFile !== null)
 
-  // Filter to only the 5 create-eligible types
   const creatableTypes = itemTypes.filter((t) =>
-    ['snippet', 'prompt', 'command', 'note', 'link'].includes(
+    ['snippet', 'prompt', 'command', 'note', 'link', 'file', 'image'].includes(
       t.name.toLowerCase(),
     ),
   )
@@ -217,6 +228,19 @@ export default function CreateItemDialog({
               rows={2}
             />
           </div>
+
+          {showFileUpload && (
+            <div className="space-y-1.5">
+              <Label>
+                {typeName === 'image' ? 'Image' : 'File'}
+              </Label>
+              <FileUpload
+                uploadType={typeName === 'image' ? 'image' : 'file'}
+                value={uploadedFile}
+                onChange={setUploadedFile}
+              />
+            </div>
+          )}
 
           {showContent && (
             <div className="space-y-1.5">
