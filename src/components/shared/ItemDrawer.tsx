@@ -193,7 +193,7 @@ function ViewMode({
 
       <Separator />
 
-      <div className="flex-1 space-y-5 overflow-y-auto p-4">
+      <div className="markdown-editor-scroll flex-1 space-y-5 overflow-y-auto p-4">
         {item.description && (
           <div className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground">
@@ -382,7 +382,7 @@ function EditMode({
 
       <Separator />
 
-      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+      <div className="markdown-editor-scroll flex-1 space-y-4 overflow-y-auto p-4">
         <div className="space-y-1.5">
           <Label htmlFor="edit-title">Title</Label>
           <Input
@@ -534,7 +534,7 @@ export default function ItemDrawer() {
     <Sheet open={isOpen} onOpenChange={(open) => { if (!open) { setEditing(false); closeDrawer() } }}>
       <SheetContent
         side="right"
-        className="flex flex-col gap-0 overflow-y-auto p-0"
+        className="markdown-editor-scroll flex flex-col gap-0 overflow-y-auto p-0"
         style={{ width: '100%', maxWidth: '576px' }}
       >
         {loading ? (

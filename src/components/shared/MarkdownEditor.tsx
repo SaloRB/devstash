@@ -5,7 +5,6 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 
 interface MarkdownEditorProps {
@@ -92,14 +91,14 @@ export function MarkdownEditor({
 
       {/* Body */}
       {tab === 'write' ? (
-        <Textarea
+        <textarea
           value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          className="min-h-[120px] max-h-[400px] resize-none rounded-none border-0 bg-transparent p-3 text-sm text-white focus-visible:ring-0 focus-visible:ring-offset-0 font-mono"
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange?.(e.target.value)}
+          className="markdown-editor-scroll min-h-50 max-h-100 w-full resize-none overflow-y-auto bg-transparent p-3 font-mono text-sm text-white outline-none placeholder:text-[#858585]"
           placeholder="Write markdown..."
         />
       ) : (
-        <div className="markdown-preview min-h-[120px] max-h-[400px] overflow-y-auto p-3 text-sm">
+        <div className="markdown-preview markdown-editor-scroll min-h-50 max-h-100 overflow-y-auto p-3 text-sm">
           {value.trim() ? (
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
           ) : (

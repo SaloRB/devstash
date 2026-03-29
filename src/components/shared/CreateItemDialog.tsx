@@ -134,7 +134,7 @@ export default function CreateItemDialog({
           </Button>
         }
       />
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="flex max-h-[90vh] flex-col sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {(() => {
@@ -156,7 +156,7 @@ export default function CreateItemDialog({
           <DialogDescription>Add a new item to your stash.</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="markdown-editor-scroll -mr-4 flex-1 space-y-4 overflow-y-auto pr-4">
           <div className="space-y-1.5">
             <Label>Type</Label>
             <Select
