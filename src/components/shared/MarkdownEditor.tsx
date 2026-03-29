@@ -1,0 +1,112 @@
+'use client'
+
+import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Copy, Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
+
+interface MarkdownEditorProps {
+  value: string
+  readOnly?: boolean
+  onChange?: (value: string) => void
+  className?: string
+}
+
+export function MarkdownEditor({
+  value,
+  readOnly = false,
+  onChange,
+  className,
+}: MarkdownEditorProps) {
+  const [tab, setTab] = useState<'write' | 'preview'>(
+    readOnly ? 'preview' : 'write'
+  )
+  const [copied, setCopied] = useState(false)
+
+  function handleCopy() {
+    navigator.clipboard.writeText(value)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div
+      className={cn(
+        'overflow-hidden rounded-md border border-white/10 bg-[#1e1e1e]',
+        className
+      )}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-white/10 bg-[#2d2d2d] px-3 py-2">
+        <div className="flex items-center gap-1.5">
+          <div className="size-3 rounded-full bg-[#ff5f57]" />
+          <div className="size-3 rounded-full bg-[#febc2e]" />
+          <div className="size-3 rounded-full bg-[#28c840]" />
+        </div>
+        <div className="flex items-center gap-2">
+          {!readOnly && (
+            <div className="flex rounded border border-white/10 text-xs">
+              <button
+                type="button"
+                onClick={() => setTab('write')}
+                className={cn(
+                  'px-2 py-0.5 transition-colors',
+                  tab === 'write'
+                    ? 'bg-white/10 text-white'
+                    : 'text-[#858585] hover:text-white'
+                )}
+              >
+                Write
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab('preview')}
+                className={cn(
+                  'px-2 py-0.5 transition-colors',
+                  tab === 'preview'
+                    ? 'bg-white/10 text-white'
+                    : 'text-[#858585] hover:text-white'
+                )}
+              >
+                Preview
+              </button>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="size-6 text-[#858585] hover:bg-white/10 hover:text-white"
+            onClick={handleCopy}
+          >
+            {copied ? (
+              <Check className="size-3.5 text-green-400" />
+            ) : (
+              <Copy className="size-3.5" />
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Body */}
+      {tab === 'write' ? (
+        <Textarea
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
+          className="min-h-[120px] max-h-[400px] resize-none rounded-none border-0 bg-transparent p-3 text-sm text-white focus-visible:ring-0 focus-visible:ring-offset-0 font-mono"
+          placeholder="Write markdown..."
+        />
+      ) : (
+        <div className="markdown-preview min-h-[120px] max-h-[400px] overflow-y-auto p-3 text-sm">
+          {value.trim() ? (
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
+          ) : (
+            <p className="text-[#858585]">Nothing to preview.</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}

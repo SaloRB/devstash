@@ -27,9 +27,11 @@ import { ICON_MAP } from '@/lib/item-types'
 import { createItem } from '@/actions/items'
 import type { ItemTypeWithCount } from '@/lib/db/items'
 import { CodeEditor } from '@/components/shared/CodeEditor'
+import { MarkdownEditor } from '@/components/shared/MarkdownEditor'
 
 const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
 const LANGUAGE_TYPES = new Set(['snippet', 'command'])
+const MARKDOWN_TYPES = new Set(['note', 'prompt'])
 const URL_TYPES = new Set(['link'])
 
 export default function CreateItemDialog({
@@ -59,6 +61,7 @@ export default function CreateItemDialog({
   const typeName = selectedType?.name.toLowerCase() ?? ''
   const showContent = CONTENT_TYPES.has(typeName)
   const showLanguage = LANGUAGE_TYPES.has(typeName)
+  const showMarkdown = MARKDOWN_TYPES.has(typeName)
   const showUrl = URL_TYPES.has(typeName)
 
   function resetForm() {
@@ -224,6 +227,8 @@ export default function CreateItemDialog({
                   language={language || undefined}
                   onChange={setContent}
                 />
+              ) : showMarkdown ? (
+                <MarkdownEditor value={content} onChange={setContent} />
               ) : (
                 <Textarea
                   id="create-content"

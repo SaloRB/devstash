@@ -45,9 +45,11 @@ import { ICON_MAP } from '@/lib/item-types'
 import { updateItem, deleteItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
 import { CodeEditor } from '@/components/shared/CodeEditor'
+import { MarkdownEditor } from '@/components/shared/MarkdownEditor'
 
 const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
 const LANGUAGE_TYPES = new Set(['snippet', 'command'])
+const MARKDOWN_TYPES = new Set(['note', 'prompt'])
 const URL_TYPES = new Set(['link'])
 
 function DrawerSkeleton() {
@@ -212,6 +214,8 @@ function ViewMode({
                 language={item.language ?? undefined}
                 readOnly
               />
+            ) : MARKDOWN_TYPES.has(item.itemType.name.toLowerCase()) ? (
+              <MarkdownEditor value={item.content} readOnly />
             ) : (
               <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
                 <code>{item.content}</code>
@@ -317,6 +321,7 @@ function EditMode({
   const typeName = item.itemType.name.toLowerCase()
   const showContent = CONTENT_TYPES.has(typeName)
   const showLanguage = LANGUAGE_TYPES.has(typeName)
+  const showMarkdown = MARKDOWN_TYPES.has(typeName)
   const showUrl = URL_TYPES.has(typeName)
 
   async function handleSave() {
@@ -408,6 +413,8 @@ function EditMode({
                 language={language || undefined}
                 onChange={setContent}
               />
+            ) : showMarkdown ? (
+              <MarkdownEditor value={content} onChange={setContent} />
             ) : (
               <Textarea
                 id="edit-content"
