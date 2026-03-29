@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import { getItemsByType, getItemTypesWithCounts } from '@/lib/db/items'
 import ItemCard from '@/components/shared/ItemCard'
+import ImageCard from '@/components/shared/ImageCard'
 import EmptyState from '@/components/shared/EmptyState'
 import CreateItemDialog from '@/components/shared/CreateItemDialog'
 
@@ -46,19 +47,30 @@ export default async function ItemsPage({ params }: ItemsPageProps) {
         />
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <ItemCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              description={item.description}
-              itemType={item.itemType}
-              isFavorite={item.isFavorite}
-              isPinned={item.isPinned}
-              tags={item.tags.map((t) => t.name)}
-              createdAt={item.createdAt}
-            />
-          ))}
+          {items.map((item) =>
+            type === 'image' ? (
+              <ImageCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                fileUrl={item.fileUrl}
+                isFavorite={item.isFavorite}
+                isPinned={item.isPinned}
+              />
+            ) : (
+              <ItemCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                description={item.description}
+                itemType={item.itemType}
+                isFavorite={item.isFavorite}
+                isPinned={item.isPinned}
+                tags={item.tags.map((t) => t.name)}
+                createdAt={item.createdAt}
+              />
+            )
+          )}
         </div>
       )}
     </div>
