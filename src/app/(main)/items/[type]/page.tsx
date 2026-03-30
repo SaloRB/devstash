@@ -2,6 +2,7 @@ import { auth } from '@/auth'
 import { getItemsByType, getItemTypesWithCounts } from '@/lib/db/items'
 import ItemCard from '@/components/shared/ItemCard'
 import ImageCard from '@/components/shared/ImageCard'
+import FileListRow from '@/components/shared/FileListRow'
 import EmptyState from '@/components/shared/EmptyState'
 import CreateItemDialog from '@/components/shared/CreateItemDialog'
 
@@ -45,6 +46,19 @@ export default async function ItemsPage({ params }: ItemsPageProps) {
           title={`No ${label.toLowerCase()} yet`}
           description={`Items of type "${type}" will appear here.`}
         />
+      ) : type === 'file' ? (
+        <div className="flex flex-col gap-2">
+          {items.map((item) => (
+            <FileListRow
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              fileName={item.fileName}
+              fileSize={item.fileSize}
+              createdAt={item.createdAt}
+            />
+          ))}
+        </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item) =>

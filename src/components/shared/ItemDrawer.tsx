@@ -160,7 +160,7 @@ function ViewMode({
             variant="ghost"
             size="sm"
             className="flex items-center gap-1.5 text-sm"
-            onClick={() => window.open(`/api/download/${item.id}`, '_blank')}
+            onClick={() => { window.location.href = `/api/download/${item.id}` }}
           >
             <Download className="size-4" />
             Download
