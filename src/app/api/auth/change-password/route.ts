@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
+import { applyRateLimit, getIP } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
+  const ip = getIP(req)
+  const limited = await applyRateLimit(`change-password:${ip}`, 5, '15 m')
+  if (limited) return limited
+
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -29,7 +29,7 @@ export async function GET(
   headers.set('Content-Type', obj.ContentType ?? 'application/octet-stream')
   headers.set(
     'Content-Disposition',
-    `attachment; filename="${item.fileName ?? 'download'}"`
+    `attachment; filename*=UTF-8''${encodeURIComponent(item.fileName ?? 'download')}`
   )
   if (obj.ContentLength) {
     headers.set('Content-Length', String(obj.ContentLength))

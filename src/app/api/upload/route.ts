@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { auth } from '@/auth'
 import { r2, R2_BUCKET, R2_PUBLIC_URL } from '@/lib/r2'
+import { applyRateLimit } from '@/lib/rate-limit'
 
 const IMAGE_TYPES = new Set([
   'image/png',
@@ -33,6 +34,9 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  const limited = await applyRateLimit(`upload:${session.user.id}`, 20, '1 h')
+  if (limited) return limited
 
   const formData = await req.formData()
   const file = formData.get('file') as File | null
