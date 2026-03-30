@@ -27,6 +27,10 @@ Never call `list_projects`, `list_organizations`, or any discovery tool before a
 
 Be extremely concise. Sacrifice grammar for brevity. Drop articles, use symbols (→, /), collapse noun phrases, cut implied info. Shorter always wins.
 
+## Git Commits
+
+Never add `Co-Authored-By` lines to commit messages.
+
 ## Commands
 
 - `npm run dev` — start dev server
