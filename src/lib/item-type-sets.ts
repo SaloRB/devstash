@@ -1,0 +1,5 @@
+export const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
+export const LANGUAGE_TYPES = new Set(['snippet', 'command'])
+export const MARKDOWN_TYPES = new Set(['note', 'prompt'])
+export const URL_TYPES = new Set(['link'])
+export const FILE_TYPES = new Set(['file', 'image'])

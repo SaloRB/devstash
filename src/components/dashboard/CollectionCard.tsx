@@ -8,8 +8,7 @@ import {
   CardAction,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ICON_MAP } from '@/lib/item-types'
-import { getDominantTypeColor } from '@/lib/collection-utils'
+import { getDominantTypeColor, getCollectionTypeIcons } from '@/lib/collection-utils'
 
 interface CollectionItemType {
   id: string
@@ -39,21 +38,7 @@ export default function CollectionCard({
   // Derive border color from most-used item type
   const borderColor = getDominantTypeColor(items.map(({ itemType }) => itemType))
 
-  const typeCounts: Record<string, { count: number; color: string }> = {}
-  for (const { itemType } of items) {
-    if (!typeCounts[itemType.id]) {
-      typeCounts[itemType.id] = { count: 0, color: itemType.color }
-    }
-    typeCounts[itemType.id].count++
-  }
-
-  // Get unique type icons sorted by usage (most to least)
-  const typeIcons = Object.entries(typeCounts)
-    .sort(([, a], [, b]) => b.count - a.count)
-    .map(([id, { color }]) => {
-      const iconName = items.find(({ itemType }) => itemType.id === id)!.itemType.icon
-      return { id, icon: ICON_MAP[iconName] ?? ICON_MAP['Code'], color }
-    })
+  const typeIcons = getCollectionTypeIcons(items)
 
   return (
     <Card

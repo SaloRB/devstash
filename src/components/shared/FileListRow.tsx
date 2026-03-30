@@ -2,6 +2,7 @@
 
 import { FileText, FileCode, FileJson, File, Download } from 'lucide-react'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
+import { formatBytes } from '@/lib/utils'
 
 interface FileListRowProps {
   id: string
@@ -24,12 +25,6 @@ function getFileIcon(fileName?: string | null) {
   return <File className="size-5 shrink-0 text-muted-foreground" />
 }
 
-function formatFileSize(bytes?: number | null) {
-  if (!bytes) return '—'
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
 
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString('en-US', {
@@ -60,7 +55,7 @@ export default function FileListRow({
       </p>
 
       <div className="hidden shrink-0 text-xs text-muted-foreground sm:block">
-        {formatFileSize(fileSize)}
+        {formatBytes(fileSize)}
       </div>
 
       <div className="hidden shrink-0 text-xs text-muted-foreground md:block">

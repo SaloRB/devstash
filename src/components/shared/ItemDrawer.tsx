@@ -43,22 +43,12 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
-import { updateItem, deleteItem } from '@/actions/items'
+import { deleteItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
-import { CodeEditor } from '@/components/shared/CodeEditor'
-import { MarkdownEditor } from '@/components/shared/MarkdownEditor'
-
-const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
-const LANGUAGE_TYPES = new Set(['snippet', 'command'])
-const MARKDOWN_TYPES = new Set(['note', 'prompt'])
-const URL_TYPES = new Set(['link'])
-const FILE_TYPES = new Set(['file', 'image'])
-
-function formatBytes(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
+import { useItemEditForm } from '@/hooks/use-item-edit-form'
+import { ItemContentField } from '@/components/shared/ItemContentField'
+import { LANGUAGE_TYPES, MARKDOWN_TYPES, FILE_TYPES } from '@/lib/item-type-sets'
+import { formatBytes, formatLongDate } from '@/lib/utils'
 
 function DrawerSkeleton() {
   return (
@@ -108,14 +98,8 @@ function ViewMode({
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const formattedCreated = new Date(item.createdAt).toLocaleDateString(
-    'en-US',
-    { month: 'long', day: 'numeric', year: 'numeric' }
-  )
-  const formattedUpdated = new Date(item.updatedAt).toLocaleDateString(
-    'en-US',
-    { month: 'long', day: 'numeric', year: 'numeric' }
-  )
+  const formattedCreated = formatLongDate(item.createdAt)
+  const formattedUpdated = formatLongDate(item.updatedAt)
 
   return (
     <>
@@ -261,19 +245,13 @@ function ViewMode({
             <p className="text-xs font-medium text-muted-foreground">
               Content
             </p>
-            {LANGUAGE_TYPES.has(item.itemType.name.toLowerCase()) ? (
-              <CodeEditor
-                value={item.content}
-                language={item.language ?? undefined}
-                readOnly
-              />
-            ) : MARKDOWN_TYPES.has(item.itemType.name.toLowerCase()) ? (
-              <MarkdownEditor value={item.content} readOnly />
-            ) : (
-              <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
-                <code>{item.content}</code>
-              </pre>
-            )}
+            <ItemContentField
+              value={item.content}
+              language={item.language ?? undefined}
+              showLanguage={LANGUAGE_TYPES.has(item.itemType.name.toLowerCase())}
+              showMarkdown={MARKDOWN_TYPES.has(item.itemType.name.toLowerCase())}
+              readOnly
+            />
           </div>
         )}
 
@@ -361,51 +339,10 @@ function EditMode({
   onCancel: () => void
   onSaved: (updated: ItemDetail) => void
 }) {
-  const [title, setTitle] = useState(item.title)
-  const [description, setDescription] = useState(item.description ?? '')
-  const [content, setContent] = useState(item.content ?? '')
-  const [language, setLanguage] = useState(item.language ?? '')
-  const [url, setUrl] = useState(item.url ?? '')
-  const [tagsInput, setTagsInput] = useState(
-    item.tags.map((t) => t.name).join(', ')
-  )
-  const [saving, setSaving] = useState(false)
-
-  const typeName = item.itemType.name.toLowerCase()
-  const showContent = CONTENT_TYPES.has(typeName)
-  const showLanguage = LANGUAGE_TYPES.has(typeName)
-  const showMarkdown = MARKDOWN_TYPES.has(typeName)
-  const showUrl = URL_TYPES.has(typeName)
-
-  async function handleSave() {
-    setSaving(true)
-    const tags = tagsInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean)
-
-    const result = await updateItem(item.id, {
-      title,
-      description: description || null,
-      content: showContent ? content || null : item.content,
-      language: showLanguage ? language || null : item.language,
-      url: showUrl ? url || null : item.url,
-      tags,
-    })
-
-    setSaving(false)
-
-    if (result.success) {
-      toast.success('Item updated')
-      onSaved(result.data)
-    } else {
-      const msg =
-        typeof result.error === 'string'
-          ? result.error
-          : 'Validation failed — check your input'
-      toast.error(msg)
-    }
-  }
+  const { fields, setters, flags, saving, canSave, handleSave } = useItemEditForm(item, onSaved)
+  const { title, description, content, language, url, tagsInput } = fields
+  const { setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput } = setters
+  const { showContent, showLanguage, showMarkdown, showUrl } = flags
 
   return (
     <>
@@ -415,7 +352,7 @@ function EditMode({
         <Button
           size="sm"
           className="gap-1.5"
-          disabled={!title.trim() || saving}
+          disabled={!canSave}
           onClick={handleSave}
         >
           <Save className="size-4" />
@@ -460,24 +397,14 @@ function EditMode({
         {showContent && (
           <div className="space-y-1.5">
             <Label>Content</Label>
-            {showLanguage ? (
-              <CodeEditor
-                value={content}
-                language={language || undefined}
-                onChange={setContent}
-              />
-            ) : showMarkdown ? (
-              <MarkdownEditor value={content} onChange={setContent} />
-            ) : (
-              <Textarea
-                id="edit-content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Content"
-                rows={8}
-                className="font-mono text-xs"
-              />
-            )}
+            <ItemContentField
+              value={content}
+              language={language || undefined}
+              showLanguage={showLanguage}
+              showMarkdown={showMarkdown}
+              onChange={setContent}
+              rows={8}
+            />
           </div>
         )}
 
@@ -542,11 +469,11 @@ function EditMode({
           )}
           <div className="flex items-center justify-between">
             <span>Created</span>
-            <span>{new Date(item.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+            <span>{formatLongDate(item.createdAt)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Updated</span>
-            <span>{new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+            <span>{formatLongDate(item.updatedAt)}</span>
           </div>
         </div>
       </div>

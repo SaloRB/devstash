@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { Plus, Code } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -24,17 +23,11 @@ import {
   SelectTrigger,
 } from '@/components/ui/select'
 import { ICON_MAP } from '@/lib/item-types'
-import { createItem } from '@/actions/items'
 import type { ItemTypeWithCount } from '@/lib/db/items'
-import { CodeEditor } from '@/components/shared/CodeEditor'
-import { MarkdownEditor } from '@/components/shared/MarkdownEditor'
-import { FileUpload, type UploadedFile } from '@/components/shared/FileUpload'
-
-const CONTENT_TYPES = new Set(['snippet', 'prompt', 'command', 'note'])
-const LANGUAGE_TYPES = new Set(['snippet', 'command'])
-const MARKDOWN_TYPES = new Set(['note', 'prompt'])
-const URL_TYPES = new Set(['link'])
-const FILE_TYPES = new Set(['file', 'image'])
+import { FileUpload } from '@/components/shared/FileUpload'
+import { useItemCreateForm } from '@/hooks/use-item-create-form'
+import { ItemContentField } from '@/components/shared/ItemContentField'
+import { ItemTypeIcon } from '@/components/shared/ItemTypeIcon'
 
 export default function CreateItemDialog({
   itemTypes,
@@ -45,81 +38,12 @@ export default function CreateItemDialog({
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const [saving, setSaving] = useState(false)
 
-  const defaultTypeId =
-    itemTypes.find(
-      (t) => t.name.toLowerCase() === (defaultTypeName ?? 'snippet')
-    )?.id ?? ''
-  const [selectedTypeId, setSelectedTypeId] = useState(defaultTypeId)
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [content, setContent] = useState('')
-  const [language, setLanguage] = useState('')
-  const [url, setUrl] = useState('')
-  const [tagsInput, setTagsInput] = useState('')
-  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null)
-
-  const selectedType = itemTypes.find((t) => t.id === selectedTypeId)
-  const typeName = selectedType?.name.toLowerCase() ?? ''
-  const showContent = CONTENT_TYPES.has(typeName)
-  const showLanguage = LANGUAGE_TYPES.has(typeName)
-  const showMarkdown = MARKDOWN_TYPES.has(typeName)
-  const showUrl = URL_TYPES.has(typeName)
-  const showFileUpload = FILE_TYPES.has(typeName)
-
-  function resetForm() {
-    setSelectedTypeId(defaultTypeId ?? '')
-    setTitle('')
-    setDescription('')
-    setContent('')
-    setLanguage('')
-    setUrl('')
-    setTagsInput('')
-    setUploadedFile(null)
-  }
-
-  async function handleCreate() {
-    setSaving(true)
-    const tags = tagsInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean)
-
-    const result = await createItem({
-      itemTypeId: selectedTypeId,
-      title,
-      description: description || null,
-      content: showContent ? content || null : null,
-      language: showLanguage ? language || null : null,
-      url: showUrl ? url || null : null,
-      fileUrl: showFileUpload ? (uploadedFile?.fileUrl ?? null) : null,
-      fileName: showFileUpload ? (uploadedFile?.fileName ?? null) : null,
-      fileSize: showFileUpload ? (uploadedFile?.fileSize ?? null) : null,
-      tags,
-    })
-
-    setSaving(false)
-
-    if (result.success) {
-      toast.success('Item created')
-      setOpen(false)
-      resetForm()
-      router.refresh()
-    } else {
-      const msg =
-        typeof result.error === 'string'
-          ? result.error
-          : 'Validation failed — check your input'
-      toast.error(msg)
-    }
-  }
-
-  const canSubmit =
-    selectedTypeId &&
-    title.trim() &&
-    !saving &&
-    (!showFileUpload || uploadedFile !== null)
+  const { fields, setters, flags, selectedType, typeName, saving, canSubmit, resetForm, handleCreate } =
+    useItemCreateForm(itemTypes, defaultTypeName, () => { setOpen(false); router.refresh() })
+  const { selectedTypeId, title, description, content, language, url, tagsInput, uploadedFile } = fields
+  const { setSelectedTypeId, setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setUploadedFile } = setters
+  const { showContent, showLanguage, showMarkdown, showUrl, showFileUpload } = flags
 
   const creatableTypes = itemTypes.filter((t) =>
     ['snippet', 'prompt', 'command', 'note', 'link', 'file', 'image'].includes(
@@ -148,20 +72,10 @@ export default function CreateItemDialog({
       <DialogContent className="flex max-h-[90vh] flex-col sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {(() => {
-              const Icon = selectedType
-                ? (ICON_MAP[selectedType.icon] ?? Code)
-                : Code
-              const color = selectedType?.color ?? '#888'
-              return (
-                <span
-                  className="inline-flex size-7 items-center justify-center rounded-full"
-                  style={{ backgroundColor: `${color}25` }}
-                >
-                  <Icon className="size-4" style={{ color }} />
-                </span>
-              )
-            })()}
+            <ItemTypeIcon
+              icon={selectedType?.icon ?? 'Code'}
+              color={selectedType?.color ?? '#888'}
+            />
             Create New Item
           </DialogTitle>
           <DialogDescription>Add a new item to your stash.</DialogDescription>
@@ -245,24 +159,13 @@ export default function CreateItemDialog({
           {showContent && (
             <div className="space-y-1.5">
               <Label>Content</Label>
-              {showLanguage ? (
-                <CodeEditor
-                  value={content}
-                  language={language || undefined}
-                  onChange={setContent}
-                />
-              ) : showMarkdown ? (
-                <MarkdownEditor value={content} onChange={setContent} />
-              ) : (
-                <Textarea
-                  id="create-content"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Content"
-                  rows={6}
-                  className="font-mono text-xs"
-                />
-              )}
+              <ItemContentField
+                value={content}
+                language={language || undefined}
+                showLanguage={showLanguage}
+                showMarkdown={showMarkdown}
+                onChange={setContent}
+              />
             </div>
           )}
 
