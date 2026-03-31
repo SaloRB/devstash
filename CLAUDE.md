@@ -23,6 +23,10 @@ Never call `list_projects`, `list_organizations`, or any discovery tool before a
 
 **Always pass all three IDs (org, project, branch) on every Neon MCP call — never omit `branchId`.**
 
+## UI Components
+
+Use **Base UI** as the primitive layer — **not Radix UI**. shadcn/ui components in this project are built on Base UI, not Radix. Never install or import from `@radix-ui/*`. Install new components via `npx shadcn@latest add <component>`.
+
 ## Communication Style
 
 Be extremely concise. Sacrifice grammar for brevity. Drop articles, use symbols (→, /), collapse noun phrases, cut implied info. Shorter always wins.

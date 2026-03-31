@@ -67,7 +67,8 @@ Example v4 configuration:
 ## Styling
 
 - Tailwind CSS for all styling
-- Use shadcn/ui components where applicable
+- Use Base UI components (from shadcn/ui with Base UI as the primitive layer) — **not Radix UI**
+- Never install or import from `@radix-ui/*` packages
 - No inline styles
 - Dark mode first, light mode as option
 
