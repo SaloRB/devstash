@@ -25,6 +25,7 @@ const updateItemSchema = z.object({
   tags: z
     .array(z.string().trim())
     .transform((arr) => arr.filter((t) => t.length > 0)),
+  collectionIds: z.array(z.string()).default([]),
 })
 
 export type UpdateItemInput = z.infer<typeof updateItemSchema>
@@ -52,6 +53,7 @@ const createItemSchema = z.object({
   fileUrl: z.string().nullable().optional().transform((v) => v || null),
   fileName: z.string().nullable().optional().transform((v) => v || null),
   fileSize: z.number().nullable().optional(),
+  collectionIds: z.array(z.string()).default([]),
 })
 
 export type CreateItemInput = z.infer<typeof createItemSchema>
@@ -67,10 +69,10 @@ export async function createItem(data: CreateItemInput) {
     return { success: false as const, error: parsed.error.flatten().fieldErrors }
   }
 
-  const { itemTypeId, ...fields } = parsed.data
+  const { itemTypeId, collectionIds, ...fields } = parsed.data
 
   try {
-    const created = await createItemDb(session.user.id, itemTypeId, fields)
+    const created = await createItemDb(session.user.id, itemTypeId, { ...fields, collectionIds })
     return { success: true as const, data: created }
   } catch {
     return { success: false as const, error: 'Failed to create item' }

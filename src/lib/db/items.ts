@@ -79,9 +79,10 @@ export async function updateItem(
     url: string | null
     language: string | null
     tags: string[]
+    collectionIds: string[]
   }
 ) {
-  const { tags, ...fields } = data
+  const { tags, collectionIds, ...fields } = data
   return prisma.item.update({
     where: { id, userId },
     data: {
@@ -92,6 +93,10 @@ export async function updateItem(
           where: { name },
           create: { name },
         })),
+      },
+      collections: {
+        deleteMany: {},
+        create: collectionIds.map((collectionId) => ({ collectionId })),
       },
     },
     include: {
@@ -117,9 +122,10 @@ export async function createItem(
     fileUrl?: string | null
     fileName?: string | null
     fileSize?: number | null
+    collectionIds?: string[]
   }
 ) {
-  const { tags, fileUrl, fileName, fileSize, ...fields } = data
+  const { tags, fileUrl, fileName, fileSize, collectionIds = [], ...fields } = data
   const contentType = fileUrl ? ('FILE' as const) : ('TEXT' as const)
   return prisma.item.create({
     data: {
@@ -136,6 +142,11 @@ export async function createItem(
           create: { name },
         })),
       },
+      ...(collectionIds.length > 0 && {
+        collections: {
+          create: collectionIds.map((collectionId) => ({ collectionId })),
+        },
+      }),
     },
     include: {
       itemType: true,

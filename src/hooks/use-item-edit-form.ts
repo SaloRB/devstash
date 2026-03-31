@@ -18,6 +18,9 @@ export function useItemEditForm(
   const [tagsInput, setTagsInput] = useState(
     item.tags.map((t) => t.name).join(', ')
   )
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>(
+    item.collections.map((c) => c.collection.id)
+  )
   const [saving, setSaving] = useState(false)
 
   const typeName = item.itemType.name.toLowerCase()
@@ -40,6 +43,7 @@ export function useItemEditForm(
       language: showLanguage ? language || null : item.language,
       url: showUrl ? url || null : item.url,
       tags,
+      collectionIds: selectedCollectionIds,
     })
 
     setSaving(false)
@@ -57,8 +61,8 @@ export function useItemEditForm(
   }
 
   return {
-    fields: { title, description, content, language, url, tagsInput },
-    setters: { setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput },
+    fields: { title, description, content, language, url, tagsInput, selectedCollectionIds },
+    setters: { setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setSelectedCollectionIds },
     flags: { showContent, showLanguage, showMarkdown, showUrl },
     saving,
     canSave: !!title.trim() && !saving,

@@ -45,8 +45,10 @@ import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
 import { deleteItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
+import type { UserCollection } from '@/lib/db/collections'
 import { useItemEditForm } from '@/hooks/use-item-edit-form'
 import { ItemContentField } from '@/components/shared/ItemContentField'
+import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
 import { LANGUAGE_TYPES, MARKDOWN_TYPES, FILE_TYPES } from '@/lib/item-type-sets'
 import { formatBytes, formatLongDate } from '@/lib/utils'
 
@@ -332,16 +334,18 @@ function ViewMode({
 
 function EditMode({
   item,
+  collections,
   onCancel,
   onSaved,
 }: {
   item: ItemDetail
+  collections: UserCollection[]
   onCancel: () => void
   onSaved: (updated: ItemDetail) => void
 }) {
   const { fields, setters, flags, saving, canSave, handleSave } = useItemEditForm(item, onSaved)
-  const { title, description, content, language, url, tagsInput } = fields
-  const { setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput } = setters
+  const { title, description, content, language, url, tagsInput, selectedCollectionIds } = fields
+  const { setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setSelectedCollectionIds } = setters
   const { showContent, showLanguage, showMarkdown, showUrl } = flags
 
   return (
@@ -442,6 +446,17 @@ function EditMode({
           />
         </div>
 
+        {collections.length > 0 && (
+          <div className="space-y-1.5">
+            <Label>Collections</Label>
+            <CollectionMultiSelect
+              collections={collections}
+              value={selectedCollectionIds}
+              onChange={setSelectedCollectionIds}
+            />
+          </div>
+        )}
+
         <Separator />
 
         <div className="space-y-2 text-sm text-muted-foreground">
@@ -481,7 +496,7 @@ function EditMode({
   )
 }
 
-export default function ItemDrawer() {
+export default function ItemDrawer({ collections = [] }: { collections?: UserCollection[] }) {
   const { isOpen, item, loading, closeDrawer, refreshItem } = useItemDrawer()
   const router = useRouter()
   const [editing, setEditing] = useState(false)
@@ -552,6 +567,7 @@ export default function ItemDrawer() {
             {editing ? (
               <EditMode
                 item={item}
+                collections={collections}
                 onCancel={() => setEditing(false)}
                 onSaved={handleSaved}
               />

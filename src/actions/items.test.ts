@@ -44,6 +44,7 @@ const validInput = {
   url: null,
   language: 'javascript',
   tags: ['react', 'hooks'],
+  collectionIds: [] as string[],
 }
 
 const mockUpdatedItem = {
@@ -161,6 +162,26 @@ describe('updateItem', () => {
 
     expect(result).toEqual({ success: false, error: 'Failed to update item' })
   })
+
+  it('passes collectionIds to DB when provided', async () => {
+    await updateItem('item-1', { ...validInput, collectionIds: ['col-1', 'col-2'] })
+
+    expect(mockUpdateDb).toHaveBeenCalledWith(
+      'item-1',
+      'user-1',
+      expect.objectContaining({ collectionIds: ['col-1', 'col-2'] })
+    )
+  })
+
+  it('defaults collectionIds to empty array when omitted', async () => {
+    await updateItem('item-1', validInput)
+
+    expect(mockUpdateDb).toHaveBeenCalledWith(
+      'item-1',
+      'user-1',
+      expect.objectContaining({ collectionIds: [] })
+    )
+  })
 })
 
 const validCreateInput = {
@@ -174,6 +195,7 @@ const validCreateInput = {
   fileUrl: null,
   fileName: null,
   fileSize: null,
+  collectionIds: [] as string[],
 }
 
 const mockCreatedItem = {
@@ -301,6 +323,26 @@ describe('createItem', () => {
       'user-1',
       'type-1',
       expect.objectContaining({ fileUrl: null, fileName: null })
+    )
+  })
+
+  it('passes collectionIds to DB when provided', async () => {
+    await createItem({ ...validCreateInput, collectionIds: ['col-1', 'col-2'] })
+
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({ collectionIds: ['col-1', 'col-2'] })
+    )
+  })
+
+  it('defaults collectionIds to empty array when omitted', async () => {
+    await createItem(validCreateInput)
+
+    expect(mockCreateDb).toHaveBeenCalledWith(
+      'user-1',
+      'type-1',
+      expect.objectContaining({ collectionIds: [] })
     )
   })
 })

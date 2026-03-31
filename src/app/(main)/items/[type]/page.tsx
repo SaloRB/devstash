@@ -1,5 +1,6 @@
 import { auth } from '@/auth'
 import { getItemsByType, getItemTypesWithCounts } from '@/lib/db/items'
+import { getUserCollections } from '@/lib/db/collections'
 import ItemsGrid from '@/components/items/ItemsGrid'
 import CreateItemDialog from '@/components/shared/CreateItemDialog'
 
@@ -19,9 +20,10 @@ export async function generateMetadata({ params }: ItemsPageProps) {
 export default async function ItemsPage({ params }: ItemsPageProps) {
   const { type } = await params
   const session = await auth()
-  const [items, itemTypes] = await Promise.all([
+  const [items, itemTypes, collections] = await Promise.all([
     getItemsByType(session!.user!.id!, type),
     getItemTypesWithCounts(session!.user!.id!),
+    getUserCollections(session!.user!.id!),
   ])
 
   const label = getLabel(type)
@@ -35,7 +37,7 @@ export default async function ItemsPage({ params }: ItemsPageProps) {
             {items.length} item{items.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <CreateItemDialog itemTypes={itemTypes} defaultTypeName={type} />
+        <CreateItemDialog itemTypes={itemTypes} defaultTypeName={type} collections={collections} />
       </div>
 
       <ItemsGrid type={type} items={items} />

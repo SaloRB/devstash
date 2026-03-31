@@ -61,7 +61,16 @@ export async function createCollection(
   })
 }
 
+export async function getUserCollections(userId: string) {
+  return prisma.collection.findMany({
+    where: { userId },
+    orderBy: { name: 'asc' },
+    select: { id: true, name: true },
+  })
+}
+
 export type CollectionWithItems = Awaited<
   ReturnType<typeof getRecentCollections>
 >[number]
 export type SidebarCollection = Awaited<ReturnType<typeof getSidebarCollections>>[number]
+export type UserCollection = Awaited<ReturnType<typeof getUserCollections>>[number]

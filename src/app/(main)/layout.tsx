@@ -3,10 +3,17 @@ import AppSidebar from '@/components/dashboard/AppSidebar'
 import TopBar from '@/components/layout/TopBar'
 import { ItemDrawerProvider } from '@/contexts/item-drawer-context'
 import ItemDrawer from '@/components/shared/ItemDrawer'
+import { auth } from '@/auth'
+import { getUserCollections } from '@/lib/db/collections'
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth()
+  const collections = session?.user?.id
+    ? await getUserCollections(session.user.id)
+    : []
+
   return (
     <ItemDrawerProvider>
       <SidebarProvider
@@ -20,7 +27,7 @@ export default function MainLayout({
           </main>
         </SidebarInset>
       </SidebarProvider>
-      <ItemDrawer />
+      <ItemDrawer collections={collections} />
     </ItemDrawerProvider>
   )
 }

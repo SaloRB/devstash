@@ -24,25 +24,29 @@ import {
 } from '@/components/ui/select'
 import { ICON_MAP } from '@/lib/item-types'
 import type { ItemTypeWithCount } from '@/lib/db/items'
+import type { UserCollection } from '@/lib/db/collections'
 import { FileUpload } from '@/components/shared/FileUpload'
 import { useItemCreateForm } from '@/hooks/use-item-create-form'
 import { ItemContentField } from '@/components/shared/ItemContentField'
 import { ItemTypeIcon } from '@/components/shared/ItemTypeIcon'
+import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
 
 export default function CreateItemDialog({
   itemTypes,
   defaultTypeName,
+  collections = [],
 }: {
   itemTypes: ItemTypeWithCount[]
   defaultTypeName?: string
+  collections?: UserCollection[]
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
 
   const { fields, setters, flags, selectedType, typeName, saving, canSubmit, resetForm, handleCreate } =
     useItemCreateForm(itemTypes, defaultTypeName, () => { setOpen(false); router.refresh() })
-  const { selectedTypeId, title, description, content, language, url, tagsInput, uploadedFile } = fields
-  const { setSelectedTypeId, setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setUploadedFile } = setters
+  const { selectedTypeId, title, description, content, language, url, tagsInput, uploadedFile, selectedCollectionIds } = fields
+  const { setSelectedTypeId, setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setUploadedFile, setSelectedCollectionIds } = setters
   const { showContent, showLanguage, showMarkdown, showUrl, showFileUpload } = flags
 
   const creatableTypes = itemTypes.filter((t) =>
@@ -202,6 +206,17 @@ export default function CreateItemDialog({
               placeholder="Comma-separated tags"
             />
           </div>
+
+          {collections.length > 0 && (
+            <div className="space-y-1.5">
+              <Label>Collections</Label>
+              <CollectionMultiSelect
+                collections={collections}
+                value={selectedCollectionIds}
+                onChange={setSelectedCollectionIds}
+              />
+            </div>
+          )}
         </div>
 
         <DialogFooter>

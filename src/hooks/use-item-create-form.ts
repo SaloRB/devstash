@@ -10,7 +10,7 @@ import { CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES } 
 export function useItemCreateForm(
   itemTypes: ItemTypeWithCount[],
   defaultTypeName?: string,
-  onCreated?: () => void
+  onCreated?: () => void,
 ) {
   const defaultTypeId =
     itemTypes.find(
@@ -25,6 +25,7 @@ export function useItemCreateForm(
   const [url, setUrl] = useState('')
   const [tagsInput, setTagsInput] = useState('')
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null)
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
 
   const selectedType = itemTypes.find((t) => t.id === selectedTypeId)
@@ -44,6 +45,7 @@ export function useItemCreateForm(
     setUrl('')
     setTagsInput('')
     setUploadedFile(null)
+    setSelectedCollectionIds([])
   }
 
   async function handleCreate() {
@@ -64,6 +66,7 @@ export function useItemCreateForm(
       fileName: showFileUpload ? (uploadedFile?.fileName ?? null) : null,
       fileSize: showFileUpload ? (uploadedFile?.fileSize ?? null) : null,
       tags,
+      collectionIds: selectedCollectionIds,
     })
 
     setSaving(false)
@@ -82,8 +85,8 @@ export function useItemCreateForm(
   }
 
   return {
-    fields: { selectedTypeId, title, description, content, language, url, tagsInput, uploadedFile },
-    setters: { setSelectedTypeId, setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setUploadedFile },
+    fields: { selectedTypeId, title, description, content, language, url, tagsInput, uploadedFile, selectedCollectionIds },
+    setters: { setSelectedTypeId, setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setUploadedFile, setSelectedCollectionIds },
     flags: { showContent, showLanguage, showMarkdown, showUrl, showFileUpload },
     selectedType,
     typeName,
