@@ -1,26 +1,12 @@
-# Current Feature: Collection Create
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- "New Collection" button in TopBar opens a modal dialog
-- Modal has fields: name (required), description (optional)
-- createCollection server action with Zod validation + ownership (userId) scoping
-- lib/db/collections.ts gains a createCollection DB query
-- Toast on success; toast on error
-- After save: close modal + router.refresh() to reflect new collection everywhere (sidebar, dashboard, any collections list)
-- Follow same patterns as item create (server action, Zod, shadcn Dialog, Sonner toast, router.refresh)
-
 ## Notes
-
-- Collections are user-scoped — always pass userId from session
-- Server component data fetching via lib/db functions; client-side mutations via server actions / api routes
-- Modal triggered from TopBar (already has "New Item" button — add "New Collection" alongside it)
-- No file/image fields — just name + description
-- Sidebar and dashboard RecentCollections should reflect the new collection after refresh
 
 ## History
 
@@ -68,3 +54,4 @@ In Progress
 - **2026-03-30** - Completed Code Decomposition Refactor: extracted useItemEditForm and useItemCreateForm hooks (form state + save logic out of EditMode and CreateItemDialog); ItemContentField component unifies CodeEditor/MarkdownEditor/Textarea switching across 3 sites; ItemTypeIcon replaces inline IIFE; ItemsGrid server component extracts layout from items page; formatBytes + formatLongDate added to utils.ts (removed 3 local copies); item-type-sets.ts centralises type Sets; getCollectionTypeIcons moved to collection-utils.ts.
 - **2026-03-30** - Completed Logo Link to Dashboard: wrapped TopBar logo (icon + "DevStash" text) in Next.js Link pointing to /dashboard.
 - **2026-03-30** - Completed Dashboard Skeleton Loading: added skeletons.tsx with StatsCardsSkeleton, RecentCollectionsSkeleton, PinnedItemsSkeleton, RecentItemsSkeleton; wrapped each section in Suspense on dashboard page for independent streaming.
+- **2026-03-30** - Completed Collection Create: "New Collection" button in TopBar opens shadcn Dialog with name/description fields; createCollection server action (Zod, userId scoping); createCollection DB query in lib/db/collections.ts; Sonner toast on success/error; router.refresh() updates sidebar and dashboard. Empty collections render no left border color. 7 unit tests with full coverage on server action.
