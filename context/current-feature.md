@@ -1,27 +1,16 @@
-# Current Feature: Global Search / Command Palette
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Cmd+K / Ctrl+K opens command palette
-- Fuzzy search across all user items and collections
-- Results grouped: Items section + Collections section
-- Keyboard navigation (arrows, Enter to select)
-- Item results show type icon; collection results show item count
-- Selecting item → opens ItemDrawer; selecting collection → navigates to /collections/[id]
-- TopBar search input opens palette on click
-- Search input placeholder shows ⌘K hint
+<!-- goals go here -->
 
 ## Notes
 
-- Use shadcn `cmdk` component (Command)
-- Client-side fuzzy search only — no server round-trips on query
-- Pre-fetch searchable data on app load
-- Search data shape: items (id, title, type, content preview), collections (id, name, itemCount)
-- Reuse existing data fetching functions (items/collections DB queries)
+<!-- notes go here -->
 
 ## History
 
@@ -75,3 +64,4 @@ In Progress
 - **2026-03-30** - Completed Collections Pages: /collections page showing all user collections in CollectionCard grid, /collections/[id] page showing collection items with ItemCard/ImageCard/FileListRow. Dashboard and collections page cards linked to /collections/[id]. Added getAllCollections and getCollectionWithItems DB queries.
 - **2026-03-31** - Completed Collection Items Grouped Layout: /collections/[id] groups items by type (others → images → files) with section headers. Item count row replaced by icon + count pairs sorted by count descending, using each type's brand color.
 - **2026-03-31** - Completed Collection Actions (Edit, Delete, Favorite): /collections/[id] header has edit (Dialog), delete (AlertDialog), and favorite (placeholder) buttons. /collections and dashboard CollectionCards have a 3-dots DropdownMenu with edit/delete/favorite; card click navigates, dropdown stops propagation. deleteCollection server action removes collection only (items preserved). updateCollection server action edits name/description. Sonner toasts + router.refresh() on all actions.
+- **2026-03-31** - Completed Global Search / Command Palette: Cmd+K / Ctrl+K opens cmdk-based palette. Client-side fuzzy search across all user items and collections, pre-fetched at layout load. Grouped results (Items / Collections) with type icons, item descriptions, and item counts. Selecting item opens ItemDrawer; selecting collection navigates to /collections/[id]. TopBar static input replaced with SearchTrigger button showing ⌘K badge. New files: SearchTrigger, CommandPalette, SearchProvider context, getSearchData DB query.
