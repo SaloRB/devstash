@@ -1,20 +1,12 @@
-# Current Feature: Collections Pages
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Create /collections page showing all user collections using existing collection cards
-- Create /collections/[id] page showing items in that collection using existing item cards
-- Link sidebar "View all collections" to /collections
-- Link all collection cards to /collections/[id]
-
 ## Notes
-
-- Reuse existing CollectionCard and ItemCard components
-- Follow (main) route group pattern used by dashboard/items/profile
 
 ## History
 
@@ -65,3 +57,4 @@ In Progress
 - **2026-03-30** - Completed Collection Create: "New Collection" button in TopBar opens shadcn Dialog with name/description fields; createCollection server action (Zod, userId scoping); createCollection DB query in lib/db/collections.ts; Sonner toast on success/error; router.refresh() updates sidebar and dashboard. Empty collections render no left border color. 7 unit tests with full coverage on server action.
 - **2026-03-30** - Completed Add Item to Collections: multi-select collection picker (shadcn Popover + Command) in Create Item dialog and Item Drawer edit mode; getUserCollections DB query; collectionIds added to createItem/updateItem DB queries (connect on create, deleteMany+create on update) and Zod schemas; CollectionMultiSelect shared component; collections fetched in TopBar, items page, and main layout and passed as props. 4 new unit tests.
 - **2026-03-30** - Completed Remove Copy Button from ItemDrawer for Files and Images: wrapped copy button in FILE_TYPES check; hidden for file/image types, visible for all others.
+- **2026-03-30** - Completed Collections Pages: /collections page showing all user collections in CollectionCard grid, /collections/[id] page showing collection items with ItemCard/ImageCard/FileListRow. Dashboard and collections page cards linked to /collections/[id]. Added getAllCollections and getCollectionWithItems DB queries.
