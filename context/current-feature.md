@@ -6,7 +6,11 @@ Not Started
 
 ## Goals
 
+<!-- goals go here -->
+
 ## Notes
+
+<!-- notes go here -->
 
 ## History
 
@@ -59,3 +63,4 @@ Not Started
 - **2026-03-30** - Completed Remove Copy Button from ItemDrawer for Files and Images: wrapped copy button in FILE_TYPES check; hidden for file/image types, visible for all others.
 - **2026-03-30** - Completed Collections Pages: /collections page showing all user collections in CollectionCard grid, /collections/[id] page showing collection items with ItemCard/ImageCard/FileListRow. Dashboard and collections page cards linked to /collections/[id]. Added getAllCollections and getCollectionWithItems DB queries.
 - **2026-03-31** - Completed Collection Items Grouped Layout: /collections/[id] groups items by type (others → images → files) with section headers. Item count row replaced by icon + count pairs sorted by count descending, using each type's brand color.
+- **2026-03-31** - Completed Collection Actions (Edit, Delete, Favorite): /collections/[id] header has edit (Dialog), delete (AlertDialog), and favorite (placeholder) buttons. /collections and dashboard CollectionCards have a 3-dots DropdownMenu with edit/delete/favorite; card click navigates, dropdown stops propagation. deleteCollection server action removes collection only (items preserved). updateCollection server action edits name/description. Sonner toasts + router.refresh() on all actions.
