@@ -1,12 +1,20 @@
-# Current Feature
+# Current Feature: Collections Pages
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- Create /collections page showing all user collections using existing collection cards
+- Create /collections/[id] page showing items in that collection using existing item cards
+- Link sidebar "View all collections" to /collections
+- Link all collection cards to /collections/[id]
+
 ## Notes
+
+- Reuse existing CollectionCard and ItemCard components
+- Follow (main) route group pattern used by dashboard/items/profile
 
 ## History
 

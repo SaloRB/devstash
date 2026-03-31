@@ -61,6 +61,62 @@ export async function createCollection(
   })
 }
 
+export async function getAllCollections(userId: string) {
+  return prisma.collection.findMany({
+    where: { userId },
+    orderBy: [{ isFavorite: 'desc' }, { updatedAt: 'desc' }],
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      isFavorite: true,
+      items: {
+        select: {
+          item: {
+            select: {
+              itemType: { select: { id: true, icon: true, color: true } },
+            },
+          },
+        },
+      },
+      _count: { select: { items: true } },
+    },
+  })
+}
+
+export async function getCollectionWithItems(id: string, userId: string) {
+  return prisma.collection.findFirst({
+    where: { id, userId },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      isFavorite: true,
+      items: {
+        select: {
+          item: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              isFavorite: true,
+              isPinned: true,
+              fileUrl: true,
+              fileName: true,
+              fileSize: true,
+              createdAt: true,
+              itemType: { select: { id: true, name: true, icon: true, color: true } },
+              tags: { select: { name: true } },
+            },
+          },
+        },
+        orderBy: { item: { createdAt: 'desc' } },
+      },
+      _count: { select: { items: true } },
+    },
+  })
+}
+
 export async function getUserCollections(userId: string) {
   return prisma.collection.findMany({
     where: { userId },

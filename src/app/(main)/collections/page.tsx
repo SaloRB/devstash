@@ -1,25 +1,25 @@
 import Link from 'next/link'
 import { FolderOpen } from 'lucide-react'
 import { auth } from '@/auth'
-import { getRecentCollections, type CollectionWithItems } from '@/lib/db/collections'
-import CollectionCard from './CollectionCard'
+import { getAllCollections } from '@/lib/db/collections'
+import CollectionCard from '@/components/dashboard/CollectionCard'
 import EmptyState from '@/components/shared/EmptyState'
 
-export default async function RecentCollections() {
+export const metadata = { title: 'DevStash - Collections' }
+
+export default async function CollectionsPage() {
   const session = await auth()
-  const collections = await getRecentCollections(session!.user!.id!)
+  const collections = await getAllCollections(session!.user!.id!)
 
   return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Collections</h2>
-        <Link
-          href="/collections"
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          View all
-        </Link>
+    <div className="mx-auto max-w-6xl space-y-6 lg:px-8 xl:px-12">
+      <div>
+        <h1 className="text-2xl font-bold">Collections</h1>
+        <p className="text-sm text-muted-foreground">
+          {collections.length} collection{collections.length !== 1 ? 's' : ''}
+        </p>
       </div>
+
       {collections.length === 0 ? (
         <EmptyState
           icon={FolderOpen}
@@ -28,7 +28,7 @@ export default async function RecentCollections() {
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {collections.map((col: CollectionWithItems) => (
+          {collections.map((col) => (
             <Link key={col.id} href={`/collections/${col.id}`}>
               <CollectionCard
                 name={col.name}
@@ -41,6 +41,6 @@ export default async function RecentCollections() {
           ))}
         </div>
       )}
-    </section>
+    </div>
   )
 }
