@@ -577,10 +577,15 @@ export default function ItemDrawer({
             <SheetHeader className="px-4 pb-4 pt-4">
               <div className="flex items-start gap-3 pr-6">
                 {Icon && (
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                  <div
+                    className="flex size-10 shrink-0 items-center justify-center rounded-md "
+                    style={{ backgroundColor: `${item.itemType.color}15` }}
+                  >
                     <Icon
                       className="size-5"
-                      style={{ color: item.itemType.color }}
+                      style={{
+                        color: item.itemType.color,
+                      }}
                     />
                   </div>
                 )}
@@ -593,7 +598,7 @@ export default function ItemDrawer({
                       variant="secondary"
                       className="capitalize text-xs"
                       style={{
-                        backgroundColor: `${item.itemType.color}10`,
+                        backgroundColor: `${item.itemType.color}15`,
                         color: item.itemType.color,
                       }}
                     >
