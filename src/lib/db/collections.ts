@@ -117,6 +117,24 @@ export async function getCollectionWithItems(id: string, userId: string) {
   })
 }
 
+export async function updateCollection(
+  id: string,
+  userId: string,
+  data: { name: string; description?: string | null },
+) {
+  return prisma.collection.update({
+    where: { id, userId },
+    data: { name: data.name, description: data.description ?? null },
+    select: { id: true, name: true, description: true },
+  })
+}
+
+export async function deleteCollection(id: string, userId: string) {
+  return prisma.collection.delete({
+    where: { id, userId },
+  })
+}
+
 export async function getUserCollections(userId: string) {
   return prisma.collection.findMany({
     where: { userId },

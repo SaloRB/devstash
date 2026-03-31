@@ -1,4 +1,7 @@
-import { Star, MoreHorizontal } from 'lucide-react'
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { Star } from 'lucide-react'
 import {
   Card,
   CardHeader,
@@ -7,8 +10,8 @@ import {
   CardContent,
   CardAction,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { getDominantTypeColor, getCollectionTypeIcons } from '@/lib/collection-utils'
+import CollectionActionsDropdown from '@/components/collections/CollectionActionsDropdown'
 
 interface CollectionItemType {
   id: string
@@ -21,6 +24,7 @@ interface CollectionItem {
 }
 
 interface CollectionCardProps {
+  id: string
   name: string
   description?: string | null
   itemCount: number
@@ -29,13 +33,15 @@ interface CollectionCardProps {
 }
 
 export default function CollectionCard({
+  id,
   name,
   description,
   itemCount,
   isFavorite,
   items,
 }: CollectionCardProps) {
-  // Derive border color from most-used item type
+  const router = useRouter()
+
   const borderColor = itemCount > 0
     ? getDominantTypeColor(items.map(({ itemType }) => itemType))
     : 'transparent'
@@ -45,8 +51,9 @@ export default function CollectionCard({
   return (
     <Card
       size="sm"
-      className="border-l-4 bg-teal-950/20 ring-teal-900/30 transition-colors hover:bg-teal-950/30"
+      className="cursor-pointer border-l-4 bg-teal-950/20 ring-teal-900/30 transition-colors hover:bg-teal-950/30"
       style={{ borderLeftColor: borderColor }}
+      onClick={() => router.push(`/collections/${id}`)}
     >
       <CardHeader>
         <div className="flex items-center gap-2">
@@ -56,9 +63,11 @@ export default function CollectionCard({
           )}
         </div>
         <CardAction>
-          <Button variant="ghost" size="icon-xs">
-            <MoreHorizontal className="size-4 text-muted-foreground" />
-          </Button>
+          <CollectionActionsDropdown
+            collectionId={id}
+            collectionName={name}
+            collectionDescription={description}
+          />
         </CardAction>
         <CardDescription className="text-xs">{itemCount} items</CardDescription>
         {description && (
@@ -69,9 +78,9 @@ export default function CollectionCard({
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-1.5">
-          {typeIcons.map(({ id, icon: Icon, color }) => (
+          {typeIcons.map(({ id: typeId, icon: Icon, color }) => (
             <div
-              key={id}
+              key={typeId}
               className="flex size-5 items-center justify-center rounded-full"
               style={{ backgroundColor: `${color}20` }}
             >

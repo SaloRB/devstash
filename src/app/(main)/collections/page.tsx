@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { FolderOpen } from 'lucide-react'
 import { auth } from '@/auth'
 import { getAllCollections } from '@/lib/db/collections'
@@ -29,15 +28,15 @@ export default async function CollectionsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {collections.map((col) => (
-            <Link key={col.id} href={`/collections/${col.id}`}>
-              <CollectionCard
-                name={col.name}
-                description={col.description}
-                itemCount={col._count.items}
-                isFavorite={col.isFavorite}
-                items={col.items.map(({ item }) => ({ itemType: item.itemType }))}
-              />
-            </Link>
+            <CollectionCard
+              key={col.id}
+              id={col.id}
+              name={col.name}
+              description={col.description}
+              itemCount={col._count.items}
+              isFavorite={col.isFavorite}
+              items={col.items.map(({ item }) => ({ itemType: item.itemType }))}
+            />
           ))}
         </div>
       )}

@@ -7,6 +7,7 @@ import ItemCard from '@/components/shared/ItemCard'
 import ImageCard from '@/components/shared/ImageCard'
 import FileListRow from '@/components/shared/FileListRow'
 import EmptyState from '@/components/shared/EmptyState'
+import CollectionDetailActions from '@/components/collections/CollectionDetailActions'
 
 interface CollectionDetailPageProps {
   params: Promise<{ id: string }>
@@ -51,7 +52,14 @@ export default async function CollectionDetailPage({
   return (
     <div className="mx-auto max-w-6xl space-y-6 lg:px-8 xl:px-12">
       <div>
-        <h1 className="text-2xl font-bold">{collection.name}</h1>
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-2xl font-bold">{collection.name}</h1>
+          <CollectionDetailActions
+            collectionId={collection.id}
+            collectionName={collection.name}
+            collectionDescription={collection.description}
+          />
+        </div>
         {collection.description && (
           <p className="text-sm text-muted-foreground">
             {collection.description}
