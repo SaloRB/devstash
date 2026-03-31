@@ -49,7 +49,11 @@ import type { UserCollection } from '@/lib/db/collections'
 import { useItemEditForm } from '@/hooks/use-item-edit-form'
 import { ItemContentField } from '@/components/shared/ItemContentField'
 import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
-import { LANGUAGE_TYPES, MARKDOWN_TYPES, FILE_TYPES } from '@/lib/item-type-sets'
+import {
+  LANGUAGE_TYPES,
+  MARKDOWN_TYPES,
+  FILE_TYPES,
+} from '@/lib/item-type-sets'
 import { formatBytes, formatLongDate } from '@/lib/utils'
 
 function DrawerSkeleton() {
@@ -123,9 +127,7 @@ function ViewMode({
           size="sm"
           className="flex items-center gap-1.5 text-sm"
         >
-          <Pin
-            className={`size-4 ${item.isPinned ? 'fill-foreground' : ''}`}
-          />
+          <Pin className={`size-4 ${item.isPinned ? 'fill-foreground' : ''}`} />
           Pin
         </Button>
         {!FILE_TYPES.has(item.itemType.name.toLowerCase()) && (
@@ -148,7 +150,9 @@ function ViewMode({
             variant="ghost"
             size="sm"
             className="flex items-center gap-1.5 text-sm"
-            onClick={() => { window.location.href = `/api/download/${item.id}` }}
+            onClick={() => {
+              window.location.href = `/api/download/${item.id}`
+            }}
           >
             <Download className="size-4" />
             Download
@@ -181,7 +185,8 @@ function ViewMode({
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete this item?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete &quot;{item.title}&quot;. This action cannot be undone.
+                  This will permanently delete &quot;{item.title}&quot;. This
+                  action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -221,7 +226,8 @@ function ViewMode({
             />
             {item.fileName && (
               <p className="text-xs text-muted-foreground">
-                {item.fileName}{item.fileSize ? ` · ${formatBytes(item.fileSize)}` : ''}
+                {item.fileName}
+                {item.fileSize ? ` · ${formatBytes(item.fileSize)}` : ''}
               </p>
             )}
           </div>
@@ -234,7 +240,9 @@ function ViewMode({
               <Badge variant="secondary" className="text-xs">
                 {item.fileName?.split('.').pop()?.toUpperCase() ?? 'FILE'}
               </Badge>
-              <span className="min-w-0 flex-1 truncate text-sm">{item.fileName}</span>
+              <span className="min-w-0 flex-1 truncate text-sm">
+                {item.fileName}
+              </span>
               {item.fileSize && (
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {formatBytes(item.fileSize)}
@@ -246,14 +254,16 @@ function ViewMode({
 
         {item.content && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-muted-foreground">
-              Content
-            </p>
+            <p className="text-xs font-medium text-muted-foreground">Content</p>
             <ItemContentField
               value={item.content}
               language={item.language ?? undefined}
-              showLanguage={LANGUAGE_TYPES.has(item.itemType.name.toLowerCase())}
-              showMarkdown={MARKDOWN_TYPES.has(item.itemType.name.toLowerCase())}
+              showLanguage={LANGUAGE_TYPES.has(
+                item.itemType.name.toLowerCase(),
+              )}
+              showMarkdown={MARKDOWN_TYPES.has(
+                item.itemType.name.toLowerCase(),
+              )}
               readOnly
             />
           </div>
@@ -314,9 +324,7 @@ function ViewMode({
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
             <CalendarDays className="size-3.5 text-muted-foreground" />
-            <p className="text-xs font-medium text-muted-foreground">
-              Details
-            </p>
+            <p className="text-xs font-medium text-muted-foreground">Details</p>
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex items-center justify-between">
@@ -345,9 +353,26 @@ function EditMode({
   onCancel: () => void
   onSaved: (updated: ItemDetail) => void
 }) {
-  const { fields, setters, flags, saving, canSave, handleSave } = useItemEditForm(item, onSaved)
-  const { title, description, content, language, url, tagsInput, selectedCollectionIds } = fields
-  const { setTitle, setDescription, setContent, setLanguage, setUrl, setTagsInput, setSelectedCollectionIds } = setters
+  const { fields, setters, flags, saving, canSave, handleSave } =
+    useItemEditForm(item, onSaved)
+  const {
+    title,
+    description,
+    content,
+    language,
+    url,
+    tagsInput,
+    selectedCollectionIds,
+  } = fields
+  const {
+    setTitle,
+    setDescription,
+    setContent,
+    setLanguage,
+    setUrl,
+    setTagsInput,
+    setSelectedCollectionIds,
+  } = setters
   const { showContent, showLanguage, showMarkdown, showUrl } = flags
 
   return (
@@ -498,12 +523,15 @@ function EditMode({
   )
 }
 
-export default function ItemDrawer({ collections = [] }: { collections?: UserCollection[] }) {
+export default function ItemDrawer({
+  collections = [],
+}: {
+  collections?: UserCollection[]
+}) {
   const { isOpen, item, loading, closeDrawer, refreshItem } = useItemDrawer()
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
-
 
   const Icon = item ? (ICON_MAP[item.itemType.icon] ?? ICON_MAP['Code']) : null
 
@@ -528,7 +556,15 @@ export default function ItemDrawer({ collections = [] }: { collections?: UserCol
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => { if (!open) { setEditing(false); closeDrawer() } }}>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          setEditing(false)
+          closeDrawer()
+        }
+      }}
+    >
       <SheetContent
         side="right"
         className="markdown-editor-scroll flex flex-col gap-0 overflow-y-auto p-0"
@@ -553,7 +589,14 @@ export default function ItemDrawer({ collections = [] }: { collections?: UserCol
                     {item.title}
                   </SheetTitle>
                   <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge
+                      variant="secondary"
+                      className="capitalize text-xs"
+                      style={{
+                        backgroundColor: `${item.itemType.color}10`,
+                        color: item.itemType.color,
+                      }}
+                    >
                       {item.itemType.name}
                     </Badge>
                     {item.language && (
@@ -574,7 +617,12 @@ export default function ItemDrawer({ collections = [] }: { collections?: UserCol
                 onSaved={handleSaved}
               />
             ) : (
-              <ViewMode item={item} onEdit={() => setEditing(true)} onDelete={handleDelete} deleting={deleting} />
+              <ViewMode
+                item={item}
+                onEdit={() => setEditing(true)}
+                onDelete={handleDelete}
+                deleting={deleting}
+              />
             )}
           </>
         ) : null}
