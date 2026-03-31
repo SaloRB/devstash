@@ -61,31 +61,43 @@ export async function createCollection(
   })
 }
 
-export async function getAllCollections(userId: string) {
-  return prisma.collection.findMany({
-    where: { userId },
-    orderBy: [{ isFavorite: 'desc' }, { updatedAt: 'desc' }],
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      isFavorite: true,
-      items: {
-        select: {
-          item: {
-            select: {
-              itemType: { select: { id: true, icon: true, color: true } },
+export async function getAllCollections(userId: string, page = 1, limit = 21) {
+  const where = { userId }
+  const [collections, total] = await prisma.$transaction([
+    prisma.collection.findMany({
+      where,
+      orderBy: [{ isFavorite: 'desc' }, { updatedAt: 'desc' }],
+      skip: (page - 1) * limit,
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        isFavorite: true,
+        items: {
+          select: {
+            item: {
+              select: {
+                itemType: { select: { id: true, icon: true, color: true } },
+              },
             },
           },
         },
+        _count: { select: { items: true } },
       },
-      _count: { select: { items: true } },
-    },
-  })
+    }),
+    prisma.collection.count({ where }),
+  ])
+  return { collections, total }
 }
 
-export async function getCollectionWithItems(id: string, userId: string) {
-  return prisma.collection.findFirst({
+export async function getCollectionWithItems(
+  id: string,
+  userId: string,
+  page = 1,
+  limit = 21,
+) {
+  const collection = await prisma.collection.findFirst({
     where: { id, userId },
     select: {
       id: true,
@@ -111,10 +123,13 @@ export async function getCollectionWithItems(id: string, userId: string) {
           },
         },
         orderBy: { item: { createdAt: 'desc' } },
+        skip: (page - 1) * limit,
+        take: limit,
       },
       _count: { select: { items: true } },
     },
   })
+  return collection
 }
 
 export async function updateCollection(

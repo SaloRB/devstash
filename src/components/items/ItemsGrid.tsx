@@ -4,7 +4,7 @@ import ImageCard from '@/components/shared/ImageCard'
 import FileListRow from '@/components/shared/FileListRow'
 import EmptyState from '@/components/shared/EmptyState'
 
-type GridItem = Awaited<ReturnType<typeof getItemsByType>>[number]
+type GridItem = Awaited<ReturnType<typeof getItemsByType>>['items'][number]
 
 interface ItemsGridProps {
   type: string

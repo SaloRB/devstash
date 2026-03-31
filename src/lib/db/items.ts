@@ -45,15 +45,27 @@ export async function getItemTypesWithCounts(userId: string) {
   })
 }
 
-export async function getItemsByType(userId: string, type: string) {
-  return prisma.item.findMany({
-    where: { userId, itemType: { name: type } },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      itemType: true,
-      tags: true,
-    },
-  })
+export async function getItemsByType(
+  userId: string,
+  type: string,
+  page = 1,
+  limit = 21,
+) {
+  const where = { userId, itemType: { name: type } }
+  const [items, total] = await prisma.$transaction([
+    prisma.item.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        itemType: true,
+        tags: true,
+      },
+    }),
+    prisma.item.count({ where }),
+  ])
+  return { items, total }
 }
 
 export async function getItemById(id: string, userId: string) {

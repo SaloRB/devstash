@@ -2,16 +2,22 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
+    $transaction: vi.fn(),
     item: {
       findFirst: vi.fn(),
+      findMany: vi.fn(),
+      count: vi.fn(),
     },
   },
 }))
 
-import { getItemById } from './items'
+import { getItemById, getItemsByType } from './items'
 import { prisma } from '@/lib/prisma'
 
 const mockFindFirst = vi.mocked(prisma.item.findFirst)
+const mockTransaction = vi.mocked(prisma.$transaction)
+const mockFindMany = vi.mocked(prisma.item.findMany)
+const mockCount = vi.mocked(prisma.item.count)
 
 const mockItem = {
   id: 'item-1',
@@ -30,6 +36,57 @@ const mockItem = {
   tags: [],
   collections: [],
 }
+
+describe('getItemsByType', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockFindMany.mockResolvedValue([mockItem] as never)
+    mockCount.mockResolvedValue(1 as never)
+    mockTransaction.mockImplementation(((ops: unknown[]) => Promise.all(ops)) as never)
+  })
+
+  it('returns items and total', async () => {
+    const result = await getItemsByType('user-1', 'snippet')
+
+    expect(result).toEqual({ items: [mockItem], total: 1 })
+  })
+
+  it('uses page 1 skip=0 by default', async () => {
+    await getItemsByType('user-1', 'snippet')
+
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: 0, take: 21 })
+    )
+  })
+
+  it('calculates skip correctly for page 2', async () => {
+    await getItemsByType('user-1', 'snippet', 2, 21)
+
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: 21, take: 21 })
+    )
+  })
+
+  it('calculates skip correctly for page 3 with custom limit', async () => {
+    await getItemsByType('user-1', 'snippet', 3, 10)
+
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: 20, take: 10 })
+    )
+  })
+
+  it('filters by userId and type', async () => {
+    await getItemsByType('user-1', 'snippet')
+
+    const expectedWhere = { userId: 'user-1', itemType: { name: 'snippet' } }
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expectedWhere })
+    )
+    expect(mockCount).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expectedWhere })
+    )
+  })
+})
 
 describe('getItemById', () => {
   beforeEach(() => {
