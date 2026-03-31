@@ -1,20 +1,12 @@
-# Current Feature: Remove Copy Button from ItemDrawer for Files and Images
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Copy button is hidden/removed from ItemDrawer action bar when item type is `file` or `image`
-- Copy button remains visible for all other item types (snippet, command, note, prompt, link)
-- No regressions in drawer behavior for other types
-
 ## Notes
-
-- Copy button is in the ItemDrawer action bar (non-edit mode)
-- File/image items have no meaningful "content" to copy (they have fileUrl/fileName instead)
-- Check `item-type-sets.ts` for existing type Sets to reuse
 
 ## History
 
@@ -64,3 +56,4 @@ In Progress
 - **2026-03-30** - Completed Dashboard Skeleton Loading: added skeletons.tsx with StatsCardsSkeleton, RecentCollectionsSkeleton, PinnedItemsSkeleton, RecentItemsSkeleton; wrapped each section in Suspense on dashboard page for independent streaming.
 - **2026-03-30** - Completed Collection Create: "New Collection" button in TopBar opens shadcn Dialog with name/description fields; createCollection server action (Zod, userId scoping); createCollection DB query in lib/db/collections.ts; Sonner toast on success/error; router.refresh() updates sidebar and dashboard. Empty collections render no left border color. 7 unit tests with full coverage on server action.
 - **2026-03-30** - Completed Add Item to Collections: multi-select collection picker (shadcn Popover + Command) in Create Item dialog and Item Drawer edit mode; getUserCollections DB query; collectionIds added to createItem/updateItem DB queries (connect on create, deleteMany+create on update) and Zod schemas; CollectionMultiSelect shared component; collections fetched in TopBar, items page, and main layout and passed as props. 4 new unit tests.
+- **2026-03-30** - Completed Remove Copy Button from ItemDrawer for Files and Images: wrapped copy button in FILE_TYPES check; hidden for file/image types, visible for all others.
