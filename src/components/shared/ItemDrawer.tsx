@@ -128,19 +128,21 @@ function ViewMode({
           />
           Pin
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-sm"
-          onClick={handleCopy}
-        >
-          {copied ? (
-            <Check className="size-4 text-green-500" />
-          ) : (
-            <Copy className="size-4" />
-          )}
-          Copy
-        </Button>
+        {!FILE_TYPES.has(item.itemType.name.toLowerCase()) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-1.5 text-sm"
+            onClick={handleCopy}
+          >
+            {copied ? (
+              <Check className="size-4 text-green-500" />
+            ) : (
+              <Copy className="size-4" />
+            )}
+            Copy
+          </Button>
+        )}
         {FILE_TYPES.has(item.itemType.name.toLowerCase()) && item.fileUrl && (
           <Button
             variant="ghost"

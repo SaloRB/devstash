@@ -1,12 +1,20 @@
-# Current Feature
+# Current Feature: Remove Copy Button from ItemDrawer for Files and Images
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- Copy button is hidden/removed from ItemDrawer action bar when item type is `file` or `image`
+- Copy button remains visible for all other item types (snippet, command, note, prompt, link)
+- No regressions in drawer behavior for other types
+
 ## Notes
+
+- Copy button is in the ItemDrawer action bar (non-edit mode)
+- File/image items have no meaningful "content" to copy (they have fileUrl/fileName instead)
+- Check `item-type-sets.ts` for existing type Sets to reuse
 
 ## History
 
