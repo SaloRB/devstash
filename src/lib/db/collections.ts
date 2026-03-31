@@ -47,6 +47,20 @@ export async function getSidebarCollections(userId: string, limit = 8) {
   })
 }
 
+export async function createCollection(
+  userId: string,
+  data: { name: string; description?: string | null },
+) {
+  return prisma.collection.create({
+    data: {
+      name: data.name,
+      description: data.description ?? null,
+      userId,
+    },
+    select: { id: true, name: true, description: true },
+  })
+}
+
 export type CollectionWithItems = Awaited<
   ReturnType<typeof getRecentCollections>
 >[number]

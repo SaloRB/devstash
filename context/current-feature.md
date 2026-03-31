@@ -1,15 +1,26 @@
-# Current Feature
+# Current Feature: Collection Create
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- "New Collection" button in TopBar opens a modal dialog
+- Modal has fields: name (required), description (optional)
+- createCollection server action with Zod validation + ownership (userId) scoping
+- lib/db/collections.ts gains a createCollection DB query
+- Toast on success; toast on error
+- After save: close modal + router.refresh() to reflect new collection everywhere (sidebar, dashboard, any collections list)
+- Follow same patterns as item create (server action, Zod, shadcn Dialog, Sonner toast, router.refresh)
+
 ## Notes
 
-
-
+- Collections are user-scoped — always pass userId from session
+- Server component data fetching via lib/db functions; client-side mutations via server actions / api routes
+- Modal triggered from TopBar (already has "New Item" button — add "New Collection" alongside it)
+- No file/image fields — just name + description
+- Sidebar and dashboard RecentCollections should reflect the new collection after refresh
 
 ## History
 

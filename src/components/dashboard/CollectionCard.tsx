@@ -36,7 +36,9 @@ export default function CollectionCard({
   items,
 }: CollectionCardProps) {
   // Derive border color from most-used item type
-  const borderColor = getDominantTypeColor(items.map(({ itemType }) => itemType))
+  const borderColor = itemCount > 0
+    ? getDominantTypeColor(items.map(({ itemType }) => itemType))
+    : 'transparent'
 
   const typeIcons = getCollectionTypeIcons(items)
 

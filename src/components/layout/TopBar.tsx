@@ -1,11 +1,11 @@
-import { Search, FolderPlus } from "lucide-react";
+import { Search } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
 import { getItemTypesWithCounts } from "@/lib/db/items";
 import CreateItemDialog from "@/components/shared/CreateItemDialog";
+import CreateCollectionDialog from "@/components/shared/CreateCollectionDialog";
 
 export default async function TopBar() {
   const session = await auth();
@@ -29,10 +29,7 @@ export default async function TopBar() {
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="outline">
-          <FolderPlus className="size-4" />
-          New Collection
-        </Button>
+        <CreateCollectionDialog />
         <CreateItemDialog itemTypes={itemTypes} />
       </div>
     </header>
