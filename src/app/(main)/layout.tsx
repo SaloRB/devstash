@@ -5,38 +5,44 @@ import { ItemDrawerProvider } from '@/contexts/item-drawer-context'
 import ItemDrawer from '@/components/shared/ItemDrawer'
 import { SearchProvider } from '@/contexts/search-context'
 import CommandPalette from '@/components/shared/CommandPalette'
+import { EditorPreferencesProvider } from '@/contexts/editor-preferences-context'
 import { auth } from '@/auth'
 import { getUserCollections } from '@/lib/db/collections'
 import { getSearchData } from '@/lib/db/search'
+import { getEditorPreferences } from '@/lib/db/profile'
+import { DEFAULT_EDITOR_PREFS, type EditorPreferences } from '@/lib/editor-preferences'
 
 export default async function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth()
-  const [collections, searchData] = session?.user?.id
+  const [collections, searchData, editorPrefs] = session?.user?.id
     ? await Promise.all([
         getUserCollections(session.user.id),
         getSearchData(session.user.id),
+        getEditorPreferences(session.user.id),
       ])
-    : [[], { items: [], collections: [] }]
+    : [[], { items: [], collections: [] }, DEFAULT_EDITOR_PREFS]
 
   return (
     <ItemDrawerProvider>
       <SearchProvider items={searchData.items} collections={searchData.collections}>
-        <SidebarProvider
-          style={{ '--topbar-height': '57px' } as React.CSSProperties}
-        >
-          <AppSidebar />
-          <SidebarInset>
-            <TopBar />
-            <main className="mt-(--topbar-height) flex-1 overflow-y-auto p-6">
-              {children}
-            </main>
-          </SidebarInset>
-        </SidebarProvider>
-        <CommandPalette />
+        <EditorPreferencesProvider initialPrefs={editorPrefs as EditorPreferences}>
+          <SidebarProvider
+            style={{ '--topbar-height': '57px' } as React.CSSProperties}
+          >
+            <AppSidebar />
+            <SidebarInset>
+              <TopBar />
+              <main className="mt-(--topbar-height) flex-1 overflow-y-auto p-6">
+                {children}
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
+          <CommandPalette />
+          <ItemDrawer collections={collections} />
+        </EditorPreferencesProvider>
       </SearchProvider>
-      <ItemDrawer collections={collections} />
     </ItemDrawerProvider>
   )
 }

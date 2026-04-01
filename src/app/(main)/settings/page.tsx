@@ -3,6 +3,7 @@ import { auth } from '@/auth'
 import { getProfileUser } from '@/lib/db/profile'
 import { ChangePasswordForm } from '@/components/settings/ChangePasswordForm'
 import { DeleteAccountButton } from '@/components/settings/DeleteAccountButton'
+import { EditorPreferencesForm } from '@/components/settings/EditorPreferencesForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 export default async function SettingsPage() {
   const session = await auth()
@@ -32,6 +33,17 @@ export default async function SettingsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Editor */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Editor</CardTitle>
+          <CardDescription>Customize your code editor appearance</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <EditorPreferencesForm />
+        </CardContent>
+      </Card>
 
       {/* Danger Zone */}
       <Card>

@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import Editor, { type OnMount } from '@monaco-editor/react'
+import Editor, { type OnMount, type BeforeMount } from '@monaco-editor/react'
 import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useEditorPreferences } from '@/contexts/editor-preferences-context'
 
 interface CodeEditorProps {
   value: string
@@ -14,6 +15,48 @@ interface CodeEditorProps {
   className?: string
 }
 
+const handleBeforeMount: BeforeMount = (monaco) => {
+  monaco.editor.defineTheme('monokai', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '75715e', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'f92672' },
+      { token: 'string', foreground: 'e6db74' },
+      { token: 'number', foreground: 'ae81ff' },
+      { token: 'type', foreground: '66d9e8' },
+      { token: 'function', foreground: 'a6e22e' },
+    ],
+    colors: {
+      'editor.background': '#272822',
+      'editor.foreground': '#f8f8f2',
+      'editorLineNumber.foreground': '#75715e',
+      'editor.selectionBackground': '#49483e',
+      'editor.lineHighlightBackground': '#3e3d32',
+    },
+  })
+
+  monaco.editor.defineTheme('github-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '8b949e', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'ff7b72' },
+      { token: 'string', foreground: 'a5d6ff' },
+      { token: 'number', foreground: '79c0ff' },
+      { token: 'type', foreground: 'ffa657' },
+      { token: 'function', foreground: 'd2a8ff' },
+    ],
+    colors: {
+      'editor.background': '#0d1117',
+      'editor.foreground': '#c9d1d9',
+      'editorLineNumber.foreground': '#6e7681',
+      'editor.selectionBackground': '#388bfd33',
+      'editor.lineHighlightBackground': '#161b22',
+    },
+  })
+}
+
 export function CodeEditor({
   value,
   language,
@@ -21,6 +64,7 @@ export function CodeEditor({
   onChange,
   className,
 }: CodeEditorProps) {
+  const { prefs } = useEditorPreferences()
   const [copied, setCopied] = useState(false)
   const [height, setHeight] = useState(120)
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
@@ -87,16 +131,18 @@ export function CodeEditor({
         height={height}
         value={value}
         language={normalizedLanguage}
-        theme="vs-dark"
+        theme={prefs.theme}
         onChange={(val) => onChange?.(val ?? '')}
+        beforeMount={handleBeforeMount}
         onMount={handleMount}
         options={{
           readOnly,
-          minimap: { enabled: false },
+          minimap: { enabled: prefs.minimap },
           scrollBeyondLastLine: false,
-          fontSize: 12,
+          fontSize: prefs.fontSize,
+          tabSize: prefs.tabSize,
           lineNumbers: 'on',
-          wordWrap: 'on',
+          wordWrap: prefs.wordWrap ? 'on' : 'off',
           padding: { top: 12, bottom: 12 },
           scrollbar: {
             vertical: 'auto',

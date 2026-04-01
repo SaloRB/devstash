@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { DEFAULT_EDITOR_PREFS, type EditorPreferences } from '@/lib/editor-preferences'
 
 export async function getProfileStats(userId: string) {
   const [totalItems, totalCollections, itemTypeCounts] = await Promise.all([
@@ -28,6 +29,16 @@ export async function getProfileUser(userId: string) {
       accounts: { select: { provider: true } },
     },
   })
+}
+
+export async function getEditorPreferences(userId: string): Promise<EditorPreferences> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { editorPreferences: true },
+  })
+  const raw = user?.editorPreferences
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return DEFAULT_EDITOR_PREFS
+  return { ...DEFAULT_EDITOR_PREFS, ...(raw as Partial<EditorPreferences>) }
 }
 
 export type ProfileStats = Awaited<ReturnType<typeof getProfileStats>>
