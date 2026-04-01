@@ -7,11 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatBytes } from '@/lib/utils'
-
-const IMAGE_EXTS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'])
-const FILE_EXTS = new Set(['pdf', 'txt', 'md', 'json', 'yaml', 'yml', 'xml', 'csv', 'toml', 'ini'])
-const IMAGE_MAX = 5 * 1024 * 1024
-const FILE_MAX = 10 * 1024 * 1024
+import { IMAGE_EXTS, FILE_EXTS, IMAGE_MAX, FILE_MAX } from '@/constants'
 
 export type UploadedFile = {
   fileUrl: string

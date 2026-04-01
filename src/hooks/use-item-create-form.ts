@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { createItem } from '@/actions/items'
 import type { ItemTypeWithCount } from '@/lib/db/items'
 import type { UploadedFile } from '@/components/shared/FileUpload'
-import { CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES } from '@/lib/item-type-sets'
+import { CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES } from '@/constants'
 
 export function useItemCreateForm(
   itemTypes: ItemTypeWithCount[],

@@ -1,7 +1,7 @@
 import { FolderOpen } from 'lucide-react'
 import { auth } from '@/auth'
 import { getAllCollections } from '@/lib/db/collections'
-import { COLLECTIONS_PER_PAGE } from '@/lib/constants'
+import { COLLECTIONS_PER_PAGE } from '@/constants'
 import CollectionCard from '@/components/dashboard/CollectionCard'
 import EmptyState from '@/components/shared/EmptyState'
 import Pagination from '@/components/shared/Pagination'

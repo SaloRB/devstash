@@ -12,12 +12,8 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { useEditorPreferences } from '@/contexts/editor-preferences-context'
 import { updateEditorPreferences } from '@/actions/editor-preferences'
-import {
-  FONT_SIZE_OPTIONS,
-  TAB_SIZE_OPTIONS,
-  THEME_OPTIONS,
-  type EditorPreferences,
-} from '@/lib/editor-preferences'
+import { FONT_SIZE_OPTIONS, TAB_SIZE_OPTIONS, THEME_OPTIONS } from '@/constants'
+import type { EditorPreferences } from '@/types/editor'
 
 export function EditorPreferencesForm() {
   const { prefs, setPrefs } = useEditorPreferences()

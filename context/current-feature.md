@@ -1,16 +1,61 @@
-# Current Feature
+# Current Feature: Consolidate Constants & Types into Dedicated Folders
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- `src/constants/` folder holds all app constants, split into focused files by domain
+- `src/types/` folder holds all shared TypeScript types, split by domain
+- No constants defined inside component files (FileUpload.tsx) or middleware (proxy.ts)
+- Zod schemas + inferred types live in `src/types/` (or `src/schemas/` — TBD with user)
+- All existing imports updated — no broken references across the codebase
 
 ## Notes
 
-<!-- notes go here -->
+**Current scatter:**
+
+- `src/lib/constants.ts` — pagination only (ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, DASHBOARD_COLLECTIONS_LIMIT, DASHBOARD_RECENT_ITEMS_LIMIT)
+- `src/lib/item-type-sets.ts` — CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES (Sets)
+- `src/lib/editor-preferences.ts` — DEFAULT_EDITOR_PREFS, FONT_SIZE_OPTIONS, TAB_SIZE_OPTIONS, THEME_OPTIONS + EditorPreferences interface
+- `src/proxy.ts` — AUTH_ROUTES, PROTECTED_ROUTES arrays
+- `src/components/shared/FileUpload.tsx` — IMAGE_EXTS, FILE_EXTS, IMAGE_MAX, FILE_MAX
+- `src/actions/items.ts` — createItemSchema, updateItemSchema, deleteItemSchema + inferred input types
+- `src/actions/collections.ts` — createCollectionSchema, updateCollectionSchema, deleteCollectionSchema + inferred input types
+- `src/lib/db/items.ts` — ItemWithType, ItemTypeWithCount, ItemDetail
+- `src/lib/db/collections.ts` — CollectionWithItems, SidebarCollection, UserCollection
+- `src/lib/db/profile.ts` — ProfileStats, ProfileUser
+- `src/lib/db/search.ts` — SearchItem, SearchCollection
+
+**Proposed structure:**
+```
+src/
+├── constants/
+│   ├── pagination.ts      — ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, DASHBOARD_* limits
+│   ├── routes.ts          — AUTH_ROUTES, PROTECTED_ROUTES
+│   ├── files.ts           — IMAGE_EXTS, FILE_EXTS, IMAGE_MAX, FILE_MAX
+│   ├── item-types.ts      — CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES (Sets)
+│   ├── editor.ts          — DEFAULT_EDITOR_PREFS, FONT_SIZE_OPTIONS, TAB_SIZE_OPTIONS, THEME_OPTIONS
+│   └── index.ts           — re-exports all
+├── types/
+│   ├── items.ts           — ItemWithType, ItemTypeWithCount, ItemDetail, CreateItemInput, UpdateItemInput
+│   ├── collections.ts     — CollectionWithItems, SidebarCollection, UserCollection, CreateCollectionInput, UpdateCollectionInput
+│   ├── profile.ts         — ProfileStats, ProfileUser
+│   ├── search.ts          — SearchItem, SearchCollection
+│   ├── editor.ts          — EditorPreferences interface
+│   ├── next-auth.d.ts     — stays here (Next.js convention)
+│   └── index.ts           — re-exports all (except .d.ts)
+```
+
+**Zod schemas:** keep co-located in `src/actions/` but move inferred types to `src/types/`
+
+**What to leave in place:**
+- `src/lib/item-types.ts` — ICON_MAP (Lucide components, UI concern, stays in lib)
+- `src/lib/r2.ts` — env-driven config, stays
+- `src/lib/editor-preferences.ts` — can be deleted once split into constants/editor.ts + types/editor.ts
+- `src/lib/constants.ts` — delete once migrated to constants/
+- `src/lib/item-type-sets.ts` — delete once migrated to constants/item-types.ts
 
 ## History
 

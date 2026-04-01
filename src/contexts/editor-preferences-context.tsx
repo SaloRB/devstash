@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
-import type { EditorPreferences } from '@/lib/editor-preferences'
+import type { EditorPreferences } from '@/types/editor'
 
 interface EditorPreferencesContextValue {
   prefs: EditorPreferences

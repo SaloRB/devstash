@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { updateItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
-import { CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES } from '@/lib/item-type-sets'
+import { CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES } from '@/constants'
 
 export function useItemEditForm(
   item: ItemDetail,

@@ -53,7 +53,7 @@ import {
   LANGUAGE_TYPES,
   MARKDOWN_TYPES,
   FILE_TYPES,
-} from '@/lib/item-type-sets'
+} from '@/constants'
 import { formatBytes, formatLongDate } from '@/lib/utils'
 
 function DrawerSkeleton() {

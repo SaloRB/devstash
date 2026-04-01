@@ -6,7 +6,7 @@ vi.mock('@/lib/prisma', () => ({
 
 import { getEditorPreferences } from './profile'
 import { prisma } from '@/lib/prisma'
-import { DEFAULT_EDITOR_PREFS } from '@/lib/editor-preferences'
+import { DEFAULT_EDITOR_PREFS } from '@/constants'
 
 const mockFindUnique = vi.mocked(prisma.user.findUnique)
 

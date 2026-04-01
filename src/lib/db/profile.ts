@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import { DEFAULT_EDITOR_PREFS, type EditorPreferences } from '@/lib/editor-preferences'
+import { DEFAULT_EDITOR_PREFS } from '@/constants'
+import type { EditorPreferences } from '@/types/editor'
 
 export async function getProfileStats(userId: string) {
   const [totalItems, totalCollections, itemTypeCounts] = await Promise.all([

@@ -10,7 +10,8 @@ import { auth } from '@/auth'
 import { getUserCollections } from '@/lib/db/collections'
 import { getSearchData } from '@/lib/db/search'
 import { getEditorPreferences } from '@/lib/db/profile'
-import { DEFAULT_EDITOR_PREFS, type EditorPreferences } from '@/lib/editor-preferences'
+import { DEFAULT_EDITOR_PREFS } from '@/constants'
+import type { EditorPreferences } from '@/types/editor'
 
 export default async function MainLayout({
   children,

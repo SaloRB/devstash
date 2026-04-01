@@ -1,11 +1,9 @@
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 import { NextResponse } from "next/server";
+import { AUTH_ROUTES, PROTECTED_ROUTES } from "@/constants/routes";
 
 const { auth } = NextAuth(authConfig);
-
-const AUTH_ROUTES = ["/sign-in", "/register", "/forgot-password", "/reset-password"];
-const PROTECTED_ROUTES = ["/dashboard", "/profile", "/items", "/settings"];
 
 export const proxy = auth(function middleware(req) {
   const isLoggedIn = !!req.auth;

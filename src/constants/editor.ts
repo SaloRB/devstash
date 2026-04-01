@@ -1,10 +1,4 @@
-export interface EditorPreferences {
-  fontSize: number
-  tabSize: number
-  wordWrap: boolean
-  minimap: boolean
-  theme: 'vs-dark' | 'monokai' | 'github-dark'
-}
+import type { EditorPreferences } from '@/types/editor'
 
 export const DEFAULT_EDITOR_PREFS: EditorPreferences = {
   fontSize: 14,

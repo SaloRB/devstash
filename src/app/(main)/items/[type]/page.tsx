@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
 import { getItemsByType, getItemTypesWithCounts } from '@/lib/db/items'
 import { getUserCollections } from '@/lib/db/collections'
-import { ITEMS_PER_PAGE } from '@/lib/constants'
+import { ITEMS_PER_PAGE } from '@/constants'
 import ItemsGrid from '@/components/items/ItemsGrid'
 import CreateItemDialog from '@/components/shared/CreateItemDialog'
 import Pagination from '@/components/shared/Pagination'
