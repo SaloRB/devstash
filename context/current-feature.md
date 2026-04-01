@@ -1,29 +1,16 @@
-# Current Feature: Homepage Mockup
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Build `prototypes/homepage/` with `index.html`, `styles.css`, `script.js`
-- Hero section: chaos container (floating animated icons) → transform arrow → dashboard preview
-- Chaos icons animate: float/bounce off walls, repel from mouse cursor
-- Fixed navbar: logo, Features/Pricing links, Sign In/Get Started buttons
-- Features section: 6 cards using item type accent colors
-- AI section: Pro badge + feature checklist + code editor mockup with AI tag demo
-- Pricing section: Free vs Pro cards, yearly toggle ($72/yr), "Most Popular" badge on Pro
-- CTA section and footer with current year
-- Scroll fade-in animations, navbar opacity on scroll
-- Responsive: mobile stacks vertically, arrow rotates 90°
+<!-- goals go here -->
 
 ## Notes
 
-- Output is a static prototype (no framework), pure HTML/CSS/JS
-- Dark theme; accent colors per type: Snippet #3b82f6, Prompt #f59e0b, Command #06b6d4, Note #22c55e, File #64748b, Image #ec4899, URL #6366f1
-- Chaos icons: Notion, GitHub, Slack, VS Code logos + browser tabs, Terminal, Text file, Bookmark
-- Arrow pulses via CSS animation
-- Animations use requestAnimationFrame for chaos icons
+<!-- notes go here -->
 
 ## History
 
@@ -86,3 +73,4 @@ In Progress
 - **2026-04-01** - Completed Favorite Toggle Button: wired placeholder favorite buttons in ItemDrawer action bar, /collections/[id] header (CollectionDetailActions), and CollectionCard 3-dots dropdown (CollectionActionsDropdown). Added always-visible star toggle to ItemCard (filled yellow when favorited). toggleFavoriteItem/toggleFavoriteCollection DB queries and server actions. Optimistic local state + router.refresh() sync via useEffect. 10 unit tests.
 - **2026-04-01** - Completed Client-Side Sorting on Favorites Page: FavoritesSortableContent client wrapper holds sort state (field + direction), renders Name/Date/Type sort buttons (shadcn Button, secondary/ghost variants) with chevron indicator. sortItems sorts by title/updatedAt/itemType.name; sortCollections by name/updatedAt. SortField/SortDir types in src/types/items.ts, SORT_FIELDS constant in src/constants/sorting.ts, FavoriteCollection type exported from lib/db/collections.ts.
 - **2026-04-01** - Completed Pinned Items: togglePinnedItem DB query, toggleItemPin server action, Pin button wired in ItemDrawer with optimistic UI + toast. Pinned items sort to top of /items/[type] and /collections/[id] listings. Pin icon on ItemCard remains static indicator. 9 unit tests.
+- **2026-04-01** - Completed Homepage Mockup: static prototype in prototypes/homepage/ (index.html, styles.css, script.js). Dark theme with 7 item-type accent colors. Hero with requestAnimationFrame chaos animation (8 icons bounce/repel from mouse), pulsing arrow, dashboard preview. Fixed navbar, Features (6 cards), AI section with code editor mockup, Pricing with monthly/yearly toggle, CTA, footer. Scroll fade-in, navbar opacity. Fully responsive — mobile stacks vertically, arrow rotates 90°.
