@@ -1,27 +1,16 @@
-# Current Feature: Add Favorite Button to Drawer, Collection Page, and Cards
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Wire up the favorite toggle in ItemDrawer action bar (currently placeholder)
-- Wire up the favorite toggle in /collections/[id] page header (currently placeholder)
-- Add favorite toggle to CollectionCard dropdown menu (3-dots)
-- Add favorite toggle to ItemCard (star icon that toggles favorited state)
-- Create `toggleFavorite` server actions for both items and collections
-- Reflect live favorited state visually (filled/outline star, highlighted state)
+<!-- goals go here -->
 
 ## Notes
 
-- Item Drawer already has a favorite button in the action bar — it was added as a placeholder in "Completed Item Drawer" history entry
-- Collection page /collections/[id] header has a favorite button — also a placeholder per "Completed Collection Actions" history entry
-- CollectionCard 3-dots DropdownMenu has a favorite entry that is also placeholder
-- ItemCard does not currently have a favorite button — needs to be added
-- `isFavorited` field likely lives on items/collections in the DB; check schema for `favorited` or `isFavorited` boolean
-- Toggling should update state optimistically or via router.refresh()
-- Use Sonner toast on success/error
+<!-- notes go here -->
 
 ## History
 
@@ -81,3 +70,4 @@ In Progress
 - **2026-03-31** - Completed Editor Preferences Settings: editorPreferences JSONB column on User (Prisma migration), EditorPreferencesContext/Provider wrapping main layout, updateEditorPreferences server action (Zod-validated), EditorPreferencesForm with theme/font-size/tab-size dropdowns and word-wrap/minimap toggles (auto-save + toast), Editor card added to /settings page, CodeEditor consumes context applying all prefs + custom monokai/github-dark themes via beforeMount. 13 unit tests.
 - **2026-03-31** - Completed Constants & Types Consolidation: created src/constants/ (pagination.ts, routes.ts, files.ts, item-types.ts, editor.ts, index.ts) and src/types/ (editor.ts, items.ts, collections.ts, profile.ts, search.ts, index.ts). Deleted lib/constants.ts, lib/item-type-sets.ts, lib/editor-preferences.ts. Moved AUTH_ROUTES/PROTECTED_ROUTES out of proxy.ts, file upload limits out of FileUpload.tsx. All imports updated; 81 tests pass.
 - **2026-04-01** - Completed Favorites Page: added star icon link in TopBar, /favorites route (protected), getFavoriteItems/getFavoriteCollections DB queries, compact monospace list view with FavoriteItems and FavoriteCollections components (type icon, title, colored type badge, relative date). Click item opens ItemDrawer; click collection navigates to /collections/[id]. Empty state when no favorites.
+- **2026-04-01** - Completed Favorite Toggle Button: wired placeholder favorite buttons in ItemDrawer action bar, /collections/[id] header (CollectionDetailActions), and CollectionCard 3-dots dropdown (CollectionActionsDropdown). Added always-visible star toggle to ItemCard (filled yellow when favorited). toggleFavoriteItem/toggleFavoriteCollection DB queries and server actions. Optimistic local state + router.refresh() sync via useEffect. 10 unit tests.
