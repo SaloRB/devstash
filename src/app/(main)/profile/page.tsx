@@ -2,8 +2,6 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { getProfileUser, getProfileStats } from '@/lib/db/profile'
 import { UserAvatar } from '@/components/shared/UserAvatar'
-import { ChangePasswordForm } from '@/components/profile/ChangePasswordForm'
-import { DeleteAccountButton } from '@/components/profile/DeleteAccountButton'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -24,8 +22,6 @@ export default async function ProfilePage() {
   ])
 
   if (!user) redirect('/sign-in')
-
-  const isEmailUser = !user.accounts.some((a) => a.provider === 'github')
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
@@ -48,7 +44,6 @@ export default async function ProfilePage() {
                 <p className="text-sm text-muted-foreground">{user.email}</p>
               </div>
             </div>
-            {isEmailUser && <ChangePasswordForm />}
           </div>
           <Separator />
           <p className="text-sm text-muted-foreground">
@@ -105,16 +100,6 @@ export default async function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Account Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Danger zone</CardTitle>
-          <CardDescription>Irreversible account actions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DeleteAccountButton />
-        </CardContent>
-      </Card>
     </div>
   )
 }

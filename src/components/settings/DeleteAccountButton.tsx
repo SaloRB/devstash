@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,6 +40,7 @@ export function DeleteAccountButton() {
     <div className="space-y-2">
       <AlertDialog>
         <AlertDialogTrigger render={<Button variant="destructive" disabled={loading} />}>
+          <Trash2 className="size-4" />
           Delete account
         </AlertDialogTrigger>
         <AlertDialogContent>

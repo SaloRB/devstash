@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { KeyRound } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -60,6 +61,7 @@ export function ChangePasswordForm() {
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm() }}>
       <DialogTrigger render={<Button variant="outline" />}>
+        <KeyRound className="size-4" />
         Change password
       </DialogTrigger>
       <DialogContent>

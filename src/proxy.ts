@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const { auth } = NextAuth(authConfig);
 
 const AUTH_ROUTES = ["/sign-in", "/register", "/forgot-password", "/reset-password"];
-const PROTECTED_ROUTES = ["/dashboard", "/profile", "/items"];
+const PROTECTED_ROUTES = ["/dashboard", "/profile", "/items", "/settings"];
 
 export const proxy = auth(function middleware(req) {
   const isLoggedIn = !!req.auth;
@@ -32,6 +32,8 @@ export const config = {
     "/profile/:path*",
     "/profile",
     "/items/:path*",
+    "/settings",
+    "/settings/:path*",
     "/sign-in",
     "/register",
     "/forgot-password",

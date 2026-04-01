@@ -2,7 +2,7 @@
 
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, Settings, User } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +30,12 @@ export function SidebarUserMenu({ name, email, image }: SidebarUserMenuProps) {
             <Link href="/profile" className="flex items-center gap-1.5 w-full">
               <User className="size-4" />
               Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href="/settings" className="flex items-center gap-1.5 w-full">
+              <Settings className="size-4" />
+              Settings
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
