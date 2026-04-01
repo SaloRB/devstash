@@ -55,7 +55,7 @@ export async function getItemsByType(
   const [items, total] = await prisma.$transaction([
     prisma.item.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       skip: (page - 1) * limit,
       take: limit,
       include: {
@@ -184,6 +184,16 @@ export async function toggleFavoriteItem(id: string, userId: string) {
     where: { id, userId },
     data: { isFavorite: !item.isFavorite },
     select: { id: true, isFavorite: true },
+  })
+}
+
+export async function togglePinnedItem(id: string, userId: string) {
+  const item = await prisma.item.findFirst({ where: { id, userId }, select: { isPinned: true } })
+  if (!item) throw new Error('Item not found')
+  return prisma.item.update({
+    where: { id, userId },
+    data: { isPinned: !item.isPinned },
+    select: { id: true, isPinned: true },
   })
 }
 

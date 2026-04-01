@@ -43,7 +43,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
-import { deleteItem, toggleFavoriteItem } from '@/actions/items'
+import { deleteItem, toggleFavoriteItem, toggleItemPin } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
 import type { UserCollection } from '@/lib/db/collections'
 import { useItemEditForm } from '@/hooks/use-item-edit-form'
@@ -88,15 +88,19 @@ function ViewMode({
   onEdit,
   onDelete,
   onToggleFavorite,
+  onTogglePin,
   deleting,
   togglingFavorite,
+  togglingPin,
 }: {
   item: ItemDetail
   onEdit: () => void
   onDelete: () => void
   onToggleFavorite: () => void
+  onTogglePin: () => void
   deleting: boolean
   togglingFavorite: boolean
+  togglingPin: boolean
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -131,7 +135,9 @@ function ViewMode({
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1.5 text-sm"
+          className={`flex items-center gap-1.5 text-sm ${item.isPinned ? 'text-foreground' : ''}`}
+          onClick={onTogglePin}
+          disabled={togglingPin}
         >
           <Pin className={`size-4 ${item.isPinned ? 'fill-foreground' : ''}`} />
           Pin
@@ -539,6 +545,7 @@ export default function ItemDrawer({
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [togglingFavorite, setTogglingFavorite] = useState(false)
+  const [togglingPin, setTogglingPin] = useState(false)
 
   const Icon = item ? (ICON_MAP[item.itemType.icon] ?? ICON_MAP['Code']) : null
 
@@ -558,6 +565,19 @@ export default function ItemDrawer({
       router.refresh()
     } else {
       toast.error(result.error ?? 'Failed to update favorite')
+    }
+  }
+
+  async function handleTogglePin() {
+    if (!item) return
+    setTogglingPin(true)
+    const result = await toggleItemPin(item.id)
+    setTogglingPin(false)
+    if (result.success) {
+      refreshItem({ ...item, isPinned: result.data.isPinned })
+      router.refresh()
+    } else {
+      toast.error(result.error ?? 'Failed to update pin')
     }
   }
 
@@ -647,8 +667,10 @@ export default function ItemDrawer({
                 onEdit={() => setEditing(true)}
                 onDelete={handleDelete}
                 onToggleFavorite={handleToggleFavorite}
+                onTogglePin={handleTogglePin}
                 deleting={deleting}
                 togglingFavorite={togglingFavorite}
+                togglingPin={togglingPin}
               />
             )}
           </>

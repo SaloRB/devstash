@@ -7,14 +7,16 @@ vi.mock('@/lib/prisma', () => ({
       findFirst: vi.fn(),
       findMany: vi.fn(),
       count: vi.fn(),
+      update: vi.fn(),
     },
   },
 }))
 
-import { getItemById, getItemsByType } from './items'
+import { getItemById, getItemsByType, togglePinnedItem } from './items'
 import { prisma } from '@/lib/prisma'
 
 const mockFindFirst = vi.mocked(prisma.item.findFirst)
+const mockUpdate = vi.mocked(prisma.item.update)
 const mockTransaction = vi.mocked(prisma.$transaction)
 const mockFindMany = vi.mocked(prisma.item.findMany)
 const mockCount = vi.mocked(prisma.item.count)
@@ -84,6 +86,54 @@ describe('getItemsByType', () => {
     )
     expect(mockCount).toHaveBeenCalledWith(
       expect.objectContaining({ where: expectedWhere })
+    )
+  })
+})
+
+describe('togglePinnedItem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('flips isPinned from false to true', async () => {
+    mockFindFirst.mockResolvedValue({ isPinned: false } as never)
+    mockUpdate.mockResolvedValue({ id: 'item-1', isPinned: true } as never)
+
+    const result = await togglePinnedItem('item-1', 'user-1')
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { isPinned: true } })
+    )
+    expect(result).toEqual({ id: 'item-1', isPinned: true })
+  })
+
+  it('flips isPinned from true to false', async () => {
+    mockFindFirst.mockResolvedValue({ isPinned: true } as never)
+    mockUpdate.mockResolvedValue({ id: 'item-1', isPinned: false } as never)
+
+    const result = await togglePinnedItem('item-1', 'user-1')
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { isPinned: false } })
+    )
+    expect(result).toEqual({ id: 'item-1', isPinned: false })
+  })
+
+  it('throws when item not found', async () => {
+    mockFindFirst.mockResolvedValue(null)
+
+    await expect(togglePinnedItem('item-1', 'user-1')).rejects.toThrow('Item not found')
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+
+  it('scopes findFirst to userId', async () => {
+    mockFindFirst.mockResolvedValue({ isPinned: false } as never)
+    mockUpdate.mockResolvedValue({ id: 'item-1', isPinned: true } as never)
+
+    await togglePinnedItem('item-1', 'user-1')
+
+    expect(mockFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: 'item-1', userId: 'user-1' } })
     )
   })
 })

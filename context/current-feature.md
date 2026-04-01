@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature: Pinned Items
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- `toggleItemPin` server action (items only)
+- Pin button in ItemDrawer is clickable with optimistic UI
+- Toast on success/error
+- Pinned items sort to top of listings
+- Pin icon on ItemCard is static indicator only
 
 ## Notes
 
-<!-- notes go here -->
+- Follow Favorite Button pattern (optimistic local state + router.refresh())
+- Items only — no collection pinning
+- Pin icon on ItemCard already exists as static UI; keep it that way
 
 ## History
 

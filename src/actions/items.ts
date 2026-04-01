@@ -8,6 +8,7 @@ import {
   updateItem as updateItemDb,
   deleteItem as deleteItemDb,
   toggleFavoriteItem as toggleFavoriteItemDb,
+  togglePinnedItem as togglePinnedItemDb,
 } from '@/lib/db/items'
 import { r2, R2_BUCKET, keyFromUrl } from '@/lib/r2'
 
@@ -121,6 +122,17 @@ export async function toggleFavoriteItem(itemId: string) {
     return { success: true as const, data: result }
   } catch {
     return { success: false as const, error: 'Failed to update favorite' }
+  }
+}
+
+export async function toggleItemPin(itemId: string) {
+  const session = await auth()
+  if (!session?.user?.id) return { success: false as const, error: 'Unauthorized' }
+  try {
+    const result = await togglePinnedItemDb(itemId, session.user.id)
+    return { success: true as const, data: result }
+  } catch {
+    return { success: false as const, error: 'Failed to update pin' }
   }
 }
 

@@ -122,7 +122,7 @@ export async function getCollectionWithItems(
             },
           },
         },
-        orderBy: { item: { createdAt: 'desc' } },
+        orderBy: [{ item: { isPinned: 'desc' } }, { item: { createdAt: 'desc' } }],
         skip: (page - 1) * limit,
         take: limit,
       },
