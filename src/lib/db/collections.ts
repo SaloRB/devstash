@@ -150,6 +150,20 @@ export async function deleteCollection(id: string, userId: string) {
   })
 }
 
+export async function getFavoriteCollections(userId: string) {
+  return prisma.collection.findMany({
+    where: { isFavorite: true, userId },
+    orderBy: { updatedAt: 'desc' },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      updatedAt: true,
+      _count: { select: { items: true } },
+    },
+  })
+}
+
 export async function getUserCollections(userId: string) {
   return prisma.collection.findMany({
     where: { userId },

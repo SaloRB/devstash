@@ -177,6 +177,17 @@ export async function deleteItem(id: string, userId: string) {
   })
 }
 
+export async function getFavoriteItems(userId: string) {
+  return prisma.item.findMany({
+    where: { isFavorite: true, userId },
+    orderBy: { updatedAt: 'desc' },
+    include: {
+      itemType: true,
+      tags: true,
+    },
+  })
+}
+
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number]
 export type ItemTypeWithCount = Awaited<ReturnType<typeof getItemTypesWithCounts>>[number]
 export type ItemDetail = NonNullable<Awaited<ReturnType<typeof getItemById>>>

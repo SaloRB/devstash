@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Star } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
 import { getItemTypesWithCounts } from "@/lib/db/items";
@@ -33,6 +34,13 @@ export default async function TopBar() {
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        <Link
+          href="/favorites"
+          className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          title="Favorites"
+        >
+          <Star className="size-4" />
+        </Link>
         <CreateCollectionDialog />
         <CreateItemDialog itemTypes={itemTypes} collections={collections} />
       </div>
