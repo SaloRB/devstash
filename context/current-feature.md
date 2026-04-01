@@ -1,16 +1,29 @@
-# Current Feature
+# Current Feature: Homepage Mockup
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- Build `prototypes/homepage/` with `index.html`, `styles.css`, `script.js`
+- Hero section: chaos container (floating animated icons) → transform arrow → dashboard preview
+- Chaos icons animate: float/bounce off walls, repel from mouse cursor
+- Fixed navbar: logo, Features/Pricing links, Sign In/Get Started buttons
+- Features section: 6 cards using item type accent colors
+- AI section: Pro badge + feature checklist + code editor mockup with AI tag demo
+- Pricing section: Free vs Pro cards, yearly toggle ($72/yr), "Most Popular" badge on Pro
+- CTA section and footer with current year
+- Scroll fade-in animations, navbar opacity on scroll
+- Responsive: mobile stacks vertically, arrow rotates 90°
 
 ## Notes
 
-<!-- notes go here -->
+- Output is a static prototype (no framework), pure HTML/CSS/JS
+- Dark theme; accent colors per type: Snippet #3b82f6, Prompt #f59e0b, Command #06b6d4, Note #22c55e, File #64748b, Image #ec4899, URL #6366f1
+- Chaos icons: Notion, GitHub, Slack, VS Code logos + browser tabs, Terminal, Text file, Bookmark
+- Arrow pulses via CSS animation
+- Animations use requestAnimationFrame for chaos icons
 
 ## History
 
