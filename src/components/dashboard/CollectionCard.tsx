@@ -67,6 +67,7 @@ export default function CollectionCard({
             collectionId={id}
             collectionName={name}
             collectionDescription={description}
+            isFavorite={isFavorite}
           />
         </CardAction>
         <CardDescription className="text-xs">{itemCount} items</CardDescription>

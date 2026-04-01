@@ -32,18 +32,20 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { updateCollection, deleteCollection } from '@/actions/collections'
+import { updateCollection, deleteCollection, toggleFavoriteCollection } from '@/actions/collections'
 
 interface CollectionActionsDropdownProps {
   collectionId: string
   collectionName: string
   collectionDescription?: string | null
+  isFavorite: boolean
 }
 
 export default function CollectionActionsDropdown({
   collectionId,
   collectionName,
   collectionDescription,
+  isFavorite,
 }: CollectionActionsDropdownProps) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
@@ -52,6 +54,17 @@ export default function CollectionActionsDropdown({
   const [description, setDescription] = useState(collectionDescription ?? '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [favorited, setFavorited] = useState(isFavorite)
+
+  async function handleToggleFavorite() {
+    const result = await toggleFavoriteCollection(collectionId)
+    if (result.success) {
+      setFavorited(result.data.isFavorite)
+      router.refresh()
+    } else {
+      toast.error(typeof result.error === 'string' ? result.error : 'Failed to update favorite')
+    }
+  }
 
   async function handleSave() {
     setSaving(true)
@@ -93,9 +106,9 @@ export default function CollectionActionsDropdown({
             <Pencil className="mr-2 size-4" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            <Star className="mr-2 size-4" />
-            Favorite
+          <DropdownMenuItem onClick={handleToggleFavorite}>
+            <Star className={`mr-2 size-4 ${favorited ? 'fill-yellow-500 text-yellow-500' : ''}`} />
+            {favorited ? 'Unfavorite' : 'Favorite'}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

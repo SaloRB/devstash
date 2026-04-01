@@ -27,18 +27,20 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { updateCollection, deleteCollection } from '@/actions/collections'
+import { updateCollection, deleteCollection, toggleFavoriteCollection } from '@/actions/collections'
 
 interface CollectionDetailActionsProps {
   collectionId: string
   collectionName: string
   collectionDescription?: string | null
+  isFavorite: boolean
 }
 
 export default function CollectionDetailActions({
   collectionId,
   collectionName,
   collectionDescription,
+  isFavorite,
 }: CollectionDetailActionsProps) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
@@ -46,6 +48,8 @@ export default function CollectionDetailActions({
   const [description, setDescription] = useState(collectionDescription ?? '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [favorited, setFavorited] = useState(isFavorite)
+  const [togglingFavorite, setTogglingFavorite] = useState(false)
 
   async function handleSave() {
     setSaving(true)
@@ -57,6 +61,18 @@ export default function CollectionDetailActions({
       router.refresh()
     } else {
       toast.error(typeof result.error === 'string' ? result.error : 'Failed to update')
+    }
+  }
+
+  async function handleToggleFavorite() {
+    setTogglingFavorite(true)
+    const result = await toggleFavoriteCollection(collectionId)
+    setTogglingFavorite(false)
+    if (result.success) {
+      setFavorited(result.data.isFavorite)
+      router.refresh()
+    } else {
+      toast.error(typeof result.error === 'string' ? result.error : 'Failed to update favorite')
     }
   }
 
@@ -125,8 +141,15 @@ export default function CollectionDetailActions({
         </DialogContent>
       </Dialog>
 
-      <Button variant="outline" size="icon-sm" disabled title="Favorite (coming soon)">
-        <Star className="size-4" />
+      <Button
+        variant="outline"
+        size="icon-sm"
+        title={favorited ? 'Remove from favorites' : 'Add to favorites'}
+        onClick={handleToggleFavorite}
+        disabled={togglingFavorite}
+        className={favorited ? 'text-yellow-500 hover:text-yellow-500' : ''}
+      >
+        <Star className={`size-4 ${favorited ? 'fill-yellow-500' : ''}`} />
       </Button>
 
       <AlertDialog>

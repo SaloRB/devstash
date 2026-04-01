@@ -68,6 +68,7 @@ export default async function CollectionDetailPage({
             collectionId={collection.id}
             collectionName={collection.name}
             collectionDescription={collection.description}
+            isFavorite={collection.isFavorite}
           />
         </div>
         {collection.description && (

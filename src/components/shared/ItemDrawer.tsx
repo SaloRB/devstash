@@ -43,7 +43,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
-import { deleteItem } from '@/actions/items'
+import { deleteItem, toggleFavoriteItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
 import type { UserCollection } from '@/lib/db/collections'
 import { useItemEditForm } from '@/hooks/use-item-edit-form'
@@ -87,12 +87,16 @@ function ViewMode({
   item,
   onEdit,
   onDelete,
+  onToggleFavorite,
   deleting,
+  togglingFavorite,
 }: {
   item: ItemDetail
   onEdit: () => void
   onDelete: () => void
+  onToggleFavorite: () => void
   deleting: boolean
+  togglingFavorite: boolean
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -116,6 +120,8 @@ function ViewMode({
           variant="ghost"
           size="sm"
           className={`gap-1.5 text-sm flex items-center ${item.isFavorite ? 'text-yellow-500 hover:text-yellow-500' : ''}`}
+          onClick={onToggleFavorite}
+          disabled={togglingFavorite}
         >
           <Star
             className={`size-4 ${item.isFavorite ? 'fill-yellow-500' : ''}`}
@@ -532,6 +538,7 @@ export default function ItemDrawer({
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [togglingFavorite, setTogglingFavorite] = useState(false)
 
   const Icon = item ? (ICON_MAP[item.itemType.icon] ?? ICON_MAP['Code']) : null
 
@@ -539,6 +546,19 @@ export default function ItemDrawer({
     refreshItem(updated)
     setEditing(false)
     router.refresh()
+  }
+
+  async function handleToggleFavorite() {
+    if (!item) return
+    setTogglingFavorite(true)
+    const result = await toggleFavoriteItem(item.id)
+    setTogglingFavorite(false)
+    if (result.success) {
+      refreshItem({ ...item, isFavorite: result.data.isFavorite })
+      router.refresh()
+    } else {
+      toast.error(result.error ?? 'Failed to update favorite')
+    }
   }
 
   async function handleDelete() {
@@ -626,7 +646,9 @@ export default function ItemDrawer({
                 item={item}
                 onEdit={() => setEditing(true)}
                 onDelete={handleDelete}
+                onToggleFavorite={handleToggleFavorite}
                 deleting={deleting}
+                togglingFavorite={togglingFavorite}
               />
             )}
           </>

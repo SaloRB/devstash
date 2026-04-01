@@ -177,6 +177,16 @@ export async function deleteItem(id: string, userId: string) {
   })
 }
 
+export async function toggleFavoriteItem(id: string, userId: string) {
+  const item = await prisma.item.findFirst({ where: { id, userId }, select: { isFavorite: true } })
+  if (!item) throw new Error('Item not found')
+  return prisma.item.update({
+    where: { id, userId },
+    data: { isFavorite: !item.isFavorite },
+    select: { id: true, isFavorite: true },
+  })
+}
+
 export async function getFavoriteItems(userId: string) {
   return prisma.item.findMany({
     where: { isFavorite: true, userId },

@@ -1,16 +1,27 @@
-# Current Feature
+# Current Feature: Add Favorite Button to Drawer, Collection Page, and Cards
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- Wire up the favorite toggle in ItemDrawer action bar (currently placeholder)
+- Wire up the favorite toggle in /collections/[id] page header (currently placeholder)
+- Add favorite toggle to CollectionCard dropdown menu (3-dots)
+- Add favorite toggle to ItemCard (star icon that toggles favorited state)
+- Create `toggleFavorite` server actions for both items and collections
+- Reflect live favorited state visually (filled/outline star, highlighted state)
 
 ## Notes
 
-<!-- notes go here -->
+- Item Drawer already has a favorite button in the action bar — it was added as a placeholder in "Completed Item Drawer" history entry
+- Collection page /collections/[id] header has a favorite button — also a placeholder per "Completed Collection Actions" history entry
+- CollectionCard 3-dots DropdownMenu has a favorite entry that is also placeholder
+- ItemCard does not currently have a favorite button — needs to be added
+- `isFavorited` field likely lives on items/collections in the DB; check schema for `favorited` or `isFavorited` boolean
+- Toggling should update state optimistically or via router.refresh()
+- Use Sonner toast on success/error
 
 ## History
 

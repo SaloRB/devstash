@@ -8,20 +8,23 @@ vi.mock('@/lib/db/collections', () => ({
   createCollection: vi.fn(),
   updateCollection: vi.fn(),
   deleteCollection: vi.fn(),
+  toggleFavoriteCollection: vi.fn(),
 }))
 
-import { createCollection, updateCollection, deleteCollection } from './collections'
+import { createCollection, updateCollection, deleteCollection, toggleFavoriteCollection } from './collections'
 import { auth } from '@/auth'
 import {
   createCollection as createCollectionDb,
   updateCollection as updateCollectionDb,
   deleteCollection as deleteCollectionDb,
+  toggleFavoriteCollection as toggleFavoriteCollectionDb,
 } from '@/lib/db/collections'
 
 const mockAuth = vi.mocked(auth)
 const mockCreateDb = vi.mocked(createCollectionDb)
 const mockUpdateDb = vi.mocked(updateCollectionDb)
 const mockDeleteDb = vi.mocked(deleteCollectionDb)
+const mockToggleFavoriteDb = vi.mocked(toggleFavoriteCollectionDb)
 
 const mockCreated = { id: 'col-1', name: 'My Collection', description: 'A desc' }
 const mockUpdated = { id: 'col-1', name: 'Updated Name', description: null }
@@ -195,5 +198,50 @@ describe('deleteCollection', () => {
     const result = await deleteCollection({ id: 'col-1' })
 
     expect(result).toEqual({ success: false, error: 'Failed to delete collection' })
+  })
+})
+
+describe('toggleFavoriteCollection', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAuth.mockResolvedValue({ user: { id: 'user-1' } } as never)
+    mockToggleFavoriteDb.mockResolvedValue({ id: 'col-1', isFavorite: true } as never)
+  })
+
+  it('returns unauthorized when no session', async () => {
+    mockAuth.mockResolvedValue(null as never)
+
+    const result = await toggleFavoriteCollection('col-1')
+
+    expect(result).toEqual({ success: false, error: 'Unauthorized' })
+    expect(mockToggleFavoriteDb).not.toHaveBeenCalled()
+  })
+
+  it('calls DB with id and userId', async () => {
+    await toggleFavoriteCollection('col-1')
+
+    expect(mockToggleFavoriteDb).toHaveBeenCalledWith('col-1', 'user-1')
+  })
+
+  it('returns updated isFavorite true on success', async () => {
+    const result = await toggleFavoriteCollection('col-1')
+
+    expect(result).toEqual({ success: true, data: { id: 'col-1', isFavorite: true } })
+  })
+
+  it('returns updated isFavorite false on success', async () => {
+    mockToggleFavoriteDb.mockResolvedValue({ id: 'col-1', isFavorite: false } as never)
+
+    const result = await toggleFavoriteCollection('col-1')
+
+    expect(result).toEqual({ success: true, data: { id: 'col-1', isFavorite: false } })
+  })
+
+  it('returns error when DB throws', async () => {
+    mockToggleFavoriteDb.mockRejectedValue(new Error('DB error'))
+
+    const result = await toggleFavoriteCollection('col-1')
+
+    expect(result).toEqual({ success: false, error: 'Failed to update favorite' })
   })
 })

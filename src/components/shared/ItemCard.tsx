@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Star, Pin, Copy, Check } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { ICON_MAP } from '@/lib/item-types'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { relativeDate } from '@/lib/utils'
+import { toggleFavoriteItem } from '@/actions/items'
 
 interface ItemType {
   icon: string
@@ -35,9 +37,27 @@ export default function ItemCard({
   createdAt,
 }: ItemCardProps) {
   const { openDrawer } = useItemDrawer()
+  const router = useRouter()
   const [copied, setCopied] = useState(false)
+  const [favorited, setFavorited] = useState(isFavorite)
+
+  useEffect(() => {
+    setFavorited(isFavorite)
+  }, [isFavorite])
   const Icon = ICON_MAP[itemType.icon] ?? ICON_MAP['Code']
   const iconColor = itemType.color
+
+  async function handleToggleFavorite(e: React.MouseEvent) {
+    e.stopPropagation()
+    setFavorited((prev) => !prev)
+    const result = await toggleFavoriteItem(id)
+    if (result.success) {
+      setFavorited(result.data.isFavorite)
+      router.refresh()
+    } else {
+      setFavorited(favorited)
+    }
+  }
 
   async function handleCopy(e: React.MouseEvent) {
     e.stopPropagation()
@@ -67,9 +87,15 @@ export default function ItemCard({
           <div className="flex items-center gap-2">
             <p className="truncate text-sm font-medium">{title}</p>
             {isPinned && <Pin className="size-3 text-muted-foreground" />}
-            {isFavorite && (
-              <Star className="size-3 fill-yellow-500 text-yellow-500" />
-            )}
+            <button
+              onClick={handleToggleFavorite}
+              title={favorited ? 'Remove from favorites' : 'Add to favorites'}
+              className="shrink-0"
+            >
+              <Star
+                className={`size-3 ${favorited ? 'fill-yellow-500 text-yellow-500' : 'text-muted-foreground hover:text-yellow-500'}`}
+              />
+            </button>
           </div>
           {description && (
             <p className="truncate text-xs text-muted-foreground">
