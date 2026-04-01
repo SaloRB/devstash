@@ -4,9 +4,7 @@ import { useRouter } from 'next/navigation'
 import { FolderOpen } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { relativeDate } from '@/lib/utils'
-import type { getFavoriteCollections } from '@/lib/db/collections'
-
-type FavoriteCollection = Awaited<ReturnType<typeof getFavoriteCollections>>[number]
+import type { FavoriteCollection } from '@/types/collections'
 
 export default function FavoriteCollections({ collections }: { collections: FavoriteCollection[] }) {
   const router = useRouter()

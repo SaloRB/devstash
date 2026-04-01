@@ -3,8 +3,7 @@ import { auth } from '@/auth'
 import { getFavoriteItems } from '@/lib/db/items'
 import { getFavoriteCollections } from '@/lib/db/collections'
 import EmptyState from '@/components/shared/EmptyState'
-import FavoriteItems from '@/components/favorites/FavoriteItems'
-import FavoriteCollections from '@/components/favorites/FavoriteCollections'
+import FavoritesSortableContent from '@/components/favorites/FavoritesSortableContent'
 
 export const metadata = { title: 'DevStash - Favorites' }
 
@@ -35,10 +34,7 @@ export default async function FavoritesPage() {
           description="Star items or collections to find them here."
         />
       ) : (
-        <div className="space-y-8">
-          <FavoriteItems items={items} />
-          <FavoriteCollections collections={collections} />
-        </div>
+        <FavoritesSortableContent items={items} collections={collections} />
       )}
     </div>
   )

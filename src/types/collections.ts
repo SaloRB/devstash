@@ -1,2 +1,2 @@
-export type { CollectionWithItems, SidebarCollection, UserCollection } from '@/lib/db/collections'
+export type { CollectionWithItems, SidebarCollection, UserCollection, FavoriteCollection } from '@/lib/db/collections'
 export type { CreateCollectionInput, UpdateCollectionInput } from '@/actions/collections'
