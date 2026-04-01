@@ -1,33 +1,16 @@
-# Current Feature: Homepage
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Replace `src/app/page.tsx` placeholder with full marketing homepage
-- Sticky navbar with scroll shadow, Sign In / Get Started links
-- Hero section with chaos animation (rAF bounce/repel) and static dashboard mockup
-- Features grid — 6 cards with item-type accent colors and Lucide icons
-- AI section — two-column layout with code editor mockup and AI tags demo
-- Pricing section — monthly/yearly toggle, Free and Pro cards, correct links
-- CTA section and footer with correct nav links
-- All buttons/links point to correct routes (`/sign-in`, `/register`, anchors)
-- Server components by default; client only where interactivity is required
+<!-- goals go here -->
 
 ## Notes
 
-- Route: `src/app/page.tsx` — public, no auth required
-- Client components: `HomepageNav` (scroll), `ChaosAnimation` (rAF), `PricingToggle` + `PricingCards` (state)
-- All other components are server components
-- Files go in `src/components/homepage/`
-- Chaos animation ported from `prototypes/homepage/script.js` — particle bounce + mouse repel via `useEffect`/`requestAnimationFrame`
-- Dashboard mockup in Hero is static JSX using item-type colors, not an image
-- Pricing: $8/mo or $72/yr (25% savings); use shadcn `Switch` and `Badge`
-- Gradient headline: `bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent`
-- Navbar: transparent → `backdrop-blur bg-background/80 shadow-sm` after 20px scroll
-- Page is fully static — no data fetching
+<!-- notes go here -->
 
 ## History
 
@@ -91,3 +74,4 @@ In Progress
 - **2026-04-01** - Completed Client-Side Sorting on Favorites Page: FavoritesSortableContent client wrapper holds sort state (field + direction), renders Name/Date/Type sort buttons (shadcn Button, secondary/ghost variants) with chevron indicator. sortItems sorts by title/updatedAt/itemType.name; sortCollections by name/updatedAt. SortField/SortDir types in src/types/items.ts, SORT_FIELDS constant in src/constants/sorting.ts, FavoriteCollection type exported from lib/db/collections.ts.
 - **2026-04-01** - Completed Pinned Items: togglePinnedItem DB query, toggleItemPin server action, Pin button wired in ItemDrawer with optimistic UI + toast. Pinned items sort to top of /items/[type] and /collections/[id] listings. Pin icon on ItemCard remains static indicator. 9 unit tests.
 - **2026-04-01** - Completed Homepage Mockup: static prototype in prototypes/homepage/ (index.html, styles.css, script.js). Dark theme with 7 item-type accent colors. Hero with requestAnimationFrame chaos animation (8 icons bounce/repel from mouse), pulsing arrow, dashboard preview. Fixed navbar, Features (6 cards), AI section with code editor mockup, Pricing with monthly/yearly toggle, CTA, footer. Scroll fade-in, navbar opacity. Fully responsive — mobile stacks vertically, arrow rotates 90°.
+- **2026-04-01** - Completed Homepage: replaced placeholder page.tsx with full marketing homepage. NavBar (scroll shadow, Sign In/Get Started), Hero (rAF chaos animation + static dashboard mockup), Features grid (6 cards, type accent colors), AI section (code editor mockup, pro badge, checklist), Pricing (monthly/yearly toggle, Free/Pro cards), CTA, Footer. Server components throughout; client only for HomepageNav, ChaosAnimation, PricingToggle, PricingCards. All buttons link to /sign-in, /register, or page anchors.
