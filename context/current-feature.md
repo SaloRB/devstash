@@ -1,22 +1,16 @@
-# Current Feature: Pinned Items
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- `toggleItemPin` server action (items only)
-- Pin button in ItemDrawer is clickable with optimistic UI
-- Toast on success/error
-- Pinned items sort to top of listings
-- Pin icon on ItemCard is static indicator only
+<!-- goals go here -->
 
 ## Notes
 
-- Follow Favorite Button pattern (optimistic local state + router.refresh())
-- Items only — no collection pinning
-- Pin icon on ItemCard already exists as static UI; keep it that way
+<!-- notes go here -->
 
 ## History
 
@@ -78,3 +72,4 @@ In Progress
 - **2026-04-01** - Completed Favorites Page: added star icon link in TopBar, /favorites route (protected), getFavoriteItems/getFavoriteCollections DB queries, compact monospace list view with FavoriteItems and FavoriteCollections components (type icon, title, colored type badge, relative date). Click item opens ItemDrawer; click collection navigates to /collections/[id]. Empty state when no favorites.
 - **2026-04-01** - Completed Favorite Toggle Button: wired placeholder favorite buttons in ItemDrawer action bar, /collections/[id] header (CollectionDetailActions), and CollectionCard 3-dots dropdown (CollectionActionsDropdown). Added always-visible star toggle to ItemCard (filled yellow when favorited). toggleFavoriteItem/toggleFavoriteCollection DB queries and server actions. Optimistic local state + router.refresh() sync via useEffect. 10 unit tests.
 - **2026-04-01** - Completed Client-Side Sorting on Favorites Page: FavoritesSortableContent client wrapper holds sort state (field + direction), renders Name/Date/Type sort buttons (shadcn Button, secondary/ghost variants) with chevron indicator. sortItems sorts by title/updatedAt/itemType.name; sortCollections by name/updatedAt. SortField/SortDir types in src/types/items.ts, SORT_FIELDS constant in src/constants/sorting.ts, FavoriteCollection type exported from lib/db/collections.ts.
+- **2026-04-01** - Completed Pinned Items: togglePinnedItem DB query, toggleItemPin server action, Pin button wired in ItemDrawer with optimistic UI + toast. Pinned items sort to top of /items/[type] and /collections/[id] listings. Pin icon on ItemCard remains static indicator. 9 unit tests.
