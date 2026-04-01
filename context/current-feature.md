@@ -1,61 +1,16 @@
-# Current Feature: Consolidate Constants & Types into Dedicated Folders
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- `src/constants/` folder holds all app constants, split into focused files by domain
-- `src/types/` folder holds all shared TypeScript types, split by domain
-- No constants defined inside component files (FileUpload.tsx) or middleware (proxy.ts)
-- Zod schemas + inferred types live in `src/types/` (or `src/schemas/` — TBD with user)
-- All existing imports updated — no broken references across the codebase
+<!-- goals go here -->
 
 ## Notes
 
-**Current scatter:**
-
-- `src/lib/constants.ts` — pagination only (ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, DASHBOARD_COLLECTIONS_LIMIT, DASHBOARD_RECENT_ITEMS_LIMIT)
-- `src/lib/item-type-sets.ts` — CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES (Sets)
-- `src/lib/editor-preferences.ts` — DEFAULT_EDITOR_PREFS, FONT_SIZE_OPTIONS, TAB_SIZE_OPTIONS, THEME_OPTIONS + EditorPreferences interface
-- `src/proxy.ts` — AUTH_ROUTES, PROTECTED_ROUTES arrays
-- `src/components/shared/FileUpload.tsx` — IMAGE_EXTS, FILE_EXTS, IMAGE_MAX, FILE_MAX
-- `src/actions/items.ts` — createItemSchema, updateItemSchema, deleteItemSchema + inferred input types
-- `src/actions/collections.ts` — createCollectionSchema, updateCollectionSchema, deleteCollectionSchema + inferred input types
-- `src/lib/db/items.ts` — ItemWithType, ItemTypeWithCount, ItemDetail
-- `src/lib/db/collections.ts` — CollectionWithItems, SidebarCollection, UserCollection
-- `src/lib/db/profile.ts` — ProfileStats, ProfileUser
-- `src/lib/db/search.ts` — SearchItem, SearchCollection
-
-**Proposed structure:**
-```
-src/
-├── constants/
-│   ├── pagination.ts      — ITEMS_PER_PAGE, COLLECTIONS_PER_PAGE, DASHBOARD_* limits
-│   ├── routes.ts          — AUTH_ROUTES, PROTECTED_ROUTES
-│   ├── files.ts           — IMAGE_EXTS, FILE_EXTS, IMAGE_MAX, FILE_MAX
-│   ├── item-types.ts      — CONTENT_TYPES, LANGUAGE_TYPES, MARKDOWN_TYPES, URL_TYPES, FILE_TYPES (Sets)
-│   ├── editor.ts          — DEFAULT_EDITOR_PREFS, FONT_SIZE_OPTIONS, TAB_SIZE_OPTIONS, THEME_OPTIONS
-│   └── index.ts           — re-exports all
-├── types/
-│   ├── items.ts           — ItemWithType, ItemTypeWithCount, ItemDetail, CreateItemInput, UpdateItemInput
-│   ├── collections.ts     — CollectionWithItems, SidebarCollection, UserCollection, CreateCollectionInput, UpdateCollectionInput
-│   ├── profile.ts         — ProfileStats, ProfileUser
-│   ├── search.ts          — SearchItem, SearchCollection
-│   ├── editor.ts          — EditorPreferences interface
-│   ├── next-auth.d.ts     — stays here (Next.js convention)
-│   └── index.ts           — re-exports all (except .d.ts)
-```
-
-**Zod schemas:** keep co-located in `src/actions/` but move inferred types to `src/types/`
-
-**What to leave in place:**
-- `src/lib/item-types.ts` — ICON_MAP (Lucide components, UI concern, stays in lib)
-- `src/lib/r2.ts` — env-driven config, stays
-- `src/lib/editor-preferences.ts` — can be deleted once split into constants/editor.ts + types/editor.ts
-- `src/lib/constants.ts` — delete once migrated to constants/
-- `src/lib/item-type-sets.ts` — delete once migrated to constants/item-types.ts
+<!-- notes go here -->
 
 ## History
 
@@ -113,3 +68,4 @@ src/
 - **2026-03-31** - Completed Pagination: added numbered page controls with prev/next (greyed out at boundaries) to /items/[type], /collections, and /collections/[id]. getItemsByType and getAllCollections use $transaction([findMany, count]) for page-scoped fetches. getCollectionWithItems applies skip/take to the items relation. Constants in src/lib/constants.ts. Pagination component hidden when totalPages <= 1.
 - **2026-03-31** - Completed Settings Page: added /settings route (protected), moved ChangePasswordForm and DeleteAccountButton from components/profile/ to components/settings/. Settings page shows change-password card (email users only) and danger zone (delete account). SidebarUserMenu gains a Settings link. Profile page stripped of all account actions — user info and usage stats only.
 - **2026-03-31** - Completed Editor Preferences Settings: editorPreferences JSONB column on User (Prisma migration), EditorPreferencesContext/Provider wrapping main layout, updateEditorPreferences server action (Zod-validated), EditorPreferencesForm with theme/font-size/tab-size dropdowns and word-wrap/minimap toggles (auto-save + toast), Editor card added to /settings page, CodeEditor consumes context applying all prefs + custom monokai/github-dark themes via beforeMount. 13 unit tests.
+- **2026-03-31** - Completed Constants & Types Consolidation: created src/constants/ (pagination.ts, routes.ts, files.ts, item-types.ts, editor.ts, index.ts) and src/types/ (editor.ts, items.ts, collections.ts, profile.ts, search.ts, index.ts). Deleted lib/constants.ts, lib/item-type-sets.ts, lib/editor-preferences.ts. Moved AUTH_ROUTES/PROTECTED_ROUTES out of proxy.ts, file upload limits out of FileUpload.tsx. All imports updated; 81 tests pass.
