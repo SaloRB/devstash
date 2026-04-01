@@ -1,31 +1,16 @@
-# Current Feature: Editor Preferences Settings
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add font size dropdown to editor preferences
-- Add tab size dropdown to editor preferences
-- Add word wrap toggle (default: on)
-- Add minimap toggle (default: off)
-- Add theme dropdown: vs-dark, monokai, github-dark (default: vs-dark)
-- Store preferences in JSON column `editorPreferences` on User model
-- Create and run a migration (never db push)
-- Create server action to update preferences
-- Apply settings to Monaco editor component
-- Auto-save on change (no save button)
-- Show success toast on save
-- Create EditorPreferencesContext for client components
+<!-- goals go here -->
 
 ## Notes
 
-- Settings live in the /settings page (already exists)
-- Preferences stored in `editorPreferences` JSON column on User model
-- Auto-save means each toggle/dropdown change triggers save immediately
-- Context needed so Monaco editor (client component) can read preferences
-- Migration required — use Prisma migrate dev, never db push
+<!-- notes go here -->
 
 ## History
 
@@ -82,3 +67,4 @@ In Progress
 - **2026-03-31** - Completed Global Search / Command Palette: Cmd+K / Ctrl+K opens cmdk-based palette. Client-side fuzzy search across all user items and collections, pre-fetched at layout load. Grouped results (Items / Collections) with type icons, item descriptions, and item counts. Selecting item opens ItemDrawer; selecting collection navigates to /collections/[id]. TopBar static input replaced with SearchTrigger button showing ⌘K badge. New files: SearchTrigger, CommandPalette, SearchProvider context, getSearchData DB query.
 - **2026-03-31** - Completed Pagination: added numbered page controls with prev/next (greyed out at boundaries) to /items/[type], /collections, and /collections/[id]. getItemsByType and getAllCollections use $transaction([findMany, count]) for page-scoped fetches. getCollectionWithItems applies skip/take to the items relation. Constants in src/lib/constants.ts. Pagination component hidden when totalPages <= 1.
 - **2026-03-31** - Completed Settings Page: added /settings route (protected), moved ChangePasswordForm and DeleteAccountButton from components/profile/ to components/settings/. Settings page shows change-password card (email users only) and danger zone (delete account). SidebarUserMenu gains a Settings link. Profile page stripped of all account actions — user info and usage stats only.
+- **2026-03-31** - Completed Editor Preferences Settings: editorPreferences JSONB column on User (Prisma migration), EditorPreferencesContext/Provider wrapping main layout, updateEditorPreferences server action (Zod-validated), EditorPreferencesForm with theme/font-size/tab-size dropdowns and word-wrap/minimap toggles (auto-save + toast), Editor card added to /settings page, CodeEditor consumes context applying all prefs + custom monokai/github-dark themes via beforeMount. 13 unit tests.
