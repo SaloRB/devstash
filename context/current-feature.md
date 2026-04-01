@@ -1,16 +1,33 @@
-# Current Feature
+# Current Feature: Homepage
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- Replace `src/app/page.tsx` placeholder with full marketing homepage
+- Sticky navbar with scroll shadow, Sign In / Get Started links
+- Hero section with chaos animation (rAF bounce/repel) and static dashboard mockup
+- Features grid — 6 cards with item-type accent colors and Lucide icons
+- AI section — two-column layout with code editor mockup and AI tags demo
+- Pricing section — monthly/yearly toggle, Free and Pro cards, correct links
+- CTA section and footer with correct nav links
+- All buttons/links point to correct routes (`/sign-in`, `/register`, anchors)
+- Server components by default; client only where interactivity is required
 
 ## Notes
 
-<!-- notes go here -->
+- Route: `src/app/page.tsx` — public, no auth required
+- Client components: `HomepageNav` (scroll), `ChaosAnimation` (rAF), `PricingToggle` + `PricingCards` (state)
+- All other components are server components
+- Files go in `src/components/homepage/`
+- Chaos animation ported from `prototypes/homepage/script.js` — particle bounce + mouse repel via `useEffect`/`requestAnimationFrame`
+- Dashboard mockup in Hero is static JSX using item-type colors, not an image
+- Pricing: $8/mo or $72/yr (25% savings); use shadcn `Switch` and `Badge`
+- Gradient headline: `bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent`
+- Navbar: transparent → `backdrop-blur bg-background/80 shadow-sm` after 20px scroll
+- Page is fully static — no data fetching
 
 ## History
 
