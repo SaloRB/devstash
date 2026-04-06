@@ -1,18 +1,40 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
-import { getProfileUser } from '@/lib/db/profile'
+import { getProfileUser, getProfileStats } from '@/lib/db/profile'
+import { stripe } from '@/lib/stripe'
 import { ChangePasswordForm } from '@/components/settings/ChangePasswordForm'
 import { DeleteAccountButton } from '@/components/settings/DeleteAccountButton'
 import { EditorPreferencesForm } from '@/components/settings/EditorPreferencesForm'
+import { BillingSection } from '@/components/settings/BillingSection'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-export default async function SettingsPage() {
+
+interface SettingsPageProps {
+  searchParams: Promise<{ checkout?: string }>
+}
+
+export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   const session = await auth()
   if (!session?.user?.id) redirect('/sign-in')
 
-  const user = await getProfileUser(session.user.id)
+  const [user, stats] = await Promise.all([
+    getProfileUser(session.user.id),
+    getProfileStats(session.user.id),
+  ])
   if (!user) redirect('/sign-in')
 
+  const { checkout } = await searchParams
   const isEmailUser = !user.accounts.some((a) => a.provider === 'github')
+
+  let planInterval: 'month' | 'year' | null = null
+  if (session.user.isPro && user.stripeSubscriptionId) {
+    try {
+      const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId)
+      const price = subscription.items.data[0]?.price
+      planInterval = (price?.recurring?.interval as 'month' | 'year') ?? null
+    } catch {
+      // Non-fatal
+    }
+  }
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
@@ -21,7 +43,6 @@ export default async function SettingsPage() {
         <p className="text-sm text-muted-foreground">Manage your account settings</p>
       </div>
 
-      {/* Account */}
       {isEmailUser && (
         <Card>
           <CardHeader>
@@ -34,7 +55,6 @@ export default async function SettingsPage() {
         </Card>
       )}
 
-      {/* Editor */}
       <Card>
         <CardHeader>
           <CardTitle>Editor</CardTitle>
@@ -45,7 +65,22 @@ export default async function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Danger Zone */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Billing</CardTitle>
+          <CardDescription>Manage your plan and subscription</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <BillingSection
+            isPro={session.user.isPro ?? false}
+            planInterval={planInterval}
+            itemCount={stats.totalItems}
+            collectionCount={stats.totalCollections}
+            checkoutStatus={checkout ?? null}
+          />
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Danger zone</CardTitle>

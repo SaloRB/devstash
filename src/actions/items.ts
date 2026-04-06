@@ -11,6 +11,9 @@ import {
   togglePinnedItem as togglePinnedItemDb,
 } from '@/lib/db/items'
 import { r2, R2_BUCKET, keyFromUrl } from '@/lib/r2'
+import { prisma } from '@/lib/prisma'
+import { getUserProStatus, checkItemLimit } from '@/lib/gates'
+import { FILE_TYPES } from '@/constants/item-types'
 
 const updateItemSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
@@ -72,6 +75,23 @@ export async function createItem(data: CreateItemInput) {
   }
 
   const { itemTypeId, collectionIds, ...fields } = parsed.data
+
+  const isPro = await getUserProStatus(session.user.id)
+
+  if (!isPro) {
+    const itemType = await prisma.itemType.findUnique({
+      where: { id: itemTypeId },
+      select: { name: true },
+    })
+    if (itemType && FILE_TYPES.has(itemType.name.toLowerCase())) {
+      return { success: false as const, error: 'PRO_REQUIRED' }
+    }
+
+    const allowed = await checkItemLimit(session.user.id)
+    if (!allowed) {
+      return { success: false as const, error: 'ITEM_LIMIT_REACHED' }
+    }
+  }
 
   try {
     const created = await createItemDb(session.user.id, itemTypeId, { ...fields, collectionIds })

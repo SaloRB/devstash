@@ -27,6 +27,7 @@ export async function getProfileUser(userId: string) {
       email: true,
       image: true,
       createdAt: true,
+      stripeSubscriptionId: true,
       accounts: { select: { provider: true } },
     },
   })

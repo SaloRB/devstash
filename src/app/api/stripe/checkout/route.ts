@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
     mode: 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
     metadata: { userId: session.user.id },
-    success_url: `${process.env.NEXTAUTH_URL}/dashboard?upgraded=1`,
-    cancel_url: `${process.env.NEXTAUTH_URL}/dashboard`,
+    success_url: `${process.env.NEXTAUTH_URL}/settings?tab=billing&checkout=success`,
+    cancel_url: `${process.env.NEXTAUTH_URL}/settings?tab=billing&checkout=cancelled`,
   })
 
   return NextResponse.json({ url: checkoutSession.url })

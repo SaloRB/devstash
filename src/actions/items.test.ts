@@ -24,6 +24,17 @@ vi.mock('@aws-sdk/client-s3', () => ({
   },
 }))
 
+vi.mock('@/lib/gates', () => ({
+  getUserProStatus: vi.fn(),
+  checkItemLimit: vi.fn(),
+}))
+
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    itemType: { findUnique: vi.fn() },
+  },
+}))
+
 import { createItem, updateItem, deleteItem, toggleFavoriteItem, toggleItemPin } from './items'
 import { auth } from '@/auth'
 import {
@@ -34,6 +45,8 @@ import {
   togglePinnedItem as togglePinnedItemDb,
 } from '@/lib/db/items'
 import { r2 } from '@/lib/r2'
+import { getUserProStatus, checkItemLimit } from '@/lib/gates'
+import { prisma } from '@/lib/prisma'
 
 const mockAuth = vi.mocked(auth)
 const mockCreateDb = vi.mocked(createItemDb)
@@ -42,6 +55,9 @@ const mockDeleteDb = vi.mocked(deleteItemDb)
 const mockToggleFavoriteDb = vi.mocked(toggleFavoriteItemDb)
 const mockTogglePinnedDb = vi.mocked(togglePinnedItemDb)
 const mockR2Send = vi.mocked(r2.send)
+const mockGetUserProStatus = vi.mocked(getUserProStatus)
+const mockCheckItemLimit = vi.mocked(checkItemLimit)
+const mockItemTypeFindUnique = vi.mocked(prisma.itemType.findUnique)
 
 const validInput = {
   title: 'Updated Title',
@@ -221,6 +237,46 @@ describe('createItem', () => {
     vi.clearAllMocks()
     mockAuth.mockResolvedValue({ user: { id: 'user-1' } } as never)
     mockCreateDb.mockResolvedValue(mockCreatedItem as never)
+    mockGetUserProStatus.mockResolvedValue(false)
+    mockCheckItemLimit.mockResolvedValue(true)
+    mockItemTypeFindUnique.mockResolvedValue({ name: 'snippet' } as never)
+  })
+
+  it('returns PRO_REQUIRED when free user selects file type', async () => {
+    mockItemTypeFindUnique.mockResolvedValue({ name: 'file' } as never)
+
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('returns PRO_REQUIRED when free user selects image type', async () => {
+    mockItemTypeFindUnique.mockResolvedValue({ name: 'image' } as never)
+
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('returns ITEM_LIMIT_REACHED when free user is at item limit', async () => {
+    mockCheckItemLimit.mockResolvedValue(false)
+
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: false, error: 'ITEM_LIMIT_REACHED' })
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('skips all gates for pro user', async () => {
+    mockGetUserProStatus.mockResolvedValue(true)
+    mockItemTypeFindUnique.mockResolvedValue({ name: 'file' } as never)
+
+    const result = await createItem(validCreateInput)
+
+    expect(result).toEqual({ success: true, data: mockCreatedItem })
+    expect(mockCheckItemLimit).not.toHaveBeenCalled()
   })
 
   it('returns unauthorized when no session', async () => {

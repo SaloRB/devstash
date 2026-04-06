@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { auth } from '@/auth'
+import { getUserProStatus, checkCollectionLimit } from '@/lib/gates'
 import {
   createCollection as createCollectionDb,
   updateCollection as updateCollectionDb,
@@ -30,6 +31,14 @@ export async function createCollection(data: CreateCollectionInput) {
   const parsed = createCollectionSchema.safeParse(data)
   if (!parsed.success) {
     return { success: false as const, error: parsed.error.flatten().fieldErrors }
+  }
+
+  const isPro = await getUserProStatus(session.user.id)
+  if (!isPro) {
+    const allowed = await checkCollectionLimit(session.user.id)
+    if (!allowed) {
+      return { success: false as const, error: 'COLLECTION_LIMIT_REACHED' }
+    }
   }
 
   try {

@@ -11,6 +11,11 @@ vi.mock('@/lib/db/collections', () => ({
   toggleFavoriteCollection: vi.fn(),
 }))
 
+vi.mock('@/lib/gates', () => ({
+  getUserProStatus: vi.fn(),
+  checkCollectionLimit: vi.fn(),
+}))
+
 import { createCollection, updateCollection, deleteCollection, toggleFavoriteCollection } from './collections'
 import { auth } from '@/auth'
 import {
@@ -19,12 +24,15 @@ import {
   deleteCollection as deleteCollectionDb,
   toggleFavoriteCollection as toggleFavoriteCollectionDb,
 } from '@/lib/db/collections'
+import { getUserProStatus, checkCollectionLimit } from '@/lib/gates'
 
 const mockAuth = vi.mocked(auth)
 const mockCreateDb = vi.mocked(createCollectionDb)
 const mockUpdateDb = vi.mocked(updateCollectionDb)
 const mockDeleteDb = vi.mocked(deleteCollectionDb)
 const mockToggleFavoriteDb = vi.mocked(toggleFavoriteCollectionDb)
+const mockGetUserProStatus = vi.mocked(getUserProStatus)
+const mockCheckCollectionLimit = vi.mocked(checkCollectionLimit)
 
 const mockCreated = { id: 'col-1', name: 'My Collection', description: 'A desc' }
 const mockUpdated = { id: 'col-1', name: 'Updated Name', description: null }
@@ -34,6 +42,27 @@ describe('createCollection', () => {
     vi.clearAllMocks()
     mockAuth.mockResolvedValue({ user: { id: 'user-1' } } as never)
     mockCreateDb.mockResolvedValue(mockCreated as never)
+    mockGetUserProStatus.mockResolvedValue(false)
+    mockCheckCollectionLimit.mockResolvedValue(true)
+  })
+
+  it('returns COLLECTION_LIMIT_REACHED when free user is at collection limit', async () => {
+    mockCheckCollectionLimit.mockResolvedValue(false)
+
+    const result = await createCollection({ name: 'My Collection', description: null })
+
+    expect(result).toEqual({ success: false, error: 'COLLECTION_LIMIT_REACHED' })
+    expect(mockCreateDb).not.toHaveBeenCalled()
+  })
+
+  it('skips collection limit for pro user', async () => {
+    mockGetUserProStatus.mockResolvedValue(true)
+    mockCheckCollectionLimit.mockResolvedValue(false)
+
+    const result = await createCollection({ name: 'My Collection', description: null })
+
+    expect(result).toEqual({ success: true, data: mockCreated })
+    expect(mockCheckCollectionLimit).not.toHaveBeenCalled()
   })
 
   it('returns unauthorized when no session', async () => {
