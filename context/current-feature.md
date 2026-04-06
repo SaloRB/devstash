@@ -1,27 +1,12 @@
-# Current Feature: Stripe Integration — Phase 1
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Install `stripe` npm package
-- Add `isPro: boolean` to JWT + session types; sync from DB on every JWT callback
-- Stripe singleton helper at `src/lib/stripe.ts`
-- POST `/api/stripe/checkout` — creates Checkout Session, reuses existing customer
-- POST `/api/stripe/portal` — creates Customer Portal session
-- `src/lib/gates.ts` usage-limits module (`checkItemLimit`, `checkCollectionLimit`, `getUserProStatus`)
-- `src/lib/gates.test.ts` with 100% coverage (8 test cases)
-
 ## Notes
-
-- FREE_LIMITS: `{ items: 50, collections: 3 }`
-- Checkout: auth-guard (401), validate interval (monthly/yearly), reuse `stripeCustomerId`, set `metadata.userId`, return `{ url }`
-- Portal: auth-guard (401), 400 if no `stripeCustomerId`, return `{ url }`
-- No webhook handler, no feature gates, no Billing UI — all Phase 2
-- `config = { api: { bodyParser: false } }` NOT needed in App Router
-- Env vars: `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID_MONTHLY`, `STRIPE_PRICE_ID_YEARLY`
 
 ## History
 
@@ -88,3 +73,4 @@ In Progress
 - **2026-04-01** - Completed Homepage: replaced placeholder page.tsx with full marketing homepage. NavBar (scroll shadow, Sign In/Get Started), Hero (rAF chaos animation + static dashboard mockup), Features grid (6 cards, type accent colors), AI section (code editor mockup, pro badge, checklist), Pricing (monthly/yearly toggle, Free/Pro cards), CTA, Footer. Server components throughout; client only for HomepageNav, ChaosAnimation, PricingToggle, PricingCards. All buttons link to /sign-in, /register, or page anchors.
 - **2026-04-06** - Completed Topbar Responsive: wordmark hidden below sm (S icon only); SearchTrigger shows icon-only below sm, full bar at sm+; new TopBarCreateMenu with + dropdown (New Item / New Collection) visible below md, separate labeled buttons at md+; both dialogs gained controlled open/onOpenChange props; dropdown whitespace-nowrap + alignOffset fix.
 - **2026-04-06** - Completed Auth Pages Nav + Dashboard Logo: added (auth)/layout.tsx rendering HomepageNav on all auth pages; replaced S icon box in TopBar with Zap icon matching homepage nav; fixed HomepageNav anchor links to /#features and /#pricing for cross-page navigation.
+- **2026-04-06** - Completed Stripe Integration Phase 1: installed stripe v22, isPro added to JWT/session (synced from DB on every jwt callback), stripe singleton at src/lib/stripe.ts, POST /api/stripe/checkout (auth-guard, monthly/yearly, reuse customer), POST /api/stripe/portal (auth-guard, 400 if no customer), src/lib/gates.ts (checkItemLimit, checkCollectionLimit, getUserProStatus; FREE_LIMITS items:50 collections:3), 9 unit tests 100% coverage.
