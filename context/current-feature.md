@@ -1,21 +1,16 @@
-# Current Feature: Auth Pages Nav + Dashboard Logo
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add `HomepageNav` to `/sign-in` and `/register` pages (and all other `(auth)` routes for consistency)
-- Replace the `S` icon box in `TopBar` with `<Zap>` (same as homepage nav, `text-primary`)
-- Remove the `S` div entirely
+<!-- goals go here -->
 
 ## Notes
 
-- `HomepageNav` is a client component at `src/components/homepage/homepage-nav.tsx` — scroll shadow, Sign In / Get Started buttons
-- Auth pages currently render only their form component with no wrapping nav
-- TopBar logo is at `src/components/layout/TopBar.tsx:24` — `<div>S</div>` + hidden wordmark
-- `Zap` icon in homepage nav: `w-5 h-5 text-primary` — match this size/color in TopBar
+<!-- notes go here -->
 
 ## History
 
@@ -81,3 +76,4 @@ In Progress
 - **2026-04-01** - Completed Homepage Mockup: static prototype in prototypes/homepage/ (index.html, styles.css, script.js). Dark theme with 7 item-type accent colors. Hero with requestAnimationFrame chaos animation (8 icons bounce/repel from mouse), pulsing arrow, dashboard preview. Fixed navbar, Features (6 cards), AI section with code editor mockup, Pricing with monthly/yearly toggle, CTA, footer. Scroll fade-in, navbar opacity. Fully responsive — mobile stacks vertically, arrow rotates 90°.
 - **2026-04-01** - Completed Homepage: replaced placeholder page.tsx with full marketing homepage. NavBar (scroll shadow, Sign In/Get Started), Hero (rAF chaos animation + static dashboard mockup), Features grid (6 cards, type accent colors), AI section (code editor mockup, pro badge, checklist), Pricing (monthly/yearly toggle, Free/Pro cards), CTA, Footer. Server components throughout; client only for HomepageNav, ChaosAnimation, PricingToggle, PricingCards. All buttons link to /sign-in, /register, or page anchors.
 - **2026-04-06** - Completed Topbar Responsive: wordmark hidden below sm (S icon only); SearchTrigger shows icon-only below sm, full bar at sm+; new TopBarCreateMenu with + dropdown (New Item / New Collection) visible below md, separate labeled buttons at md+; both dialogs gained controlled open/onOpenChange props; dropdown whitespace-nowrap + alignOffset fix.
+- **2026-04-06** - Completed Auth Pages Nav + Dashboard Logo: added (auth)/layout.tsx rendering HomepageNav on all auth pages; replaced S icon box in TopBar with Zap icon matching homepage nav; fixed HomepageNav anchor links to /#features and /#pricing for cross-page navigation.
