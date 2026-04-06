@@ -2,20 +2,15 @@
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Hide "DevStash" wordmark below `sm`; show only the S icon mark
-- Show a search icon button below `sm` that opens the command palette; show full SearchTrigger bar at `sm`+
-- Replace separate New Item / New Collection buttons with a `+` dropdown menu visible on all sizes
-- Keep the Favorites star link as-is
+<!-- goals go here -->
 
 ## Notes
 
-- Both dialogs support controlled `open`/`onOpenChange` props (skip internal trigger when provided)
-- New `TopBarCreateMenu` component holds dropdown + both dialogs
-- SearchTrigger gains responsive icon-only mode via Tailwind classes
+<!-- notes go here -->
 
 ## History
 
@@ -80,3 +75,4 @@ In Progress
 - **2026-04-01** - Completed Pinned Items: togglePinnedItem DB query, toggleItemPin server action, Pin button wired in ItemDrawer with optimistic UI + toast. Pinned items sort to top of /items/[type] and /collections/[id] listings. Pin icon on ItemCard remains static indicator. 9 unit tests.
 - **2026-04-01** - Completed Homepage Mockup: static prototype in prototypes/homepage/ (index.html, styles.css, script.js). Dark theme with 7 item-type accent colors. Hero with requestAnimationFrame chaos animation (8 icons bounce/repel from mouse), pulsing arrow, dashboard preview. Fixed navbar, Features (6 cards), AI section with code editor mockup, Pricing with monthly/yearly toggle, CTA, footer. Scroll fade-in, navbar opacity. Fully responsive — mobile stacks vertically, arrow rotates 90°.
 - **2026-04-01** - Completed Homepage: replaced placeholder page.tsx with full marketing homepage. NavBar (scroll shadow, Sign In/Get Started), Hero (rAF chaos animation + static dashboard mockup), Features grid (6 cards, type accent colors), AI section (code editor mockup, pro badge, checklist), Pricing (monthly/yearly toggle, Free/Pro cards), CTA, Footer. Server components throughout; client only for HomepageNav, ChaosAnimation, PricingToggle, PricingCards. All buttons link to /sign-in, /register, or page anchors.
+- **2026-04-06** - Completed Topbar Responsive: wordmark hidden below sm (S icon only); SearchTrigger shows icon-only below sm, full bar at sm+; new TopBarCreateMenu with + dropdown (New Item / New Collection) visible below md, separate labeled buttons at md+; both dialogs gained controlled open/onOpenChange props; dropdown whitespace-nowrap + alignOffset fix.
