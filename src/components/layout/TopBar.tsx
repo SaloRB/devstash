@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Zap } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
 import { getItemTypesWithCounts } from "@/lib/db/items";
@@ -21,9 +21,7 @@ export default async function TopBar() {
       <div className="flex shrink-0 items-center gap-3">
         <SidebarTrigger />
         <Link href="/dashboard" className="flex items-center gap-2 text-lg font-semibold">
-          <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm">
-            S
-          </div>
+          <Zap className="w-5 h-5 text-primary" />
           <span className="hidden sm:inline">DevStash</span>
         </Link>
       </div>

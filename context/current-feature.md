@@ -1,16 +1,21 @@
-# Current Feature
+# Current Feature: Auth Pages Nav + Dashboard Logo
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- Add `HomepageNav` to `/sign-in` and `/register` pages (and all other `(auth)` routes for consistency)
+- Replace the `S` icon box in `TopBar` with `<Zap>` (same as homepage nav, `text-primary`)
+- Remove the `S` div entirely
 
 ## Notes
 
-<!-- notes go here -->
+- `HomepageNav` is a client component at `src/components/homepage/homepage-nav.tsx` — scroll shadow, Sign In / Get Started buttons
+- Auth pages currently render only their form component with no wrapping nav
+- TopBar logo is at `src/components/layout/TopBar.tsx:24` — `<div>S</div>` + hidden wordmark
+- `Zap` icon in homepage nav: `w-5 h-5 text-primary` — match this size/color in TopBar
 
 ## History
 
