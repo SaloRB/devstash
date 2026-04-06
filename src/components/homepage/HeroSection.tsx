@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ChaosAnimation } from './chaos-animation'
+import { ChaosAnimation } from './ChaosAnimation'
 
 function DashboardMockup() {
   const navItems = [

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Switch } from '@/components/ui/switch'
-import { PricingCards } from './pricing-cards'
+import { PricingCards } from './PricingCards'
 
 export function PricingToggle() {
   const [isYearly, setIsYearly] = useState(false)

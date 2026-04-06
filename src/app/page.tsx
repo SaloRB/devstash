@@ -1,10 +1,10 @@
-import { HomepageNav } from '@/components/homepage/homepage-nav'
-import { HeroSection } from '@/components/homepage/hero-section'
-import { FeaturesSection } from '@/components/homepage/features-section'
-import { AISection } from '@/components/homepage/ai-section'
-import { PricingSection } from '@/components/homepage/pricing-section'
-import { CTASection } from '@/components/homepage/cta-section'
-import { HomepageFooter } from '@/components/homepage/homepage-footer'
+import { HomepageNav } from '@/components/homepage/HomepageNav'
+import { HeroSection } from '@/components/homepage/HeroSection'
+import { FeaturesSection } from '@/components/homepage/FeaturesSection'
+import { AISection } from '@/components/homepage/AiSection'
+import { PricingSection } from '@/components/homepage/PricingSection'
+import { CTASection } from '@/components/homepage/CtaSection'
+import { HomepageFooter } from '@/components/homepage/HomepageFooter'
 
 export default function HomePage() {
   return (

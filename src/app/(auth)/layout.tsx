@@ -1,4 +1,4 @@
-import { HomepageNav } from '@/components/homepage/homepage-nav'
+import { HomepageNav } from '@/components/homepage/HomepageNav'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

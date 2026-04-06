@@ -1,4 +1,4 @@
-import { PricingToggle } from './pricing-toggle'
+import { PricingToggle } from './PricingToggle'
 
 export function PricingSection() {
   return (
