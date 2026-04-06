@@ -25,12 +25,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (url.startsWith(baseUrl)) return url;
       return `${baseUrl}/dashboard`;
     },
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) token.id = user.id;
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { isPro: true },
+        });
+        token.isPro = dbUser?.isPro ?? false;
+      }
       return token;
     },
     session({ session, token }) {
       if (token.id) session.user.id = token.id as string;
+      session.user.isPro = (token.isPro as boolean | undefined) ?? false;
       return session;
     },
   },

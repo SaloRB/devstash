@@ -1,16 +1,27 @@
-# Current Feature
+# Current Feature: Stripe Integration — Phase 1
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- Install `stripe` npm package
+- Add `isPro: boolean` to JWT + session types; sync from DB on every JWT callback
+- Stripe singleton helper at `src/lib/stripe.ts`
+- POST `/api/stripe/checkout` — creates Checkout Session, reuses existing customer
+- POST `/api/stripe/portal` — creates Customer Portal session
+- `src/lib/gates.ts` usage-limits module (`checkItemLimit`, `checkCollectionLimit`, `getUserProStatus`)
+- `src/lib/gates.test.ts` with 100% coverage (8 test cases)
 
 ## Notes
 
-<!-- notes go here -->
+- FREE_LIMITS: `{ items: 50, collections: 3 }`
+- Checkout: auth-guard (401), validate interval (monthly/yearly), reuse `stripeCustomerId`, set `metadata.userId`, return `{ url }`
+- Portal: auth-guard (401), 400 if no `stripeCustomerId`, return `{ url }`
+- No webhook handler, no feature gates, no Billing UI — all Phase 2
+- `config = { api: { bodyParser: false } }` NOT needed in App Router
+- Env vars: `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID_MONTHLY`, `STRIPE_PRICE_ID_YEARLY`
 
 ## History
 
