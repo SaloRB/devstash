@@ -4,8 +4,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
 import { getItemTypesWithCounts } from "@/lib/db/items";
 import { getUserCollections } from "@/lib/db/collections";
-import CreateItemDialog from "@/components/shared/CreateItemDialog";
-import CreateCollectionDialog from "@/components/shared/CreateCollectionDialog";
+import TopBarCreateMenu from "@/components/layout/TopBarCreateMenu";
 import { SearchTrigger } from "@/components/layout/SearchTrigger";
 
 export default async function TopBar() {
@@ -25,7 +24,7 @@ export default async function TopBar() {
           <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm">
             S
           </div>
-          DevStash
+          <span className="hidden sm:inline">DevStash</span>
         </Link>
       </div>
 
@@ -41,8 +40,7 @@ export default async function TopBar() {
         >
           <Star className="size-4" />
         </Link>
-        <CreateCollectionDialog />
-        <CreateItemDialog itemTypes={itemTypes} collections={collections} />
+        <TopBarCreateMenu itemTypes={itemTypes} collections={collections} />
       </div>
     </header>
   );

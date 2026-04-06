@@ -2,15 +2,20 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- goals go here -->
+- Hide "DevStash" wordmark below `sm`; show only the S icon mark
+- Show a search icon button below `sm` that opens the command palette; show full SearchTrigger bar at `sm`+
+- Replace separate New Item / New Collection buttons with a `+` dropdown menu visible on all sizes
+- Keep the Favorites star link as-is
 
 ## Notes
 
-<!-- notes go here -->
+- Both dialogs support controlled `open`/`onOpenChange` props (skip internal trigger when provided)
+- New `TopBarCreateMenu` component holds dropdown + both dialogs
+- SearchTrigger gains responsive icon-only mode via Tailwind classes
 
 ## History
 

@@ -35,13 +35,23 @@ export default function CreateItemDialog({
   itemTypes,
   defaultTypeName,
   collections = [],
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: {
   itemTypes: ItemTypeWithCount[]
   defaultTypeName?: string
   collections?: UserCollection[]
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled
+    ? (v: boolean) => controlledOnOpenChange?.(v)
+    : setInternalOpen
 
   const { fields, setters, flags, selectedType, typeName, saving, canSubmit, resetForm, handleCreate } =
     useItemCreateForm(itemTypes, defaultTypeName, () => { setOpen(false); router.refresh() })
@@ -63,16 +73,18 @@ export default function CreateItemDialog({
         if (!isOpen) resetForm()
       }}
     >
-      <DialogTrigger
-        render={
-          <Button>
-            <Plus className="size-4" />
-            {defaultTypeName
-              ? `Add ${defaultTypeName.charAt(0).toUpperCase()}${defaultTypeName.slice(1)}`
-              : 'New Item'}
-          </Button>
-        }
-      />
+      {!isControlled && (
+        <DialogTrigger
+          render={
+            <Button>
+              <Plus className="size-4" />
+              {defaultTypeName
+                ? `Add ${defaultTypeName.charAt(0).toUpperCase()}${defaultTypeName.slice(1)}`
+                : 'New Item'}
+            </Button>
+          }
+        />
+      )}
       <DialogContent className="flex max-h-[90vh] flex-col sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

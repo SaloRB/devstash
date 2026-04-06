@@ -19,9 +19,20 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { createCollection } from '@/actions/collections'
 
-export default function CreateCollectionDialog() {
+export default function CreateCollectionDialog({
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+} = {}) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled
+    ? (v: boolean) => controlledOnOpenChange?.(v)
+    : setInternalOpen
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [saving, setSaving] = useState(false)
@@ -56,14 +67,16 @@ export default function CreateCollectionDialog() {
         if (!isOpen) resetForm()
       }}
     >
-      <DialogTrigger
-        render={
-          <Button variant="outline">
-            <FolderPlus className="size-4" />
-            New Collection
-          </Button>
-        }
-      />
+      {!isControlled && (
+        <DialogTrigger
+          render={
+            <Button variant="outline">
+              <FolderPlus className="size-4" />
+              New Collection
+            </Button>
+          }
+        />
+      )}
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
