@@ -1,31 +1,12 @@
-# Current Feature: Stripe Integration — Phase 2: Webhooks, Feature Gates & Billing UI
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Webhook handler at `/api/stripe/webhook` verifying Stripe signatures
-- Handle `checkout.session.completed` → set `isPro: true`, store customer/subscription IDs
-- Handle `customer.subscription.updated` → sync `isPro` from status
-- Handle `customer.subscription.deleted` → clear `isPro`, clear subscription ID
-- Handle `invoice.payment_failed` → no access revocation (Stripe retries)
-- Gate `createItem`: block file/image types for free users (`PRO_REQUIRED`), block at 50 items (`ITEM_LIMIT_REACHED`)
-- Gate `createCollection`: block at 3 collections for free users (`COLLECTION_LIMIT_REACHED`)
-- Billing tab in `/settings`: free view (plan comparison + upgrade CTAs), pro view (plan badge + manage billing)
-- Success/cancel handling on `/settings?tab=billing&checkout=success|cancelled`
-
 ## Notes
-
-- All webhook events resolve `userId` from `metadata.userId` on subscription or checkout session
-- Raw body must be read via `req.text()` before signature verification
-- `STRIPE_WEBHOOK_SECRET` is different locally (from `stripe listen`) vs. production (Dashboard)
-- Gate checks go before the existing try block in each server action
-- Free limits: 50 items, 3 collections (already defined in `src/lib/gates.ts`)
-- Billing UI: monthly ($8/mo) and yearly ($72/yr) CTAs → POST `/api/stripe/checkout` with `{ interval }`
-- Pro view shows next billing date if available; "Manage Billing" → POST `/api/stripe/portal`
-- Error codes: `PRO_REQUIRED`, `ITEM_LIMIT_REACHED`, `COLLECTION_LIMIT_REACHED` → toast + upgrade prompt
 
 ## History
 
@@ -93,3 +74,4 @@ In Progress
 - **2026-04-06** - Completed Topbar Responsive: wordmark hidden below sm (S icon only); SearchTrigger shows icon-only below sm, full bar at sm+; new TopBarCreateMenu with + dropdown (New Item / New Collection) visible below md, separate labeled buttons at md+; both dialogs gained controlled open/onOpenChange props; dropdown whitespace-nowrap + alignOffset fix.
 - **2026-04-06** - Completed Auth Pages Nav + Dashboard Logo: added (auth)/layout.tsx rendering HomepageNav on all auth pages; replaced S icon box in TopBar with Zap icon matching homepage nav; fixed HomepageNav anchor links to /#features and /#pricing for cross-page navigation.
 - **2026-04-06** - Completed Stripe Integration Phase 1: installed stripe v22, isPro added to JWT/session (synced from DB on every jwt callback), stripe singleton at src/lib/stripe.ts, POST /api/stripe/checkout (auth-guard, monthly/yearly, reuse customer), POST /api/stripe/portal (auth-guard, 400 if no customer), src/lib/gates.ts (checkItemLimit, checkCollectionLimit, getUserProStatus; FREE_LIMITS items:50 collections:3), 9 unit tests 100% coverage.
+- **2026-04-06** - Completed Stripe Integration Phase 2: webhook handler at /api/stripe/webhook (signature verify, checkout.session.completed/customer.subscription.updated/deleted/invoice.payment_failed); createItem gated (PRO_REQUIRED for file/image, ITEM_LIMIT_REACHED at 50); createCollection gated (COLLECTION_LIMIT_REACHED at 3); Billing card in /settings (current plan badge, items/collections counter, upgrade/manage-billing buttons); checkout redirects to /settings?tab=billing&checkout=success|cancelled; 6 new unit tests.
