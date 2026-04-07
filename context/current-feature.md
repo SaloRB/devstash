@@ -8,6 +8,8 @@ No active feature
 
 ## Notes
 
+## Notes
+
 ## History
 
 - **2026-03-23** - Initial Next.js setup with Tailwind CSS. Removed default boilerplate.
@@ -81,3 +83,4 @@ No active feature
 - **2026-04-07** - Completed AI Description Generator: generateDescription server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, builds context from title/type/content/url/tags, returns plain text), GenerateDescriptionButton component (Wand2 icon, Pro-only, fills description field directly), wired into description field label row in CreateItemDialog and ItemDrawer EditMode. 11 unit tests.
 - **2026-04-07** - Completed AI Explain Code: explainCode server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, 3000-char content truncation), Sparkles button in CodeEditor header (Crown + tooltip for free users), Code/Explain tab switcher after generating, explanation rendered as markdown in same container space, only shown for snippet/command types in item drawer read view. isPro threaded through ItemDrawer ViewMode → ItemContentField → CodeEditor. 11 unit tests.
 - **2026-04-07** - Completed AI Prompt Optimization: optimizePrompt server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, 3000-char truncation, prompt engineer system instruction), Sparkles/Crown button in MarkdownEditor header (prompt type only), Write/Preview/Optimized tab switcher after generation. Drawer ViewMode: Accept saves directly via updateItem + toast + refresh; Deny dismisses. Drawer EditMode: Accept replaces textarea content. CreateItemDialog: no Optimize button (existing items only). 9 unit tests.
+- **2026-04-07** - Completed UI Polish Fixes: sidebar type/collection links now show active highlight via usePathname in new SidebarNavContent client component (SidebarTypeItems + SidebarCollectionItems); VIEW ALL COLLECTIONS converted from raw link to SidebarMenuButton with active state; GitHub OAuth button added to register page matching sign-in layout.
