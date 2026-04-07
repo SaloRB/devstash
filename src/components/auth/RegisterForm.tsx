@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
+import { signInWithGitHub } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import {
   Card,
   CardContent,
@@ -82,7 +84,7 @@ export function RegisterForm() {
             <CardDescription>Join DevStash today</CardDescription>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
@@ -138,6 +140,18 @@ export function RegisterForm() {
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Creating account…' : 'Register'}
+              </Button>
+            </form>
+
+            <div className="flex items-center gap-2">
+              <Separator className="flex-1" />
+              <span className="text-xs uppercase text-muted-foreground">or</span>
+              <Separator className="flex-1" />
+            </div>
+
+            <form action={signInWithGitHub}>
+              <Button type="submit" variant="outline" className="w-full">
+                Continue with GitHub
               </Button>
             </form>
           </CardContent>
