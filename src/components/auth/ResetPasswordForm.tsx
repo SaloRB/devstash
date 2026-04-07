@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { AuthPageShell } from '@/components/auth/AuthPageShell'
 
 export function ResetPasswordForm() {
   const router = useRouter()
@@ -73,9 +74,8 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
-        <Card>
+    <AuthPageShell>
+      <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Reset password</CardTitle>
             <CardDescription>Enter your new password</CardDescription>
@@ -120,7 +120,6 @@ export function ResetPasswordForm() {
             </Link>
           </CardFooter>
         </Card>
-      </div>
-    </div>
+    </AuthPageShell>
   )
 }

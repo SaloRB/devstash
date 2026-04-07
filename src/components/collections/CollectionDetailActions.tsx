@@ -3,16 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Pencil, Star, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +15,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { updateCollection, deleteCollection, toggleFavoriteCollection } from '@/actions/collections'
+import { CollectionEditDialog } from '@/components/collections/CollectionEditDialog'
+import { useCollectionActions } from '@/hooks/use-collection-actions'
 
 interface CollectionDetailActionsProps {
   collectionId: string
@@ -46,100 +35,39 @@ export default function CollectionDetailActions({
   const [editOpen, setEditOpen] = useState(false)
   const [name, setName] = useState(collectionName)
   const [description, setDescription] = useState(collectionDescription ?? '')
-  const [saving, setSaving] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [favorited, setFavorited] = useState(isFavorite)
-  const [togglingFavorite, setTogglingFavorite] = useState(false)
 
-  async function handleSave() {
-    setSaving(true)
-    const result = await updateCollection({ id: collectionId, name, description })
-    setSaving(false)
-    if (result.success) {
-      toast.success('Collection updated')
-      setEditOpen(false)
-      router.refresh()
-    } else {
-      toast.error(typeof result.error === 'string' ? result.error : 'Failed to update')
-    }
-  }
-
-  async function handleToggleFavorite() {
-    setTogglingFavorite(true)
-    const result = await toggleFavoriteCollection(collectionId)
-    setTogglingFavorite(false)
-    if (result.success) {
-      setFavorited(result.data.isFavorite)
-      router.refresh()
-    } else {
-      toast.error(typeof result.error === 'string' ? result.error : 'Failed to update favorite')
-    }
-  }
-
-  async function handleDelete() {
-    setDeleting(true)
-    const result = await deleteCollection({ id: collectionId })
-    setDeleting(false)
-    if (result.success) {
-      toast.success('Collection deleted')
-      router.push('/collections')
-    } else {
-      toast.error(typeof result.error === 'string' ? result.error : 'Failed to delete')
-    }
-  }
+  const { favorited, saving, deleting, togglingFavorite, handleToggleFavorite, handleSave, handleDelete } =
+    useCollectionActions({
+      collectionId,
+      isFavorite,
+      afterDelete: () => router.push('/collections'),
+    })
 
   return (
     <div className="flex items-center gap-1.5">
-      <Dialog
-        open={editOpen}
-        onOpenChange={(isOpen) => {
-          setEditOpen(isOpen)
-          if (isOpen) {
-            setName(collectionName)
-            setDescription(collectionDescription ?? '')
-          }
+      <Button
+        variant="outline"
+        size="icon-sm"
+        title="Edit collection"
+        onClick={() => {
+          setName(collectionName)
+          setDescription(collectionDescription ?? '')
+          setEditOpen(true)
         }}
       >
-        <DialogTrigger
-          render={
-            <Button variant="outline" size="icon-sm" title="Edit collection" />
-          }
-        >
-          <Pencil className="size-4" />
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Collection</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="detail-col-name">Name</Label>
-              <Input
-                id="detail-col-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="detail-col-desc">Description</Label>
-              <Textarea
-                id="detail-col-desc"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saving || !name.trim()}>
-              {saving ? 'Saving…' : 'Save'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <Pencil className="size-4" />
+      </Button>
+
+      <CollectionEditDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        name={name}
+        onNameChange={setName}
+        description={description}
+        onDescriptionChange={setDescription}
+        saving={saving}
+        onSave={() => handleSave(name, description, () => setEditOpen(false))}
+      />
 
       <Button
         variant="outline"

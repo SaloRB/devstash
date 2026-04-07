@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
+import { useControlledDialog } from '@/hooks/use-controlled-dialog'
+import { appendTag } from '@/lib/utils'
+import { LanguageSelect } from '@/components/shared/LanguageSelect'
 import {
   Dialog,
   DialogContent,
@@ -23,7 +25,6 @@ import {
   SelectTrigger,
 } from '@/components/ui/select'
 import { ICON_MAP } from '@/lib/item-types'
-import { CODE_LANGUAGES } from '@/constants/editor'
 import type { ItemTypeWithCount } from '@/lib/db/items'
 import type { UserCollection } from '@/lib/db/collections'
 import { FileUpload } from '@/components/shared/FileUpload'
@@ -50,13 +51,7 @@ export default function CreateItemDialog({
   onOpenChange?: (open: boolean) => void
 }) {
   const router = useRouter()
-  const [internalOpen, setInternalOpen] = useState(false)
-
-  const isControlled = controlledOpen !== undefined
-  const open = isControlled ? controlledOpen : internalOpen
-  const setOpen = isControlled
-    ? (v: boolean) => controlledOnOpenChange?.(v)
-    : setInternalOpen
+  const { isControlled, open, setOpen } = useControlledDialog(controlledOpen, controlledOnOpenChange)
 
   const { fields, setters, flags, selectedType, typeName, saving, canSubmit, resetForm, handleCreate } =
     useItemCreateForm(itemTypes, defaultTypeName, () => { setOpen(false); router.refresh() })
@@ -193,23 +188,7 @@ export default function CreateItemDialog({
               {showLanguage && (
                 <div className="space-y-1.5">
                   <Label>Language</Label>
-                  <Select
-                    value={language || 'plaintext'}
-                    onValueChange={(v) => setLanguage(v === 'plaintext' ? '' : (v ?? ''))}
-                  >
-                    <SelectTrigger className="w-48">
-                      <span>
-                        {CODE_LANGUAGES.find((l) => l.value === (language || 'plaintext'))?.label ?? 'Plain Text'}
-                      </span>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CODE_LANGUAGES.map((l) => (
-                        <SelectItem key={l.value} value={l.value}>
-                          {l.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <LanguageSelect value={language} onChange={setLanguage} />
                 </div>
               )}
               <div className="space-y-1.5">
@@ -244,12 +223,7 @@ export default function CreateItemDialog({
                 title={title}
                 content={content}
                 isPro={isPro}
-                onAcceptTag={(tag) => {
-                  const existing = tagsInput.split(',').map((t) => t.trim()).filter(Boolean)
-                  if (!existing.includes(tag)) {
-                    setTagsInput(existing.length > 0 ? `${tagsInput}, ${tag}` : tag)
-                  }
-                }}
+                onAcceptTag={(tag) => setTagsInput(appendTag(tagsInput, tag))}
               />
             </div>
             <Input

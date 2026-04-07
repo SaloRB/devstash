@@ -56,14 +56,8 @@ import {
   MARKDOWN_TYPES,
   FILE_TYPES,
 } from '@/constants'
-import { CODE_LANGUAGES } from '@/constants/editor'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@/components/ui/select'
-import { formatBytes, formatLongDate } from '@/lib/utils'
+import { formatBytes, formatLongDate, appendTag } from '@/lib/utils'
+import { LanguageSelect } from '@/components/shared/LanguageSelect'
 
 function DrawerSkeleton() {
   return (
@@ -473,23 +467,7 @@ function EditMode({
             {showLanguage && (
               <div className="space-y-1.5">
                 <Label>Language</Label>
-                <Select
-                  value={language || 'plaintext'}
-                  onValueChange={(v) => setLanguage(v === 'plaintext' ? '' : (v ?? ''))}
-                >
-                  <SelectTrigger className="w-48">
-                    <span>
-                      {CODE_LANGUAGES.find((l) => l.value === (language || 'plaintext'))?.label ?? 'Plain Text'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CODE_LANGUAGES.map((l) => (
-                      <SelectItem key={l.value} value={l.value}>
-                        {l.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <LanguageSelect value={language} onChange={setLanguage} />
               </div>
             )}
             <div className="space-y-1.5">
@@ -527,12 +505,7 @@ function EditMode({
               title={title}
               content={content}
               isPro={isPro}
-              onAcceptTag={(tag) => {
-                const existing = tagsInput.split(',').map((t) => t.trim()).filter(Boolean)
-                if (!existing.includes(tag)) {
-                  setTagsInput(existing.length > 0 ? `${tagsInput}, ${tag}` : tag)
-                }
-              }}
+              onAcceptTag={(tag) => setTagsInput(appendTag(tagsInput, tag))}
             />
           </div>
           <Input

@@ -5,23 +5,7 @@ import { Check } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-
-const freeFeatures = [
-  'Up to 50 items',
-  '3 collections',
-  'All item types',
-  'Code editor',
-  'Markdown support',
-]
-
-const proFeatures = [
-  'Unlimited items',
-  'Unlimited collections',
-  'File & image uploads',
-  'AI-powered tagging',
-  'Semantic search',
-  'Priority support',
-]
+import { FREE_FEATURES, PRO_FEATURES } from '@/constants/pricing'
 
 export function UpgradePricingCards() {
   const [isYearly, setIsYearly] = useState(false)
@@ -71,7 +55,7 @@ export function UpgradePricingCards() {
           <p className='text-sm text-muted-foreground mb-6'>forever</p>
           <div className='border-t border-border/40 mb-6' />
           <ul className='space-y-3 mb-8 flex-1'>
-            {freeFeatures.map((f) => (
+            {FREE_FEATURES.map((f) => (
               <li key={f} className='flex items-center gap-2 text-sm'>
                 <Check className='w-4 h-4 text-primary shrink-0' />
                 {f}
@@ -96,7 +80,7 @@ export function UpgradePricingCards() {
           <p className='text-sm text-muted-foreground mb-6'>{isYearly ? 'per year' : 'per month'}</p>
           <div className='border-t border-border/40 mb-6' />
           <ul className='space-y-3 mb-8 flex-1'>
-            {proFeatures.map((f) => (
+            {PRO_FEATURES.map((f) => (
               <li key={f} className='flex items-center gap-2 text-sm'>
                 <Check className='w-4 h-4 text-primary shrink-0' />
                 {f}
