@@ -2,21 +2,11 @@
 
 ## Status
 
-In Progress
+No active feature
 
 ## Goals
 
-- Replace language text input with a dropdown (Select) populated with common Monaco-supported languages
-- Move language selector above the content/editor field so language is chosen before writing code
-- Apply to both CreateItemDialog and ItemDrawer edit mode
-- Language change immediately updates Monaco syntax highlighting as the user types
-
 ## Notes
-
-- `CODE_LANGUAGES` constant added to `src/constants/editor.ts`
-- Language dropdown uses `plaintext` as the default/empty value
-- Affects `CreateItemDialog.tsx` and `ItemDrawer.tsx` (EditMode section)
-- No schema changes needed — `language` field already exists on Item
 
 ## History
 
@@ -86,3 +76,4 @@ In Progress
 - **2026-04-06** - Completed Stripe Integration Phase 1: installed stripe v22, isPro added to JWT/session (synced from DB on every jwt callback), stripe singleton at src/lib/stripe.ts, POST /api/stripe/checkout (auth-guard, monthly/yearly, reuse customer), POST /api/stripe/portal (auth-guard, 400 if no customer), src/lib/gates.ts (checkItemLimit, checkCollectionLimit, getUserProStatus; FREE_LIMITS items:50 collections:3), 9 unit tests 100% coverage.
 - **2026-04-06** - Completed Stripe Integration Phase 2: webhook handler at /api/stripe/webhook (signature verify, checkout.session.completed/customer.subscription.updated/deleted/invoice.payment_failed); createItem gated (PRO_REQUIRED for file/image, ITEM_LIMIT_REACHED at 50); createCollection gated (COLLECTION_LIMIT_REACHED at 3); Billing card in /settings (current plan badge, items/collections counter, upgrade/manage-billing buttons); checkout redirects to /settings?tab=billing&checkout=success|cancelled; 6 new unit tests.
 - **2026-04-06** - Completed Upgrade Page: /upgrade route (redirects Pro users to /settings?tab=billing); UpgradePricingCards client component (monthly/yearly toggle, Free "Current Plan" + Pro cards matching homepage pricing, calls /api/stripe/checkout on upgrade); ghost "Upgrade" button in TopBar visible only to free users, linking to /upgrade.
+- **2026-04-07** - Completed Language Dropdown: replaced language text input with a Select dropdown (26 common Monaco languages) positioned above the code editor in CreateItemDialog and ItemDrawer edit mode. Language change immediately updates Monaco syntax highlighting. CODE_LANGUAGES constant added to src/constants/editor.ts.
