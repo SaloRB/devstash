@@ -54,6 +54,13 @@ import {
   MARKDOWN_TYPES,
   FILE_TYPES,
 } from '@/constants'
+import { CODE_LANGUAGES } from '@/constants/editor'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@/components/ui/select'
 import { formatBytes, formatLongDate } from '@/lib/utils'
 
 function DrawerSkeleton() {
@@ -438,29 +445,41 @@ function EditMode({
         </div>
 
         {showContent && (
-          <div className="space-y-1.5">
-            <Label>Content</Label>
-            <ItemContentField
-              value={content}
-              language={language || undefined}
-              showLanguage={showLanguage}
-              showMarkdown={showMarkdown}
-              onChange={setContent}
-              rows={8}
-            />
-          </div>
-        )}
-
-        {showLanguage && (
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-language">Language</Label>
-            <Input
-              id="edit-language"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              placeholder="e.g. javascript, python"
-            />
-          </div>
+          <>
+            {showLanguage && (
+              <div className="space-y-1.5">
+                <Label>Language</Label>
+                <Select
+                  value={language || 'plaintext'}
+                  onValueChange={(v) => setLanguage(v === 'plaintext' ? '' : (v ?? ''))}
+                >
+                  <SelectTrigger className="w-48">
+                    <span>
+                      {CODE_LANGUAGES.find((l) => l.value === (language || 'plaintext'))?.label ?? 'Plain Text'}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CODE_LANGUAGES.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>
+                        {l.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <Label>Content</Label>
+              <ItemContentField
+                value={content}
+                language={language || undefined}
+                showLanguage={showLanguage}
+                showMarkdown={showMarkdown}
+                onChange={setContent}
+                rows={8}
+              />
+            </div>
+          </>
         )}
 
         {showUrl && (

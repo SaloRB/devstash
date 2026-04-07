@@ -2,11 +2,21 @@
 
 ## Status
 
-No active feature
+In Progress
 
 ## Goals
 
+- Replace language text input with a dropdown (Select) populated with common Monaco-supported languages
+- Move language selector above the content/editor field so language is chosen before writing code
+- Apply to both CreateItemDialog and ItemDrawer edit mode
+- Language change immediately updates Monaco syntax highlighting as the user types
+
 ## Notes
+
+- `CODE_LANGUAGES` constant added to `src/constants/editor.ts`
+- Language dropdown uses `plaintext` as the default/empty value
+- Affects `CreateItemDialog.tsx` and `ItemDrawer.tsx` (EditMode section)
+- No schema changes needed — `language` field already exists on Item
 
 ## History
 
