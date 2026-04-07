@@ -41,7 +41,7 @@ export default async function MainLayout({
             </SidebarInset>
           </SidebarProvider>
           <CommandPalette />
-          <ItemDrawer collections={collections} />
+          <ItemDrawer collections={collections} isPro={session?.user?.isPro ?? false} />
         </EditorPreferencesProvider>
       </SearchProvider>
     </ItemDrawerProvider>

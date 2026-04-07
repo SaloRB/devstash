@@ -17,9 +17,11 @@ import type { UserCollection } from '@/lib/db/collections'
 export default function TopBarCreateMenu({
   itemTypes,
   collections,
+  isPro,
 }: {
   itemTypes: ItemTypeWithCount[]
   collections: UserCollection[]
+  isPro?: boolean
 }) {
   const [itemOpen, setItemOpen] = useState(false)
   const [collectionOpen, setCollectionOpen] = useState(false)
@@ -52,13 +54,14 @@ export default function TopBarCreateMenu({
       {/* Desktop: separate buttons (md+) */}
       <div className="hidden md:flex items-center gap-2">
         <CreateCollectionDialog />
-        <CreateItemDialog itemTypes={itemTypes} collections={collections} />
+        <CreateItemDialog itemTypes={itemTypes} collections={collections} isPro={isPro} />
       </div>
 
       {/* Controlled dialogs for mobile dropdown */}
       <CreateItemDialog
         itemTypes={itemTypes}
         collections={collections}
+        isPro={isPro}
         open={itemOpen}
         onOpenChange={setItemOpen}
       />

@@ -44,7 +44,7 @@ export default async function TopBar() {
         >
           <Star className="size-4" />
         </Link>
-        <TopBarCreateMenu itemTypes={itemTypes} collections={collections} />
+        <TopBarCreateMenu itemTypes={itemTypes} collections={collections} isPro={session?.user?.isPro ?? false} />
       </div>
     </header>
   );

@@ -49,6 +49,7 @@ import type { UserCollection } from '@/lib/db/collections'
 import { useItemEditForm } from '@/hooks/use-item-edit-form'
 import { ItemContentField } from '@/components/shared/ItemContentField'
 import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
+import { SuggestTagsButton } from '@/components/shared/SuggestTagsButton'
 import {
   LANGUAGE_TYPES,
   MARKDOWN_TYPES,
@@ -364,11 +365,13 @@ function ViewMode({
 function EditMode({
   item,
   collections,
+  isPro,
   onCancel,
   onSaved,
 }: {
   item: ItemDetail
   collections: UserCollection[]
+  isPro?: boolean
   onCancel: () => void
   onSaved: (updated: ItemDetail) => void
 }) {
@@ -495,7 +498,20 @@ function EditMode({
         )}
 
         <div className="space-y-1.5">
-          <Label htmlFor="edit-tags">Tags</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="edit-tags">Tags</Label>
+            <SuggestTagsButton
+              title={title}
+              content={content}
+              isPro={isPro}
+              onAcceptTag={(tag) => {
+                const existing = tagsInput.split(',').map((t) => t.trim()).filter(Boolean)
+                if (!existing.includes(tag)) {
+                  setTagsInput(existing.length > 0 ? `${tagsInput}, ${tag}` : tag)
+                }
+              }}
+            />
+          </div>
           <Input
             id="edit-tags"
             value={tagsInput}
@@ -556,8 +572,10 @@ function EditMode({
 
 export default function ItemDrawer({
   collections = [],
+  isPro,
 }: {
   collections?: UserCollection[]
+  isPro?: boolean
 }) {
   const { isOpen, item, loading, closeDrawer, refreshItem } = useItemDrawer()
   const router = useRouter()
@@ -677,6 +695,7 @@ export default function ItemDrawer({
               <EditMode
                 item={item}
                 collections={collections}
+                isPro={isPro}
                 onCancel={() => setEditing(false)}
                 onSaved={handleSaved}
               />

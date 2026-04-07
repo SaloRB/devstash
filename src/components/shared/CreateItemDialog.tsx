@@ -31,17 +31,20 @@ import { useItemCreateForm } from '@/hooks/use-item-create-form'
 import { ItemContentField } from '@/components/shared/ItemContentField'
 import { ItemTypeIcon } from '@/components/shared/ItemTypeIcon'
 import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
+import { SuggestTagsButton } from '@/components/shared/SuggestTagsButton'
 
 export default function CreateItemDialog({
   itemTypes,
   defaultTypeName,
   collections = [],
+  isPro,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: {
   itemTypes: ItemTypeWithCount[]
   defaultTypeName?: string
   collections?: UserCollection[]
+  isPro?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
@@ -223,7 +226,20 @@ export default function CreateItemDialog({
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="create-tags">Tags</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="create-tags">Tags</Label>
+              <SuggestTagsButton
+                title={title}
+                content={content}
+                isPro={isPro}
+                onAcceptTag={(tag) => {
+                  const existing = tagsInput.split(',').map((t) => t.trim()).filter(Boolean)
+                  if (!existing.includes(tag)) {
+                    setTagsInput(existing.length > 0 ? `${tagsInput}, ${tag}` : tag)
+                  }
+                }}
+              />
+            </div>
             <Input
               id="create-tags"
               value={tagsInput}

@@ -54,7 +54,7 @@ export default async function ItemsPage({ params, searchParams }: ItemsPageProps
             {total} item{total !== 1 ? 's' : ''}
           </p>
         </div>
-        <CreateItemDialog itemTypes={itemTypes} defaultTypeName={type} collections={collections} />
+        <CreateItemDialog itemTypes={itemTypes} defaultTypeName={type} collections={collections} isPro={isPro} />
       </div>
 
       <ItemsGrid type={type} items={items} />
