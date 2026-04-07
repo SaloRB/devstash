@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FolderPlus } from 'lucide-react'
+import { useControlledDialog } from '@/hooks/use-controlled-dialog'
 import { toast } from 'sonner'
 import {
   Dialog,
@@ -27,12 +28,7 @@ export default function CreateCollectionDialog({
   onOpenChange?: (open: boolean) => void
 } = {}) {
   const router = useRouter()
-  const isControlled = controlledOpen !== undefined
-  const [internalOpen, setInternalOpen] = useState(false)
-  const open = isControlled ? controlledOpen : internalOpen
-  const setOpen = isControlled
-    ? (v: boolean) => controlledOnOpenChange?.(v)
-    : setInternalOpen
+  const { isControlled, open, setOpen } = useControlledDialog(controlledOpen, controlledOnOpenChange)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [saving, setSaving] = useState(false)

@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { AuthPageShell } from '@/components/auth/AuthPageShell'
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('')
@@ -43,9 +44,8 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
-        <Card>
+    <AuthPageShell>
+      <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Forgot password</CardTitle>
             <CardDescription>Enter your email and we&apos;ll send a reset link</CardDescription>
@@ -85,7 +85,6 @@ export function ForgotPasswordForm() {
             </Link>
           </CardFooter>
         </Card>
-      </div>
-    </div>
+    </AuthPageShell>
   )
 }

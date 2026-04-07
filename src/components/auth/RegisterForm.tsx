@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { AuthPageShell } from '@/components/auth/AuthPageShell'
 
 export function RegisterForm() {
   const router = useRouter()
@@ -76,9 +77,8 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
-        <Card>
+    <AuthPageShell>
+      <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Create an account</CardTitle>
             <CardDescription>Join DevStash today</CardDescription>
@@ -165,7 +165,6 @@ export function RegisterForm() {
             </p>
           </CardFooter>
         </Card>
-      </div>
-    </div>
+    </AuthPageShell>
   )
 }

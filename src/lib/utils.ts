@@ -20,6 +20,12 @@ export function formatLongDate(date: Date | string): string {
   })
 }
 
+export function appendTag(tagsInput: string, tag: string): string {
+  const existing = tagsInput.split(',').map((t) => t.trim()).filter(Boolean)
+  if (existing.includes(tag)) return tagsInput
+  return existing.length > 0 ? `${tagsInput}, ${tag}` : tag
+}
+
 export function relativeDate(date: Date | string): string {
   const diff = Date.now() - new Date(date).getTime()
   const mins = Math.floor(diff / 60000)
