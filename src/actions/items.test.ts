@@ -44,7 +44,7 @@ import {
   toggleFavoriteItem as toggleFavoriteItemDb,
   togglePinnedItem as togglePinnedItemDb,
 } from '@/lib/db/items'
-import { r2 } from '@/lib/r2'
+import { r2 } from '@/lib/clients/r2'
 import { getUserProStatus, checkItemLimit } from '@/lib/gates'
 import { prisma } from '@/lib/prisma'
 

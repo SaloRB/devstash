@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireApiAuth } from '@/lib/auth-guard'
 import { prisma } from '@/lib/prisma'
-import { stripe } from '@/lib/stripe'
+import { stripe } from '@/lib/clients/stripe'
 
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const auth = await requireApiAuth()
+  if (auth instanceof NextResponse) return auth
 
   const { interval } = await req.json()
   if (interval !== 'monthly' && interval !== 'yearly') {
@@ -20,7 +18,7 @@ export async function POST(req: NextRequest) {
       : process.env.STRIPE_PRICE_ID_YEARLY!
 
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: auth.userId },
     select: { email: true, stripeCustomerId: true },
   })
 
@@ -29,11 +27,11 @@ export async function POST(req: NextRequest) {
   if (!customerId) {
     const customer = await stripe.customers.create({
       email: user?.email ?? undefined,
-      metadata: { userId: session.user.id },
+      metadata: { userId: auth.userId },
     })
     customerId = customer.id
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: auth.userId },
       data: { stripeCustomerId: customerId },
     })
   }
@@ -42,7 +40,7 @@ export async function POST(req: NextRequest) {
     customer: customerId,
     mode: 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
-    metadata: { userId: session.user.id },
+    metadata: { userId: auth.userId },
     success_url: `${process.env.NEXTAUTH_URL}/settings?tab=billing&checkout=success`,
     cancel_url: `${process.env.NEXTAUTH_URL}/settings?tab=billing&checkout=cancelled`,
   })

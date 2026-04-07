@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireApiAuth } from '@/lib/auth-guard'
 import { prisma } from '@/lib/prisma'
-import { stripe } from '@/lib/stripe'
+import { stripe } from '@/lib/clients/stripe'
 
 export async function POST() {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const auth = await requireApiAuth()
+  if (auth instanceof NextResponse) return auth
 
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: auth.userId },
     select: { stripeCustomerId: true },
   })
 

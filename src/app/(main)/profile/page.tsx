@@ -4,13 +4,7 @@ import { getProfileUser, getProfileStats } from '@/lib/db/profile'
 import { UserAvatar } from '@/components/shared/UserAvatar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import {
-  Code, Sparkles, Terminal, StickyNote, File, Image, Link, LucideIcon,
-} from 'lucide-react'
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Code, Sparkles, Terminal, StickyNote, File, Image, Link,
-}
+import { ICON_MAP } from '@/lib/item-types'
 
 export default async function ProfilePage() {
   const session = await auth()

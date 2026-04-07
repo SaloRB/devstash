@@ -21,7 +21,7 @@ vi.mock('@/lib/openai', () => ({
 import { generateAutoTags, generateDescription, explainCode, optimizePrompt } from './ai'
 import { auth } from '@/auth'
 import { requireProWithRateLimit } from '@/lib/gates'
-import { openai } from '@/lib/openai'
+import { openai } from '@/lib/clients/openai'
 
 const mockAuth = vi.mocked(auth)
 const mockRequireProWithRateLimit = vi.mocked(requireProWithRateLimit)

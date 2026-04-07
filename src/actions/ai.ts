@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { requireAuth } from '@/lib/auth-guard'
 import { requireProWithRateLimit } from '@/lib/gates'
-import { openai, AI_MODEL, handleOpenAIError } from '@/lib/openai'
+import { openai, AI_MODEL, handleOpenAIError } from '@/lib/clients/openai'
 
 const generateDescriptionSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),

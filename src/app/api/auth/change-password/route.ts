@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { auth } from '@/auth'
+import { requireApiAuth } from '@/lib/auth-guard'
 import { prisma } from '@/lib/prisma'
 import { applyRateLimit, getIP } from '@/lib/rate-limit'
 
@@ -9,10 +9,8 @@ export async function POST(req: NextRequest) {
   const limited = await applyRateLimit(`change-password:${ip}`, 5, '15 m')
   if (limited) return limited
 
-  const session = await auth()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const auth = await requireApiAuth()
+  if (auth instanceof NextResponse) return auth
 
   const { currentPassword, newPassword } = await req.json()
 
@@ -25,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: auth.userId },
     select: { password: true },
   })
 
@@ -40,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const hashed = await bcrypt.hash(newPassword, 10)
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: auth.userId },
     data: { password: hashed },
   })
 

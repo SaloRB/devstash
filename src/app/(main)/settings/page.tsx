@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { getProfileUser, getProfileStats } from '@/lib/db/profile'
-import { stripe } from '@/lib/stripe'
+import { stripe } from '@/lib/clients/stripe'
 import { ChangePasswordForm } from '@/components/settings/ChangePasswordForm'
 import { DeleteAccountButton } from '@/components/settings/DeleteAccountButton'
 import { EditorPreferencesForm } from '@/components/settings/EditorPreferencesForm'

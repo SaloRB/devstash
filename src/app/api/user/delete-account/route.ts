@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireApiAuth } from '@/lib/auth-guard'
 import { prisma } from '@/lib/prisma'
 
 export async function DELETE() {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const auth = await requireApiAuth()
+  if (auth instanceof NextResponse) return auth
 
-  await prisma.user.delete({ where: { id: session.user.id } })
+  await prisma.user.delete({ where: { id: auth.userId } })
 
   return NextResponse.json({ ok: true })
 }

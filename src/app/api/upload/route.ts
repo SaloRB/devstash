@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
-import { auth } from '@/auth'
-import { r2, R2_BUCKET, R2_PUBLIC_URL } from '@/lib/r2'
+import { requireApiAuth } from '@/lib/auth-guard'
+import { r2, R2_BUCKET, R2_PUBLIC_URL } from '@/lib/clients/r2'
 import { applyRateLimit } from '@/lib/rate-limit'
+import { IMAGE_MAX, FILE_MAX } from '@/constants'
 
 const IMAGE_TYPES = new Set([
   'image/png',
@@ -26,16 +27,11 @@ const FILE_TYPES = new Set([
   'application/toml',
 ])
 
-const IMAGE_MAX = 5 * 1024 * 1024
-const FILE_MAX = 10 * 1024 * 1024
-
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const auth = await requireApiAuth()
+  if (auth instanceof NextResponse) return auth
 
-  const limited = await applyRateLimit(`upload:${session.user.id}`, 20, '1 h')
+  const limited = await applyRateLimit(`upload:${auth.userId}`, 20, '1 h')
   if (limited) return limited
 
   const formData = await req.formData()
@@ -59,7 +55,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ext = file.name.split('.').pop() ?? 'bin'
-  const key = `${session.user.id}/${randomUUID()}.${ext}`
+  const key = `${auth.userId}/${randomUUID()}.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
 
   await r2.send(

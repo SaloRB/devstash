@@ -12,7 +12,7 @@ import {
   toggleFavoriteItem as toggleFavoriteItemDb,
   togglePinnedItem as togglePinnedItemDb,
 } from '@/lib/db/items'
-import { r2, R2_BUCKET, keyFromUrl } from '@/lib/r2'
+import { r2, R2_BUCKET, keyFromUrl } from '@/lib/clients/r2'
 import { prisma } from '@/lib/prisma'
 import { getUserProStatus, checkItemLimit } from '@/lib/gates'
 import { FILE_TYPES } from '@/constants/item-types'

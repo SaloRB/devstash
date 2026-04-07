@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
-import { sendPasswordResetEmail } from "@/lib/email";
+import { sendPasswordResetEmail } from "@/lib/clients/email";
 import { applyRateLimit, getIP } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
