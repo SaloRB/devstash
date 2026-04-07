@@ -1,18 +1,10 @@
-# Current Feature: Actions Refactor
+# Current Feature
 
 ## Status
 
-In Progress
+No active feature
 
 ## Goals
-
-Eliminate duplicate code in actions/ by extracting shared utilities.
-
-- [x] Auth session guard → `lib/auth-guard.ts` `requireAuth()` — Done
-- [x] OpenAI error catch → `lib/openai.ts` `handleOpenAIError(err)` — Done
-- [x] Pro gate + rate-limit → `lib/gates.ts` `requireProWithRateLimit(userId)` — Done
-- [x] Nullable Zod helpers → `lib/schemas.ts` `nullableString()` / `nullableUrl()` — Done
-- [x] try/catch wrapper → `lib/action-utils.ts` `withAction<T>(fn, errorMsg)` — Done
 
 ## Notes
 
@@ -90,3 +82,4 @@ Eliminate duplicate code in actions/ by extracting shared utilities.
 - **2026-04-07** - Completed AI Explain Code: explainCode server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, 3000-char content truncation), Sparkles button in CodeEditor header (Crown + tooltip for free users), Code/Explain tab switcher after generating, explanation rendered as markdown in same container space, only shown for snippet/command types in item drawer read view. isPro threaded through ItemDrawer ViewMode → ItemContentField → CodeEditor. 11 unit tests.
 - **2026-04-07** - Completed AI Prompt Optimization: optimizePrompt server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, 3000-char truncation, prompt engineer system instruction), Sparkles/Crown button in MarkdownEditor header (prompt type only), Write/Preview/Optimized tab switcher after generation. Drawer ViewMode: Accept saves directly via updateItem + toast + refresh; Deny dismisses. Drawer EditMode: Accept replaces textarea content. CreateItemDialog: no Optimize button (existing items only). 9 unit tests.
 - **2026-04-07** - Completed UI Polish Fixes: sidebar type/collection links now show active highlight via usePathname in new SidebarNavContent client component (SidebarTypeItems + SidebarCollectionItems); VIEW ALL COLLECTIONS converted from raw link to SidebarMenuButton with active state; GitHub OAuth button added to register page matching sign-in layout.
+- **2026-04-07** - Completed Actions Refactor: extracted requireAuth() to lib/auth-guard.ts (replaces 3-line session guard in 10+ places), handleOpenAIError() to lib/openai.ts (replaces 12-line catch block x4 in ai.ts), requireProWithRateLimit() to lib/gates.ts (replaces 6-line pro+rate-limit block x4 in ai.ts), nullableString()/nullableUrl() to lib/schemas.ts (reduces schema verbosity in items/collections), withAction<T>() to lib/action-utils.ts (replaces try/catch wrapper in items/collections). Net -101 lines across actions/.
