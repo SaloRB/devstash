@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Star } from 'lucide-react'
+import { useFavorites } from '@/contexts/favorites-context'
 import {
   SidebarMenu,
   SidebarMenuBadge,
@@ -55,8 +56,13 @@ export function SidebarTypeItems({ itemTypes }: { itemTypes: ItemTypeWithCount[]
 
 export function SidebarCollectionItems({ collections }: { collections: SidebarCollection[] }) {
   const pathname = usePathname()
-  const favorites = collections.filter((c) => c.isFavorite)
-  const recents = collections.filter((c) => !c.isFavorite)
+  const { overrides } = useFavorites()
+  const resolved = collections.map((c) => ({
+    ...c,
+    isFavorite: overrides[c.id] ?? c.isFavorite,
+  }))
+  const favorites = resolved.filter((c) => c.isFavorite)
+  const recents = resolved.filter((c) => !c.isFavorite)
 
   return (
     <>

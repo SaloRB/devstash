@@ -28,6 +28,7 @@ interface CollectionActionsDropdownProps {
   collectionName: string
   collectionDescription?: string | null
   isFavorite: boolean
+  onFavoriteChange?: (value: boolean) => void
 }
 
 export default function CollectionActionsDropdown({
@@ -35,6 +36,7 @@ export default function CollectionActionsDropdown({
   collectionName,
   collectionDescription,
   isFavorite,
+  onFavoriteChange,
 }: CollectionActionsDropdownProps) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
@@ -47,6 +49,7 @@ export default function CollectionActionsDropdown({
       collectionId,
       isFavorite,
       afterDelete: () => { setDeleteOpen(false); router.refresh() },
+      onFavoriteChange,
     })
 
   return (

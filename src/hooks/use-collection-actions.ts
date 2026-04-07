@@ -4,19 +4,23 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { updateCollection, deleteCollection, toggleFavoriteCollection } from '@/actions/collections'
+import { useFavorites } from '@/contexts/favorites-context'
 
 interface UseCollectionActionsOptions {
   collectionId: string
   isFavorite: boolean
   afterDelete?: () => void
+  onFavoriteChange?: (value: boolean) => void
 }
 
 export function useCollectionActions({
   collectionId,
   isFavorite,
   afterDelete,
+  onFavoriteChange,
 }: UseCollectionActionsOptions) {
   const router = useRouter()
+  const { setFavorite } = useFavorites()
   const [favorited, setFavorited] = useState(isFavorite)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -25,13 +29,15 @@ export function useCollectionActions({
   async function handleToggleFavorite() {
     const prev = favorited
     setFavorited(!prev)
+    onFavoriteChange?.(!prev)
+    setFavorite(collectionId, !prev)
     setTogglingFavorite(true)
     const result = await toggleFavoriteCollection(collectionId)
     setTogglingFavorite(false)
-    if (result.success) {
-      router.refresh()
-    } else {
+    if (!result.success) {
       setFavorited(prev)
+      onFavoriteChange?.(prev)
+      setFavorite(collectionId, prev)
       toast.error(typeof result.error === 'string' ? result.error : 'Failed to update favorite')
     }
   }

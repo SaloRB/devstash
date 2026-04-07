@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/dashboard/AppSidebar'
 import TopBar from '@/components/layout/TopBar'
 import { ItemDrawerProvider } from '@/contexts/item-drawer-context'
+import { FavoritesProvider } from '@/contexts/favorites-context'
 import ItemDrawer from '@/components/shared/ItemDrawer'
 import { SearchProvider } from '@/contexts/search-context'
 import CommandPalette from '@/components/shared/CommandPalette'
@@ -26,6 +27,7 @@ export default async function MainLayout({
     : [[], { items: [], collections: [] }, DEFAULT_EDITOR_PREFS]
 
   return (
+    <FavoritesProvider>
     <ItemDrawerProvider>
       <SearchProvider items={searchData.items} collections={searchData.collections}>
         <EditorPreferencesProvider initialPrefs={editorPrefs as EditorPreferences}>
@@ -45,5 +47,6 @@ export default async function MainLayout({
         </EditorPreferencesProvider>
       </SearchProvider>
     </ItemDrawerProvider>
+    </FavoritesProvider>
   )
 }

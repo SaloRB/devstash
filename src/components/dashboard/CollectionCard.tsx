@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Star } from 'lucide-react'
 import {
@@ -41,6 +42,7 @@ export default function CollectionCard({
   items,
 }: CollectionCardProps) {
   const router = useRouter()
+  const [favorited, setFavorited] = useState(isFavorite)
 
   const borderColor = itemCount > 0
     ? getDominantTypeColor(items.map(({ itemType }) => itemType))
@@ -58,7 +60,7 @@ export default function CollectionCard({
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-sm">{name}</CardTitle>
-          {isFavorite && (
+          {favorited && (
             <Star className="size-3.5 fill-yellow-500 text-yellow-500" />
           )}
         </div>
@@ -67,7 +69,8 @@ export default function CollectionCard({
             collectionId={id}
             collectionName={name}
             collectionDescription={description}
-            isFavorite={isFavorite}
+            isFavorite={favorited}
+            onFavoriteChange={setFavorited}
           />
         </CardAction>
         <CardDescription className="text-xs">{itemCount} items</CardDescription>
