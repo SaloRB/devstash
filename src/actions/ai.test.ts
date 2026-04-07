@@ -21,7 +21,7 @@ vi.mock('@/lib/openai', () => ({
   },
 }))
 
-import { generateAutoTags, generateDescription, explainCode } from './ai'
+import { generateAutoTags, generateDescription, explainCode, optimizePrompt } from './ai'
 import { auth } from '@/auth'
 import { getUserProStatus } from '@/lib/gates'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -282,6 +282,69 @@ describe('explainCode', () => {
   it('returns AI_ERROR on OpenAI failure', async () => {
     mockResponsesCreate.mockRejectedValue(new Error('Network error'))
     const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'AI_ERROR' })
+  })
+})
+
+describe('optimizePrompt', () => {
+  it('returns Unauthorized when no session', async () => {
+    mockAuth.mockResolvedValue(null as never)
+    const result = await optimizePrompt({ content: 'Write me a story.' })
+    expect(result).toEqual({ success: false, error: 'Unauthorized' })
+  })
+
+  it('returns PRO_REQUIRED for free users', async () => {
+    mockGetUserProStatus.mockResolvedValue(false)
+    const result = await optimizePrompt({ content: 'Write me a story.' })
+    expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
+  })
+
+  it('returns RATE_LIMITED when rate limit exceeded', async () => {
+    mockCheckRateLimit.mockResolvedValue({ allowed: false, retryAfterSecs: 3600 })
+    const result = await optimizePrompt({ content: 'Write me a story.' })
+    expect(result).toEqual({ success: false, error: 'RATE_LIMITED' })
+  })
+
+  it('returns Invalid input for empty content', async () => {
+    const result = await optimizePrompt({ content: '   ' })
+    expect(result).toEqual({ success: false, error: 'Invalid input' })
+  })
+
+  it('returns optimized prompt on success', async () => {
+    mockResponsesCreate.mockResolvedValue({
+      output_text: 'Write a 500-word short story set in a post-apocalyptic world.',
+    } as never)
+    const result = await optimizePrompt({ content: 'Write me a story.' })
+    expect(result).toEqual({
+      success: true,
+      data: 'Write a 500-word short story set in a post-apocalyptic world.',
+    })
+  })
+
+  it('trims whitespace from optimized output', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: '  Optimized prompt.  ' } as never)
+    const result = await optimizePrompt({ content: 'My prompt' })
+    expect(result).toEqual({ success: true, data: 'Optimized prompt.' })
+  })
+
+  it('returns AI_ERROR when output_text is empty', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: '   ' } as never)
+    const result = await optimizePrompt({ content: 'My prompt' })
+    expect(result).toEqual({ success: false, error: 'AI_ERROR' })
+  })
+
+  it('truncates content to 3000 chars before sending', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: 'Optimized.' } as never)
+    const longContent = 'a'.repeat(5000)
+    await optimizePrompt({ content: longContent })
+    const callArg = mockResponsesCreate.mock.calls[0][0] as { input: string }
+    expect(callArg.input).toContain('a'.repeat(3000))
+    expect(callArg.input).not.toContain('a'.repeat(3001))
+  })
+
+  it('returns AI_ERROR on OpenAI failure', async () => {
+    mockResponsesCreate.mockRejectedValue(new Error('Network error'))
+    const result = await optimizePrompt({ content: 'My prompt' })
     expect(result).toEqual({ success: false, error: 'AI_ERROR' })
   })
 })

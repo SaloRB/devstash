@@ -43,7 +43,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
 import { ICON_MAP } from '@/lib/item-types'
-import { deleteItem, toggleFavoriteItem, toggleItemPin } from '@/actions/items'
+import { deleteItem, toggleFavoriteItem, toggleItemPin, updateItem } from '@/actions/items'
 import type { ItemDetail } from '@/lib/db/items'
 import type { UserCollection } from '@/lib/db/collections'
 import { useItemEditForm } from '@/hooks/use-item-edit-form'
@@ -99,6 +99,7 @@ function ViewMode({
   onDelete,
   onToggleFavorite,
   onTogglePin,
+  onContentAccept,
   deleting,
   togglingFavorite,
   togglingPin,
@@ -109,6 +110,7 @@ function ViewMode({
   onDelete: () => void
   onToggleFavorite: () => void
   onTogglePin: () => void
+  onContentAccept?: (value: string) => void
   deleting: boolean
   togglingFavorite: boolean
   togglingPin: boolean
@@ -290,6 +292,8 @@ function ViewMode({
               readOnly
               isPro={isPro}
               showExplain={LANGUAGE_TYPES.has(item.itemType.name.toLowerCase())}
+              showOptimize={item.itemType.name.toLowerCase() === 'prompt'}
+              onAccept={item.itemType.name.toLowerCase() === 'prompt' ? onContentAccept : undefined}
               typeName={item.itemType.name}
             />
           </div>
@@ -497,6 +501,8 @@ function EditMode({
                 showMarkdown={showMarkdown}
                 onChange={setContent}
                 rows={8}
+                isPro={isPro}
+                showOptimize={item.itemType.name.toLowerCase() === 'prompt'}
               />
             </div>
           </>
@@ -607,6 +613,26 @@ export default function ItemDrawer({
     refreshItem(updated)
     setEditing(false)
     router.refresh()
+  }
+
+  async function handleContentAccept(content: string) {
+    if (!item) return
+    const result = await updateItem(item.id, {
+      title: item.title,
+      description: item.description,
+      content,
+      url: item.url,
+      language: item.language,
+      tags: item.tags.map((t) => t.name),
+      collectionIds: item.collections.map((c) => c.collection.id),
+    })
+    if (result.success) {
+      toast.success('Prompt updated')
+      refreshItem({ ...item, content })
+      router.refresh()
+    } else {
+      toast.error('Failed to save prompt')
+    }
   }
 
   async function handleToggleFavorite() {
@@ -724,6 +750,7 @@ export default function ItemDrawer({
                 onDelete={handleDelete}
                 onToggleFavorite={handleToggleFavorite}
                 onTogglePin={handleTogglePin}
+                onContentAccept={handleContentAccept}
                 deleting={deleting}
                 togglingFavorite={togglingFavorite}
                 togglingPin={togglingPin}

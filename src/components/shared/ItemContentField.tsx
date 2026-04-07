@@ -10,10 +10,12 @@ interface ItemContentFieldProps {
   showLanguage: boolean
   showMarkdown: boolean
   onChange?: (value: string) => void
+  onAccept?: (value: string) => void
   readOnly?: boolean
   rows?: number
   isPro?: boolean
   showExplain?: boolean
+  showOptimize?: boolean
   typeName?: string
 }
 
@@ -23,10 +25,12 @@ export function ItemContentField({
   showLanguage,
   showMarkdown,
   onChange,
+  onAccept,
   readOnly = false,
   rows = 6,
   isPro,
   showExplain = false,
+  showOptimize = false,
   typeName,
 }: ItemContentFieldProps) {
   if (showLanguage) {
@@ -47,7 +51,10 @@ export function ItemContentField({
       <MarkdownEditor
         value={value}
         onChange={readOnly ? undefined : onChange}
+        onAccept={onAccept}
         readOnly={readOnly}
+        isPro={isPro}
+        showOptimize={showOptimize}
       />
     )
   }
