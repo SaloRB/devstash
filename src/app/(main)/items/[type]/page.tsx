@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { auth } from '@/auth'
 import { getItemsByType, getItemTypesWithCounts } from '@/lib/db/items'
 import { getUserCollections } from '@/lib/db/collections'
@@ -5,6 +6,8 @@ import { ITEMS_PER_PAGE } from '@/constants'
 import ItemsGrid from '@/components/items/ItemsGrid'
 import CreateItemDialog from '@/components/shared/CreateItemDialog'
 import Pagination from '@/components/shared/Pagination'
+
+const PRO_ONLY_TYPES = ['file', 'image']
 
 interface ItemsPageProps {
   params: Promise<{ type: string }>
@@ -27,6 +30,29 @@ export default async function ItemsPage({ params, searchParams }: ItemsPageProps
 
   const session = await auth()
   const userId = session!.user!.id!
+  const isPro = session!.user!.isPro ?? false
+
+  if (PRO_ONLY_TYPES.includes(type) && !isPro) {
+    const label = getLabel(type)
+    return (
+      <div className="mx-auto max-w-6xl lg:px-8 xl:px-12">
+        <div className="flex flex-col items-center justify-center gap-6 rounded-lg border border-dashed py-24 text-center">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold">{label} are a Pro feature</h1>
+            <p className="text-muted-foreground max-w-sm">
+              Upgrade to Pro to store and manage {label.toLowerCase()} in your stash.
+            </p>
+          </div>
+          <Link
+            href="/settings?section=billing"
+            className="inline-flex h-8 cursor-pointer items-center justify-center rounded-lg bg-primary px-2.5 text-sm font-medium text-primary-foreground transition-colors"
+          >
+            Upgrade to Pro
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   const [{ items, total }, itemTypes, collections] = await Promise.all([
     getItemsByType(userId, type, page, ITEMS_PER_PAGE),
