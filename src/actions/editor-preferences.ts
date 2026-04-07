@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-guard'
 import { prisma } from '@/lib/prisma'
 
 const schema = z.object({
@@ -15,14 +15,14 @@ const schema = z.object({
 export async function updateEditorPreferences(
   input: z.infer<typeof schema>
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth()
-  if (!session?.user?.id) return { success: false, error: 'Unauthorized' }
+  const userId = await requireAuth()
+  if (!userId) return { success: false, error: 'Unauthorized' }
 
   const parsed = schema.safeParse(input)
   if (!parsed.success) return { success: false, error: 'Invalid preferences' }
 
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: userId },
     data: { editorPreferences: parsed.data },
   })
 

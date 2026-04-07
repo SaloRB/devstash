@@ -5,11 +5,7 @@ vi.mock('@/auth', () => ({
 }))
 
 vi.mock('@/lib/gates', () => ({
-  getUserProStatus: vi.fn(),
-}))
-
-vi.mock('@/lib/rate-limit', () => ({
-  checkRateLimit: vi.fn(),
+  requireProWithRateLimit: vi.fn(),
 }))
 
 vi.mock('@/lib/openai', () => ({
@@ -19,24 +15,22 @@ vi.mock('@/lib/openai', () => ({
       create: vi.fn(),
     },
   },
+  handleOpenAIError: (_err: unknown) => ({ success: false as const, error: 'AI_ERROR' as const }),
 }))
 
 import { generateAutoTags, generateDescription, explainCode, optimizePrompt } from './ai'
 import { auth } from '@/auth'
-import { getUserProStatus } from '@/lib/gates'
-import { checkRateLimit } from '@/lib/rate-limit'
+import { requireProWithRateLimit } from '@/lib/gates'
 import { openai } from '@/lib/openai'
 
 const mockAuth = vi.mocked(auth)
-const mockGetUserProStatus = vi.mocked(getUserProStatus)
-const mockCheckRateLimit = vi.mocked(checkRateLimit)
+const mockRequireProWithRateLimit = vi.mocked(requireProWithRateLimit)
 const mockResponsesCreate = vi.mocked(openai.responses.create)
 
 beforeEach(() => {
   vi.clearAllMocks()
   mockAuth.mockResolvedValue({ user: { id: 'user-1', isPro: true } } as never)
-  mockGetUserProStatus.mockResolvedValue(true)
-  mockCheckRateLimit.mockResolvedValue({ allowed: true, retryAfterSecs: 0 })
+  mockRequireProWithRateLimit.mockResolvedValue({ allowed: true })
 })
 
 describe('generateAutoTags', () => {
@@ -47,13 +41,13 @@ describe('generateAutoTags', () => {
   })
 
   it('returns PRO_REQUIRED for free users', async () => {
-    mockGetUserProStatus.mockResolvedValue(false)
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'PRO_REQUIRED' })
     const result = await generateAutoTags({ title: 'Test' })
     expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
   })
 
   it('returns RATE_LIMITED when rate limit exceeded', async () => {
-    mockCheckRateLimit.mockResolvedValue({ allowed: false, retryAfterSecs: 3600 })
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'RATE_LIMITED' })
     const result = await generateAutoTags({ title: 'Test' })
     expect(result).toEqual({ success: false, error: 'RATE_LIMITED' })
   })
@@ -129,13 +123,13 @@ describe('generateDescription', () => {
   })
 
   it('returns PRO_REQUIRED for free users', async () => {
-    mockGetUserProStatus.mockResolvedValue(false)
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'PRO_REQUIRED' })
     const result = await generateDescription({ title: 'Test', typeName: 'snippet' })
     expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
   })
 
   it('returns RATE_LIMITED when rate limit exceeded', async () => {
-    mockCheckRateLimit.mockResolvedValue({ allowed: false, retryAfterSecs: 3600 })
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'RATE_LIMITED' })
     const result = await generateDescription({ title: 'Test', typeName: 'snippet' })
     expect(result).toEqual({ success: false, error: 'RATE_LIMITED' })
   })
@@ -219,13 +213,13 @@ describe('explainCode', () => {
   })
 
   it('returns PRO_REQUIRED for free users', async () => {
-    mockGetUserProStatus.mockResolvedValue(false)
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'PRO_REQUIRED' })
     const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
     expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
   })
 
   it('returns RATE_LIMITED when rate limit exceeded', async () => {
-    mockCheckRateLimit.mockResolvedValue({ allowed: false, retryAfterSecs: 3600 })
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'RATE_LIMITED' })
     const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
     expect(result).toEqual({ success: false, error: 'RATE_LIMITED' })
   })
@@ -294,13 +288,13 @@ describe('optimizePrompt', () => {
   })
 
   it('returns PRO_REQUIRED for free users', async () => {
-    mockGetUserProStatus.mockResolvedValue(false)
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'PRO_REQUIRED' })
     const result = await optimizePrompt({ content: 'Write me a story.' })
     expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
   })
 
   it('returns RATE_LIMITED when rate limit exceeded', async () => {
-    mockCheckRateLimit.mockResolvedValue({ allowed: false, retryAfterSecs: 3600 })
+    mockRequireProWithRateLimit.mockResolvedValue({ allowed: false, error: 'RATE_LIMITED' })
     const result = await optimizePrompt({ content: 'Write me a story.' })
     expect(result).toEqual({ success: false, error: 'RATE_LIMITED' })
   })

@@ -2,7 +2,9 @@
 
 import { z } from 'zod'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-guard'
+import { nullableString, nullableUrl } from '@/lib/schemas'
+import { withAction } from '@/lib/action-utils'
 import {
   createItem as createItemDb,
   updateItem as updateItemDb,
@@ -17,16 +19,10 @@ import { FILE_TYPES } from '@/constants/item-types'
 
 const updateItemSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
-  description: z.string().trim().nullable().optional().transform((v) => v || null),
-  content: z.string().trim().nullable().optional().transform((v) => v || null),
-  url: z
-    .string()
-    .trim()
-    .nullable()
-    .optional()
-    .transform((v) => v || null)
-    .refine((v) => !v || z.string().url().safeParse(v).success, 'Invalid URL'),
-  language: z.string().trim().nullable().optional().transform((v) => v || null),
+  description: nullableString(),
+  content: nullableString(),
+  url: nullableUrl(),
+  language: nullableString(),
   tags: z
     .array(z.string().trim())
     .transform((arr) => arr.filter((t) => t.length > 0)),
@@ -42,16 +38,10 @@ const deleteItemSchema = z.object({
 const createItemSchema = z.object({
   itemTypeId: z.string().min(1, 'Item type is required'),
   title: z.string().trim().min(1, 'Title is required'),
-  description: z.string().trim().nullable().optional().transform((v) => v || null),
-  content: z.string().trim().nullable().optional().transform((v) => v || null),
-  url: z
-    .string()
-    .trim()
-    .nullable()
-    .optional()
-    .transform((v) => v || null)
-    .refine((v) => !v || z.string().url().safeParse(v).success, 'Invalid URL'),
-  language: z.string().trim().nullable().optional().transform((v) => v || null),
+  description: nullableString(),
+  content: nullableString(),
+  url: nullableUrl(),
+  language: nullableString(),
   tags: z
     .array(z.string().trim())
     .transform((arr) => arr.filter((t) => t.length > 0)),
@@ -64,10 +54,8 @@ const createItemSchema = z.object({
 export type CreateItemInput = z.infer<typeof createItemSchema>
 
 export async function createItem(data: CreateItemInput) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = createItemSchema.safeParse(data)
   if (!parsed.success) {
@@ -76,7 +64,7 @@ export async function createItem(data: CreateItemInput) {
 
   const { itemTypeId, collectionIds, ...fields } = parsed.data
 
-  const isPro = await getUserProStatus(session.user.id)
+  const isPro = await getUserProStatus(userId)
 
   if (!isPro) {
     const itemType = await prisma.itemType.findUnique({
@@ -87,25 +75,21 @@ export async function createItem(data: CreateItemInput) {
       return { success: false as const, error: 'PRO_REQUIRED' }
     }
 
-    const allowed = await checkItemLimit(session.user.id)
+    const allowed = await checkItemLimit(userId)
     if (!allowed) {
       return { success: false as const, error: 'ITEM_LIMIT_REACHED' }
     }
   }
 
-  try {
-    const created = await createItemDb(session.user.id, itemTypeId, { ...fields, collectionIds })
-    return { success: true as const, data: created }
-  } catch {
-    return { success: false as const, error: 'Failed to create item' }
-  }
+  return withAction(
+    () => createItemDb(userId, itemTypeId, { ...fields, collectionIds }),
+    'Failed to create item'
+  )
 }
 
 export async function deleteItem(itemId: string) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = deleteItemSchema.safeParse({ itemId })
   if (!parsed.success) {
@@ -113,7 +97,7 @@ export async function deleteItem(itemId: string) {
   }
 
   try {
-    const deleted = await deleteItemDb(parsed.data.itemId, session.user.id)
+    const deleted = await deleteItemDb(parsed.data.itemId, userId)
 
     if (deleted.fileUrl) {
       try {
@@ -135,42 +119,25 @@ export async function deleteItem(itemId: string) {
 }
 
 export async function toggleFavoriteItem(itemId: string) {
-  const session = await auth()
-  if (!session?.user?.id) return { success: false as const, error: 'Unauthorized' }
-  try {
-    const result = await toggleFavoriteItemDb(itemId, session.user.id)
-    return { success: true as const, data: result }
-  } catch {
-    return { success: false as const, error: 'Failed to update favorite' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
+  return withAction(() => toggleFavoriteItemDb(itemId, userId), 'Failed to update favorite')
 }
 
 export async function toggleItemPin(itemId: string) {
-  const session = await auth()
-  if (!session?.user?.id) return { success: false as const, error: 'Unauthorized' }
-  try {
-    const result = await togglePinnedItemDb(itemId, session.user.id)
-    return { success: true as const, data: result }
-  } catch {
-    return { success: false as const, error: 'Failed to update pin' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
+  return withAction(() => togglePinnedItemDb(itemId, userId), 'Failed to update pin')
 }
 
 export async function updateItem(itemId: string, data: UpdateItemInput) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = updateItemSchema.safeParse(data)
   if (!parsed.success) {
     return { success: false as const, error: parsed.error.flatten().fieldErrors }
   }
 
-  try {
-    const updated = await updateItemDb(itemId, session.user.id, parsed.data)
-    return { success: true as const, data: updated }
-  } catch {
-    return { success: false as const, error: 'Failed to update item' }
-  }
+  return withAction(() => updateItemDb(itemId, userId, parsed.data), 'Failed to update item')
 }

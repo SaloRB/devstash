@@ -1,12 +1,18 @@
-# Current Feature
+# Current Feature: Actions Refactor
 
 ## Status
 
-No active feature
+In Progress
 
 ## Goals
 
-## Notes
+Eliminate duplicate code in actions/ by extracting shared utilities.
+
+- [x] Auth session guard → `lib/auth-guard.ts` `requireAuth()` — Done
+- [x] OpenAI error catch → `lib/openai.ts` `handleOpenAIError(err)` — Done
+- [x] Pro gate + rate-limit → `lib/gates.ts` `requireProWithRateLimit(userId)` — Done
+- [x] Nullable Zod helpers → `lib/schemas.ts` `nullableString()` / `nullableUrl()` — Done
+- [x] try/catch wrapper → `lib/action-utils.ts` `withAction<T>(fn, errorMsg)` — Done
 
 ## Notes
 

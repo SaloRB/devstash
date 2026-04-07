@@ -1,11 +1,9 @@
 'use server'
 
 import { z } from 'zod'
-import OpenAI from 'openai'
-import { auth } from '@/auth'
-import { getUserProStatus } from '@/lib/gates'
-import { openai, AI_MODEL } from '@/lib/openai'
-import { checkRateLimit } from '@/lib/rate-limit'
+import { requireAuth } from '@/lib/auth-guard'
+import { requireProWithRateLimit } from '@/lib/gates'
+import { openai, AI_MODEL, handleOpenAIError } from '@/lib/openai'
 
 const generateDescriptionSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
@@ -22,25 +20,14 @@ export async function generateDescription(data: {
   url?: string | null
   tags?: string | null
 }) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = generateDescriptionSchema.safeParse(data)
-  if (!parsed.success) {
-    return { success: false as const, error: 'Invalid input' }
-  }
+  if (!parsed.success) return { success: false as const, error: 'Invalid input' }
 
-  const isPro = await getUserProStatus(session.user.id)
-  if (!isPro) {
-    return { success: false as const, error: 'PRO_REQUIRED' }
-  }
-
-  const { allowed } = await checkRateLimit(`ai:${session.user.id}`, 20, '1 h')
-  if (!allowed) {
-    return { success: false as const, error: 'RATE_LIMITED' }
-  }
+  const gate = await requireProWithRateLimit(userId)
+  if (!gate.allowed) return { success: false as const, error: gate.error }
 
   const { title, typeName, content, url, tags } = parsed.data
   const truncated = content ? content.slice(0, 2000) : ''
@@ -59,23 +46,11 @@ export async function generateDescription(data: {
     })
 
     const description = response.output_text.trim()
-    if (!description) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
+    if (!description) return { success: false as const, error: 'AI_ERROR' }
 
     return { success: true as const, data: description }
   } catch (err) {
-    if (err instanceof OpenAI.RateLimitError) {
-      return { success: false as const, error: 'RATE_LIMITED' }
-    }
-    if (err instanceof OpenAI.AuthenticationError) {
-      console.error('OpenAI auth error — check OPENAI_API_KEY')
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    if (err instanceof OpenAI.BadRequestError) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    return { success: false as const, error: 'AI_ERROR' }
+    return handleOpenAIError(err)
   }
 }
 
@@ -90,25 +65,14 @@ export async function explainCode(data: {
   language?: string | null
   typeName: string
 }) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = explainCodeSchema.safeParse(data)
-  if (!parsed.success) {
-    return { success: false as const, error: 'Invalid input' }
-  }
+  if (!parsed.success) return { success: false as const, error: 'Invalid input' }
 
-  const isPro = await getUserProStatus(session.user.id)
-  if (!isPro) {
-    return { success: false as const, error: 'PRO_REQUIRED' }
-  }
-
-  const { allowed } = await checkRateLimit(`ai:${session.user.id}`, 20, '1 h')
-  if (!allowed) {
-    return { success: false as const, error: 'RATE_LIMITED' }
-  }
+  const gate = await requireProWithRateLimit(userId)
+  if (!gate.allowed) return { success: false as const, error: gate.error }
 
   const { content, language, typeName } = parsed.data
   const truncated = content.slice(0, 3000)
@@ -126,23 +90,11 @@ export async function explainCode(data: {
     })
 
     const explanation = response.output_text.trim()
-    if (!explanation) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
+    if (!explanation) return { success: false as const, error: 'AI_ERROR' }
 
     return { success: true as const, data: explanation }
   } catch (err) {
-    if (err instanceof OpenAI.RateLimitError) {
-      return { success: false as const, error: 'RATE_LIMITED' }
-    }
-    if (err instanceof OpenAI.AuthenticationError) {
-      console.error('OpenAI auth error — check OPENAI_API_KEY')
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    if (err instanceof OpenAI.BadRequestError) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    return { success: false as const, error: 'AI_ERROR' }
+    return handleOpenAIError(err)
   }
 }
 
@@ -151,25 +103,14 @@ const optimizePromptSchema = z.object({
 })
 
 export async function optimizePrompt(data: { content: string }) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = optimizePromptSchema.safeParse(data)
-  if (!parsed.success) {
-    return { success: false as const, error: 'Invalid input' }
-  }
+  if (!parsed.success) return { success: false as const, error: 'Invalid input' }
 
-  const isPro = await getUserProStatus(session.user.id)
-  if (!isPro) {
-    return { success: false as const, error: 'PRO_REQUIRED' }
-  }
-
-  const { allowed } = await checkRateLimit(`ai:${session.user.id}`, 20, '1 h')
-  if (!allowed) {
-    return { success: false as const, error: 'RATE_LIMITED' }
-  }
+  const gate = await requireProWithRateLimit(userId)
+  if (!gate.allowed) return { success: false as const, error: gate.error }
 
   const truncated = parsed.data.content.slice(0, 3000)
 
@@ -182,23 +123,11 @@ export async function optimizePrompt(data: { content: string }) {
     })
 
     const optimized = response.output_text.trim()
-    if (!optimized) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
+    if (!optimized) return { success: false as const, error: 'AI_ERROR' }
 
     return { success: true as const, data: optimized }
   } catch (err) {
-    if (err instanceof OpenAI.RateLimitError) {
-      return { success: false as const, error: 'RATE_LIMITED' }
-    }
-    if (err instanceof OpenAI.AuthenticationError) {
-      console.error('OpenAI auth error — check OPENAI_API_KEY')
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    if (err instanceof OpenAI.BadRequestError) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    return { success: false as const, error: 'AI_ERROR' }
+    return handleOpenAIError(err)
   }
 }
 
@@ -211,25 +140,14 @@ export async function generateAutoTags(data: {
   title: string
   content?: string | null
 }) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return { success: false as const, error: 'Unauthorized' }
-  }
+  const userId = await requireAuth()
+  if (!userId) return { success: false as const, error: 'Unauthorized' }
 
   const parsed = generateAutoTagsSchema.safeParse(data)
-  if (!parsed.success) {
-    return { success: false as const, error: 'Invalid input' }
-  }
+  if (!parsed.success) return { success: false as const, error: 'Invalid input' }
 
-  const isPro = await getUserProStatus(session.user.id)
-  if (!isPro) {
-    return { success: false as const, error: 'PRO_REQUIRED' }
-  }
-
-  const { allowed } = await checkRateLimit(`ai:${session.user.id}`, 20, '1 h')
-  if (!allowed) {
-    return { success: false as const, error: 'RATE_LIMITED' }
-  }
+  const gate = await requireProWithRateLimit(userId)
+  if (!gate.allowed) return { success: false as const, error: gate.error }
 
   const { title, content } = parsed.data
   const truncated = content ? content.slice(0, 2000) : ''
@@ -261,16 +179,6 @@ export async function generateAutoTags(data: {
 
     return { success: true as const, data: tags }
   } catch (err) {
-    if (err instanceof OpenAI.RateLimitError) {
-      return { success: false as const, error: 'RATE_LIMITED' }
-    }
-    if (err instanceof OpenAI.AuthenticationError) {
-      console.error('OpenAI auth error — check OPENAI_API_KEY')
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    if (err instanceof OpenAI.BadRequestError) {
-      return { success: false as const, error: 'AI_ERROR' }
-    }
-    return { success: false as const, error: 'AI_ERROR' }
+    return handleOpenAIError(err)
   }
 }
