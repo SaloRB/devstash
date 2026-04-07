@@ -1,0 +1,3 @@
+# Refactor Scanner Memory
+
+- [scan_actions.md](./scan_actions.md) — Scan results for src/actions/ (2026-04-07)
