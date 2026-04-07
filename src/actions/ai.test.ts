@@ -21,7 +21,7 @@ vi.mock('@/lib/openai', () => ({
   },
 }))
 
-import { generateAutoTags, generateDescription } from './ai'
+import { generateAutoTags, generateDescription, explainCode } from './ai'
 import { auth } from '@/auth'
 import { getUserProStatus } from '@/lib/gates'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -41,7 +41,7 @@ beforeEach(() => {
 
 describe('generateAutoTags', () => {
   it('returns Unauthorized when no session', async () => {
-    mockAuth.mockResolvedValue(null)
+    mockAuth.mockResolvedValue(null as never)
     const result = await generateAutoTags({ title: 'Test' })
     expect(result).toEqual({ success: false, error: 'Unauthorized' })
   })
@@ -123,7 +123,7 @@ describe('generateAutoTags', () => {
 
 describe('generateDescription', () => {
   it('returns Unauthorized when no session', async () => {
-    mockAuth.mockResolvedValue(null)
+    mockAuth.mockResolvedValue(null as never)
     const result = await generateDescription({ title: 'Test', typeName: 'snippet' })
     expect(result).toEqual({ success: false, error: 'Unauthorized' })
   })
@@ -208,5 +208,80 @@ describe('generateDescription', () => {
     mockResponsesCreate.mockResolvedValue({ output_text: 'A quick note.' } as never)
     const result = await generateDescription({ title: 'My Note', typeName: 'note' })
     expect(result).toEqual({ success: true, data: 'A quick note.' })
+  })
+})
+
+describe('explainCode', () => {
+  it('returns Unauthorized when no session', async () => {
+    mockAuth.mockResolvedValue(null as never)
+    const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'Unauthorized' })
+  })
+
+  it('returns PRO_REQUIRED for free users', async () => {
+    mockGetUserProStatus.mockResolvedValue(false)
+    const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'PRO_REQUIRED' })
+  })
+
+  it('returns RATE_LIMITED when rate limit exceeded', async () => {
+    mockCheckRateLimit.mockResolvedValue({ allowed: false, retryAfterSecs: 3600 })
+    const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'RATE_LIMITED' })
+  })
+
+  it('returns Invalid input for empty content', async () => {
+    const result = await explainCode({ content: '   ', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'Invalid input' })
+  })
+
+  it('returns Invalid input for empty typeName', async () => {
+    const result = await explainCode({ content: 'const x = 1', typeName: '' })
+    expect(result).toEqual({ success: false, error: 'Invalid input' })
+  })
+
+  it('returns explanation on success', async () => {
+    mockResponsesCreate.mockResolvedValue({
+      output_text: 'This snippet declares a constant variable `x` with value 1.',
+    } as never)
+    const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({
+      success: true,
+      data: 'This snippet declares a constant variable `x` with value 1.',
+    })
+  })
+
+  it('trims whitespace from explanation', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: '  An explanation.  ' } as never)
+    const result = await explainCode({ content: 'ls -la', typeName: 'command' })
+    expect(result).toEqual({ success: true, data: 'An explanation.' })
+  })
+
+  it('returns AI_ERROR when output_text is empty', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: '   ' } as never)
+    const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'AI_ERROR' })
+  })
+
+  it('truncates content to 3000 chars before sending', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: 'Explanation.' } as never)
+    const longContent = 'a'.repeat(5000)
+    await explainCode({ content: longContent, typeName: 'snippet' })
+    const callArg = mockResponsesCreate.mock.calls[0][0] as { input: string }
+    expect(callArg.input).toContain('a'.repeat(3000))
+    expect(callArg.input).not.toContain('a'.repeat(3001))
+  })
+
+  it('includes language in context when provided', async () => {
+    mockResponsesCreate.mockResolvedValue({ output_text: 'Explanation.' } as never)
+    await explainCode({ content: 'const x = 1', typeName: 'snippet', language: 'typescript' })
+    const callArg = mockResponsesCreate.mock.calls[0][0] as { input: string }
+    expect(callArg.input).toContain('Language: typescript')
+  })
+
+  it('returns AI_ERROR on OpenAI failure', async () => {
+    mockResponsesCreate.mockRejectedValue(new Error('Network error'))
+    const result = await explainCode({ content: 'const x = 1', typeName: 'snippet' })
+    expect(result).toEqual({ success: false, error: 'AI_ERROR' })
   })
 })

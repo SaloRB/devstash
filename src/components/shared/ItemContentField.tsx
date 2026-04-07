@@ -12,6 +12,9 @@ interface ItemContentFieldProps {
   onChange?: (value: string) => void
   readOnly?: boolean
   rows?: number
+  isPro?: boolean
+  showExplain?: boolean
+  typeName?: string
 }
 
 export function ItemContentField({
@@ -22,6 +25,9 @@ export function ItemContentField({
   onChange,
   readOnly = false,
   rows = 6,
+  isPro,
+  showExplain = false,
+  typeName,
 }: ItemContentFieldProps) {
   if (showLanguage) {
     return (
@@ -30,6 +36,9 @@ export function ItemContentField({
         language={language || undefined}
         onChange={readOnly ? undefined : onChange}
         readOnly={readOnly}
+        isPro={isPro}
+        showExplain={showExplain}
+        typeName={typeName}
       />
     )
   }

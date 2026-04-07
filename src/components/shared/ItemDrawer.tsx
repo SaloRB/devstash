@@ -94,6 +94,7 @@ function DrawerSkeleton() {
 
 function ViewMode({
   item,
+  isPro,
   onEdit,
   onDelete,
   onToggleFavorite,
@@ -103,6 +104,7 @@ function ViewMode({
   togglingPin,
 }: {
   item: ItemDetail
+  isPro?: boolean
   onEdit: () => void
   onDelete: () => void
   onToggleFavorite: () => void
@@ -286,6 +288,9 @@ function ViewMode({
                 item.itemType.name.toLowerCase(),
               )}
               readOnly
+              isPro={isPro}
+              showExplain={LANGUAGE_TYPES.has(item.itemType.name.toLowerCase())}
+              typeName={item.itemType.name}
             />
           </div>
         )}
@@ -714,6 +719,7 @@ export default function ItemDrawer({
             ) : (
               <ViewMode
                 item={item}
+                isPro={isPro}
                 onEdit={() => setEditing(true)}
                 onDelete={handleDelete}
                 onToggleFavorite={handleToggleFavorite}

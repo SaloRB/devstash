@@ -79,6 +79,73 @@ export async function generateDescription(data: {
   }
 }
 
+const explainCodeSchema = z.object({
+  content: z.string().trim().min(1, 'Content is required'),
+  language: z.string().nullable().optional(),
+  typeName: z.string().trim().min(1),
+})
+
+export async function explainCode(data: {
+  content: string
+  language?: string | null
+  typeName: string
+}) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'Unauthorized' }
+  }
+
+  const parsed = explainCodeSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false as const, error: 'Invalid input' }
+  }
+
+  const isPro = await getUserProStatus(session.user.id)
+  if (!isPro) {
+    return { success: false as const, error: 'PRO_REQUIRED' }
+  }
+
+  const { allowed } = await checkRateLimit(`ai:${session.user.id}`, 20, '1 h')
+  if (!allowed) {
+    return { success: false as const, error: 'RATE_LIMITED' }
+  }
+
+  const { content, language, typeName } = parsed.data
+  const truncated = content.slice(0, 3000)
+
+  const contextParts = [`Type: ${typeName}`]
+  if (language) contextParts.push(`Language: ${language}`)
+  contextParts.push(`Code:\n${truncated}`)
+
+  try {
+    const response = await openai.responses.create({
+      model: AI_MODEL,
+      instructions:
+        'You are a developer tool assistant. Explain the following code concisely for a developer audience. Cover what it does and any key concepts or patterns used. Target 200-300 words. Use markdown formatting with clear sections where helpful. Return only the explanation — no preamble.',
+      input: contextParts.join('\n'),
+    })
+
+    const explanation = response.output_text.trim()
+    if (!explanation) {
+      return { success: false as const, error: 'AI_ERROR' }
+    }
+
+    return { success: true as const, data: explanation }
+  } catch (err) {
+    if (err instanceof OpenAI.RateLimitError) {
+      return { success: false as const, error: 'RATE_LIMITED' }
+    }
+    if (err instanceof OpenAI.AuthenticationError) {
+      console.error('OpenAI auth error — check OPENAI_API_KEY')
+      return { success: false as const, error: 'AI_ERROR' }
+    }
+    if (err instanceof OpenAI.BadRequestError) {
+      return { success: false as const, error: 'AI_ERROR' }
+    }
+    return { success: false as const, error: 'AI_ERROR' }
+  }
+}
+
 const generateAutoTagsSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
   content: z.string().nullable().optional(),
