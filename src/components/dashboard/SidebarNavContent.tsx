@@ -18,11 +18,6 @@ import type { getSidebarCollections } from '@/lib/db/collections'
 
 type SidebarCollection = Awaited<ReturnType<typeof getSidebarCollections>>[number]
 
-interface Props {
-  itemTypes: ItemTypeWithCount[]
-  collections: SidebarCollection[]
-}
-
 export function SidebarTypeItems({ itemTypes }: { itemTypes: ItemTypeWithCount[] }) {
   const pathname = usePathname()
 
