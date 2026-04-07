@@ -2,7 +2,7 @@
 
 ## Status
 
-Not Started
+No active feature
 
 ## Goals
 
@@ -75,3 +75,4 @@ Not Started
 - **2026-04-06** - Completed Auth Pages Nav + Dashboard Logo: added (auth)/layout.tsx rendering HomepageNav on all auth pages; replaced S icon box in TopBar with Zap icon matching homepage nav; fixed HomepageNav anchor links to /#features and /#pricing for cross-page navigation.
 - **2026-04-06** - Completed Stripe Integration Phase 1: installed stripe v22, isPro added to JWT/session (synced from DB on every jwt callback), stripe singleton at src/lib/stripe.ts, POST /api/stripe/checkout (auth-guard, monthly/yearly, reuse customer), POST /api/stripe/portal (auth-guard, 400 if no customer), src/lib/gates.ts (checkItemLimit, checkCollectionLimit, getUserProStatus; FREE_LIMITS items:50 collections:3), 9 unit tests 100% coverage.
 - **2026-04-06** - Completed Stripe Integration Phase 2: webhook handler at /api/stripe/webhook (signature verify, checkout.session.completed/customer.subscription.updated/deleted/invoice.payment_failed); createItem gated (PRO_REQUIRED for file/image, ITEM_LIMIT_REACHED at 50); createCollection gated (COLLECTION_LIMIT_REACHED at 3); Billing card in /settings (current plan badge, items/collections counter, upgrade/manage-billing buttons); checkout redirects to /settings?tab=billing&checkout=success|cancelled; 6 new unit tests.
+- **2026-04-06** - Completed Upgrade Page: /upgrade route (redirects Pro users to /settings?tab=billing); UpgradePricingCards client component (monthly/yearly toggle, Free "Current Plan" + Pro cards matching homepage pricing, calls /api/stripe/checkout on upgrade); ghost "Upgrade" button in TopBar visible only to free users, linking to /upgrade.

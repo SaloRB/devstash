@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Star, Zap } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { auth } from "@/auth";
 import { getItemTypesWithCounts } from "@/lib/db/items";
 import { getUserCollections } from "@/lib/db/collections";
@@ -31,6 +32,11 @@ export default async function TopBar() {
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        {!session?.user?.isPro && (
+          <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/upgrade" />}>
+            Upgrade
+          </Button>
+        )}
         <Link
           href="/favorites"
           className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"

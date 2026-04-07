@@ -26,7 +26,7 @@ beforeEach(() => {
 
 describe('updateEditorPreferences', () => {
   it('returns unauthorized when no session', async () => {
-    mockAuth.mockResolvedValue(null)
+    mockAuth.mockResolvedValue(null as never)
     const result = await updateEditorPreferences(validPrefs)
     expect(result).toEqual({ success: false, error: 'Unauthorized' })
     expect(mockUpdate).not.toHaveBeenCalled()
