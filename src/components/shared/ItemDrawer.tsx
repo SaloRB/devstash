@@ -50,6 +50,7 @@ import { useItemEditForm } from '@/hooks/use-item-edit-form'
 import { ItemContentField } from '@/components/shared/ItemContentField'
 import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
 import { SuggestTagsButton } from '@/components/shared/SuggestTagsButton'
+import { GenerateDescriptionButton } from '@/components/shared/GenerateDescriptionButton'
 import {
   LANGUAGE_TYPES,
   MARKDOWN_TYPES,
@@ -437,7 +438,18 @@ function EditMode({
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="edit-description">Description</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="edit-description">Description</Label>
+            <GenerateDescriptionButton
+              title={title}
+              typeName={item.itemType.name}
+              content={content}
+              url={url}
+              tags={tagsInput}
+              isPro={isPro}
+              onGenerate={setDescription}
+            />
+          </div>
           <Textarea
             id="edit-description"
             value={description}

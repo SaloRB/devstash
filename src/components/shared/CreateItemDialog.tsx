@@ -32,6 +32,7 @@ import { ItemContentField } from '@/components/shared/ItemContentField'
 import { ItemTypeIcon } from '@/components/shared/ItemTypeIcon'
 import { CollectionMultiSelect } from '@/components/shared/CollectionMultiSelect'
 import { SuggestTagsButton } from '@/components/shared/SuggestTagsButton'
+import { GenerateDescriptionButton } from '@/components/shared/GenerateDescriptionButton'
 
 export default function CreateItemDialog({
   itemTypes,
@@ -153,7 +154,18 @@ export default function CreateItemDialog({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="create-description">Description</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="create-description">Description</Label>
+              <GenerateDescriptionButton
+                title={title}
+                typeName={typeName ?? ''}
+                content={content}
+                url={url}
+                tags={tagsInput}
+                isPro={isPro}
+                onGenerate={setDescription}
+              />
+            </div>
             <Textarea
               id="create-description"
               value={description}

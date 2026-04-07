@@ -7,6 +7,78 @@ import { getUserProStatus } from '@/lib/gates'
 import { openai, AI_MODEL } from '@/lib/openai'
 import { checkRateLimit } from '@/lib/rate-limit'
 
+const generateDescriptionSchema = z.object({
+  title: z.string().trim().min(1, 'Title is required'),
+  typeName: z.string().trim().min(1),
+  content: z.string().nullable().optional(),
+  url: z.string().nullable().optional(),
+  tags: z.string().nullable().optional(),
+})
+
+export async function generateDescription(data: {
+  title: string
+  typeName: string
+  content?: string | null
+  url?: string | null
+  tags?: string | null
+}) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'Unauthorized' }
+  }
+
+  const parsed = generateDescriptionSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false as const, error: 'Invalid input' }
+  }
+
+  const isPro = await getUserProStatus(session.user.id)
+  if (!isPro) {
+    return { success: false as const, error: 'PRO_REQUIRED' }
+  }
+
+  const { allowed } = await checkRateLimit(`ai:${session.user.id}`, 20, '1 h')
+  if (!allowed) {
+    return { success: false as const, error: 'RATE_LIMITED' }
+  }
+
+  const { title, typeName, content, url, tags } = parsed.data
+  const truncated = content ? content.slice(0, 2000) : ''
+
+  const contextParts = [`Title: ${title}`, `Type: ${typeName}`]
+  if (url) contextParts.push(`URL: ${url}`)
+  if (tags) contextParts.push(`Tags: ${tags}`)
+  if (truncated) contextParts.push(`Content:\n${truncated}`)
+
+  try {
+    const response = await openai.responses.create({
+      model: AI_MODEL,
+      instructions:
+        'You are a developer tool assistant. Write a concise 1-2 sentence description/summary for a developer knowledge item. Be specific and informative. Return only the description text — no quotes, no JSON, no extra formatting.',
+      input: contextParts.join('\n'),
+    })
+
+    const description = response.output_text.trim()
+    if (!description) {
+      return { success: false as const, error: 'AI_ERROR' }
+    }
+
+    return { success: true as const, data: description }
+  } catch (err) {
+    if (err instanceof OpenAI.RateLimitError) {
+      return { success: false as const, error: 'RATE_LIMITED' }
+    }
+    if (err instanceof OpenAI.AuthenticationError) {
+      console.error('OpenAI auth error — check OPENAI_API_KEY')
+      return { success: false as const, error: 'AI_ERROR' }
+    }
+    if (err instanceof OpenAI.BadRequestError) {
+      return { success: false as const, error: 'AI_ERROR' }
+    }
+    return { success: false as const, error: 'AI_ERROR' }
+  }
+}
+
 const generateAutoTagsSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),
   content: z.string().nullable().optional(),
