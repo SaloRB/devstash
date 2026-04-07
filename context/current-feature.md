@@ -1,30 +1,12 @@
-# Current Feature: AI Auto-Tagging
+# Current Feature
 
 ## Status
 
-In Progress
+No active feature
 
 ## Goals
 
-- OpenAI client utility with `AI_MODEL` constant
-- `generateAutoTags` server action (auth, Pro gating, Zod, rate limiting)
-- AI rate limit config (20 req/hr per user) in rate-limit utility
-- "Suggest Tags" button (Sparkles icon, ghost) near tags input in create dialog and drawer edit mode
-- Suggested tags displayed as badges with accept (check) / reject (X) per tag
-- Accepted tags added to item's tag list (freeform, not DB-limited)
-- Hide button for free users (Pro-only UI + server gating)
-- Error handling via toast (Pro gate, rate limit, AI errors)
-- Unit tests for server action
-
 ## Notes
-
-- Use **Responses API** (`client.responses.create`), NOT Chat Completions — gpt-5-nano returns empty content with Chat Completions
-- `response.output_text` is where the result lives (not `choices[0].message.content`)
-- `text: { format: { type: 'json_object' } }` for structured output (not `response_format`)
-- Model may return `{"tags": [...]}` OR `["a","b"]` — handle both; normalize to lowercase
-- Truncate content to 2000 chars before API call
-- `OPENAI_API_KEY` already in `.env`
-- `isPro` not passed to create/edit UI components — pass as prop or fetch client-side for UI gating; server-side gating via session
 
 ## History
 
@@ -95,3 +77,4 @@ In Progress
 - **2026-04-06** - Completed Stripe Integration Phase 2: webhook handler at /api/stripe/webhook (signature verify, checkout.session.completed/customer.subscription.updated/deleted/invoice.payment_failed); createItem gated (PRO_REQUIRED for file/image, ITEM_LIMIT_REACHED at 50); createCollection gated (COLLECTION_LIMIT_REACHED at 3); Billing card in /settings (current plan badge, items/collections counter, upgrade/manage-billing buttons); checkout redirects to /settings?tab=billing&checkout=success|cancelled; 6 new unit tests.
 - **2026-04-06** - Completed Upgrade Page: /upgrade route (redirects Pro users to /settings?tab=billing); UpgradePricingCards client component (monthly/yearly toggle, Free "Current Plan" + Pro cards matching homepage pricing, calls /api/stripe/checkout on upgrade); ghost "Upgrade" button in TopBar visible only to free users, linking to /upgrade.
 - **2026-04-07** - Completed Language Dropdown: replaced language text input with a Select dropdown (26 common Monaco languages) positioned above the code editor in CreateItemDialog and ItemDrawer edit mode. Language change immediately updates Monaco syntax highlighting. CODE_LANGUAGES constant added to src/constants/editor.ts.
+- **2026-04-07** - Completed AI Auto-Tagging: OpenAI singleton client (src/lib/openai.ts, gpt-5-nano, Responses API), generateAutoTags server action (auth, Pro gate, 20 req/hr rate limit via Upstash, Zod validation, handles both JSON formats, normalizes to lowercase), SuggestTagsButton component (Sparkles button, per-tag accept/reject badges, hidden for free users), wired isPro through TopBar → TopBarCreateMenu → CreateItemDialog and MainLayout → ItemDrawer EditMode. AI_ERROR_MESSAGES in src/constants/ai.ts. 11 unit tests.
