@@ -23,13 +23,15 @@ export function useCollectionActions({
   const [togglingFavorite, setTogglingFavorite] = useState(false)
 
   async function handleToggleFavorite() {
+    const prev = favorited
+    setFavorited(!prev)
     setTogglingFavorite(true)
     const result = await toggleFavoriteCollection(collectionId)
     setTogglingFavorite(false)
     if (result.success) {
-      setFavorited(result.data.isFavorite)
       router.refresh()
     } else {
+      setFavorited(prev)
       toast.error(typeof result.error === 'string' ? result.error : 'Failed to update favorite')
     }
   }
