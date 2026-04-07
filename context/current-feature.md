@@ -1,29 +1,12 @@
-# Current Feature: AI Explain Code
+# Current Feature
 
 ## Status
 
-In Progress
+No active feature
 
 ## Goals
 
-- `explainCode` server action with auth, Pro gating, Zod validation, rate limiting
-- "Explain" button (Sparkles icon) in code editor window controls header (next to Copy)
-- Only shown for snippet/command types in item drawer (not create/edit forms)
-- Code/Explain tabs in editor header after generating
-- Explanation rendered as markdown in same container space as code editor
-- Loading state: Loader2 spinner while generating
-- Pro gating: Crown icon + tooltip for free users
-- Error handling via toast (Pro gating, rate limit, AI errors)
-- Unit tests for server action
-
 ## Notes
-
-- Explanations not saved to DB — regenerated on each click
-- Only in item drawer read view, not create/edit forms
-- `isPro` needs to be passed as prop to item drawer / code editor
-- Model: gpt-5-nano (OpenAI Responses API)
-- Explanation: ~200–300 words covering what code does and key concepts
-- See `docs/ai-integration-plan.md` for full architectural context
 
 ## History
 
@@ -66,7 +49,7 @@ In Progress
 - **2026-03-28** - Completed Markdown Editor: new MarkdownEditor component (Write/Preview tabs, macOS header, copy button, react-markdown + remark-gfm, fluid height 200–400px). Replaces Textarea for note/prompt content in CreateItemDialog and ItemDrawer (view + edit modes). Added .markdown-preview CSS for dark theme styling and thin 6px themed scrollbars matching Monaco across editor, drawer, and dialog.
 - **2026-03-29** - Completed File Upload with Cloudflare R2: R2 S3 client (lib/r2.ts), POST /api/upload route (validates type/size, uploads to R2), GET /api/download/[id] proxy route (ownership check, streams from R2). FileUpload component with drag-and-drop, progress bar (shadcn Progress), image preview, file info card. CreateItemDialog updated for file/image types with FileUpload and required-file gate. ItemDrawer shows image preview, file info badge, and Download button. deleteItem action deletes R2 object on item removal (non-fatal on failure). db/items.ts createItem accepts fileUrl/fileName/fileSize and sets contentType FILE.
 - **2026-03-29** - Completed Image Gallery View: new ImageCard component (aspect-video thumbnail, object-cover, 5% hover zoom/300ms). Items page renders ImageCard for image type, ItemCard for all others. 3-col grid already in place.
-- **2026-03-29** - Completed File List View: new FileListRow component (file icon by extension, name, size, upload date, direct download link). /items/file renders single-column list instead of view. Fixed ItemDrawer download button to use window.location.href (no new-tab flash).
+- **2026-03-29** - Completed File List View: new FileListRow component (file icon by extension, name, size, upload date, direct download link). /items/file renders single-column list instead of grid. Fixed ItemDrawer download button to use window.location.href (no new-tab flash).
 - **2026-03-30** - Completed Security Quick Wins: added password min-length check to reset-password route; added rate limiting (5/15m IP) to change-password endpoint; fixed Content-Disposition header injection in download route using RFC 5987 encoding; added rate limiting (20/1h user) to file upload endpoint.
 - **2026-03-30** - Completed Code Decomposition Refactor: extracted useItemEditForm and useItemCreateForm hooks (form state + save logic out of EditMode and CreateItemDialog); ItemContentField component unifies CodeEditor/MarkdownEditor/Textarea switching across 3 sites; ItemTypeIcon replaces inline IIFE; ItemsGrid server component extracts layout from items page; formatBytes + formatLongDate added to utils.ts (removed 3 local copies); item-type-sets.ts centralises type Sets; getCollectionTypeIcons moved to collection-utils.ts.
 - **2026-03-30** - Completed Logo Link to Dashboard: wrapped TopBar logo (icon + "DevStash" text) in Next.js Link pointing to /dashboard.
@@ -96,3 +79,4 @@ In Progress
 - **2026-04-07** - Completed Language Dropdown: replaced language text input with a Select dropdown (26 common Monaco languages) positioned above the code editor in CreateItemDialog and ItemDrawer edit mode. Language change immediately updates Monaco syntax highlighting. CODE_LANGUAGES constant added to src/constants/editor.ts.
 - **2026-04-07** - Completed AI Auto-Tagging: OpenAI singleton client (src/lib/openai.ts, gpt-5-nano, Responses API), generateAutoTags server action (auth, Pro gate, 20 req/hr rate limit via Upstash, Zod validation, handles both JSON formats, normalizes to lowercase), SuggestTagsButton component (Sparkles button, per-tag accept/reject badges, hidden for free users), wired isPro through TopBar → TopBarCreateMenu → CreateItemDialog and MainLayout → ItemDrawer EditMode. AI_ERROR_MESSAGES in src/constants/ai.ts. 11 unit tests.
 - **2026-04-07** - Completed AI Description Generator: generateDescription server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, builds context from title/type/content/url/tags, returns plain text), GenerateDescriptionButton component (Wand2 icon, Pro-only, fills description field directly), wired into description field label row in CreateItemDialog and ItemDrawer EditMode. 11 unit tests.
+- **2026-04-07** - Completed AI Explain Code: explainCode server action (auth, Pro gate, shared 20/hr rate limit, gpt-5-nano, 3000-char content truncation), Sparkles button in CodeEditor header (Crown + tooltip for free users), Code/Explain tab switcher after generating, explanation rendered as markdown in same container space, only shown for snippet/command types in item drawer read view. isPro threaded through ItemDrawer ViewMode → ItemContentField → CodeEditor. 11 unit tests.
