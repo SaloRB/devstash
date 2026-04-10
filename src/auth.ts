@@ -25,9 +25,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (url.startsWith(baseUrl)) return url;
       return `${baseUrl}/dashboard`;
     },
-    async jwt({ token, user }) {
-      if (user) token.id = user.id;
-      if (token.id) {
+    async jwt({ token, user, trigger }) {
+      if (user) {
+        token.id = user.id;
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id as string },
+          select: { isPro: true },
+        });
+        token.isPro = dbUser?.isPro ?? false;
+      }
+      if (trigger === 'update' && token.id) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: { isPro: true },

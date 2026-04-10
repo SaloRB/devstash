@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Image as LucideImage, File } from 'lucide-react'
 import { auth } from '@/auth'
-import { getCollectionWithItems } from '@/lib/db/collections'
+import { getCollectionName, getCollectionWithItems } from '@/lib/db/collections'
 import { COLLECTIONS_PER_PAGE } from '@/constants'
 import { ICON_MAP } from '@/lib/item-types'
 import ItemCard from '@/components/shared/ItemCard'
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: CollectionDetailPageProps) {
   const { id } = await params
   const session = await auth()
   if (!session?.user?.id) return { title: 'DevStash - Collection' }
-  const collection = await getCollectionWithItems(id, session.user.id)
+  const collection = await getCollectionName(id, session.user.id)
   if (!collection) return { title: 'DevStash - Collection' }
   return { title: `DevStash - ${collection.name}` }
 }

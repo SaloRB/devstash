@@ -176,6 +176,13 @@ export async function getFavoriteCollections(userId: string) {
 
 export type FavoriteCollection = Awaited<ReturnType<typeof getFavoriteCollections>>[number]
 
+export async function getCollectionName(id: string, userId: string) {
+  return prisma.collection.findFirst({
+    where: { id, userId },
+    select: { name: true },
+  })
+}
+
 export async function getUserCollections(userId: string) {
   return prisma.collection.findMany({
     where: { userId },
