@@ -1,5 +1,6 @@
 'use client'
 
+import NextImage from 'next/image'
 import { ImageIcon, Star, Pin } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useItemDrawer } from '@/contexts/item-drawer-context'
@@ -28,10 +29,11 @@ export default function ImageCard({
     >
       <div className="aspect-video overflow-hidden bg-muted">
         {fileUrl ? (
-          <img
+          <NextImage
             src={fileUrl}
             alt={title}
-            className="size-full object-cover transition-transform duration-300 hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-300 hover:scale-105"
           />
         ) : (
           <div className="flex size-full items-center justify-center">

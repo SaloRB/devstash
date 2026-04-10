@@ -33,6 +33,8 @@ export const config = {
     "/settings",
     "/settings/:path*",
     "/favorites",
+    "/collections",
+    "/collections/:path*",
     "/sign-in",
     "/register",
     "/forgot-password",

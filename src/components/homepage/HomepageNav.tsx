@@ -30,14 +30,14 @@ export function HomepageNav() {
 
         <ul className='hidden md:flex items-center gap-6 text-sm text-muted-foreground'>
           <li>
-            <a href='/#features' className='hover:text-foreground transition-colors'>
+            <Link href='/#features' className='hover:text-foreground transition-colors'>
               Features
-            </a>
+            </Link>
           </li>
           <li>
-            <a href='/#pricing' className='hover:text-foreground transition-colors'>
+            <Link href='/#pricing' className='hover:text-foreground transition-colors'>
               Pricing
-            </a>
+            </Link>
           </li>
         </ul>
 

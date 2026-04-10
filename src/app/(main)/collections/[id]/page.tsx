@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Image, File } from 'lucide-react'
+import { Image as LucideImage, File } from 'lucide-react'
 import { auth } from '@/auth'
 import { getCollectionWithItems } from '@/lib/db/collections'
 import { COLLECTIONS_PER_PAGE } from '@/constants'
@@ -19,7 +19,8 @@ interface CollectionDetailPageProps {
 export async function generateMetadata({ params }: CollectionDetailPageProps) {
   const { id } = await params
   const session = await auth()
-  const collection = await getCollectionWithItems(id, session!.user!.id!)
+  if (!session?.user?.id) return { title: 'DevStash - Collection' }
+  const collection = await getCollectionWithItems(id, session.user.id)
   if (!collection) return { title: 'DevStash - Collection' }
   return { title: `DevStash - ${collection.name}` }
 }
@@ -81,7 +82,7 @@ export default async function CollectionDetailPage({
             .sort(([, a], [, b]) => b.count - a.count)
             .map(([name, { count, icon, color }]) => {
               const Icon = name === 'image'
-                ? Image
+                ? LucideImage
                 : name === 'file'
                   ? File
                   : ICON_MAP[icon] ?? ICON_MAP['Code']
@@ -124,7 +125,7 @@ export default async function CollectionDetailPage({
             {images.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Image className="size-4 text-muted-foreground" />
+                  <LucideImage className="size-4 text-muted-foreground" aria-hidden={true} />
                   <h2 className="text-sm font-medium text-muted-foreground">
                     Images
                   </h2>
