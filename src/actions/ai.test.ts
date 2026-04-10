@@ -8,7 +8,7 @@ vi.mock('@/lib/gates', () => ({
   requireProWithRateLimit: vi.fn(),
 }))
 
-vi.mock('@/lib/openai', () => ({
+vi.mock('@/lib/clients/openai', () => ({
   AI_MODEL: 'gpt-5-nano',
   openai: {
     responses: {

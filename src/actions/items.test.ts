@@ -12,7 +12,7 @@ vi.mock('@/lib/db/items', () => ({
   togglePinnedItem: vi.fn(),
 }))
 
-vi.mock('@/lib/r2', () => ({
+vi.mock('@/lib/clients/r2', () => ({
   r2: { send: vi.fn() },
   R2_BUCKET: 'test-bucket',
   keyFromUrl: vi.fn((url: string) => url.replace('https://pub-test.r2.dev/', '')),
@@ -101,7 +101,7 @@ describe('updateItem', () => {
     const result = await updateItem('item-1', { ...validInput, title: '' })
 
     expect(result.success).toBe(false)
-    expect(result.error).toHaveProperty('title')
+    expect((result as { success: false; error: unknown }).error).toHaveProperty('title')
     expect(mockUpdateDb).not.toHaveBeenCalled()
   })
 
@@ -109,7 +109,7 @@ describe('updateItem', () => {
     const result = await updateItem('item-1', { ...validInput, title: '   ' })
 
     expect(result.success).toBe(false)
-    expect(result.error).toHaveProperty('title')
+    expect((result as { success: false; error: unknown }).error).toHaveProperty('title')
   })
 
   it('returns validation error for invalid URL', async () => {
@@ -292,7 +292,7 @@ describe('createItem', () => {
     const result = await createItem({ ...validCreateInput, title: '' })
 
     expect(result.success).toBe(false)
-    expect(result.error).toHaveProperty('title')
+    expect((result as { success: false; error: unknown }).error).toHaveProperty('title')
     expect(mockCreateDb).not.toHaveBeenCalled()
   })
 
@@ -300,7 +300,7 @@ describe('createItem', () => {
     const result = await createItem({ ...validCreateInput, itemTypeId: '' })
 
     expect(result.success).toBe(false)
-    expect(result.error).toHaveProperty('itemTypeId')
+    expect((result as { success: false; error: unknown }).error).toHaveProperty('itemTypeId')
     expect(mockCreateDb).not.toHaveBeenCalled()
   })
 
