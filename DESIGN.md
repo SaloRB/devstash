@@ -1,6 +1,82 @@
+---
+version: alpha
+name: DevStash
+description: Visual design system — colors, typography, spacing, components, and motion.
+colors:
+  background: "#1a1a1a"
+  surface: "#2e2e2e"
+  foreground: "#fafafa"
+  muted-foreground: "#aaaaaa"
+  primary: "#e5e5e5"
+  destructive: "#b91c1c"
+  sidebar: "#2e2e2e"
+  sidebar-primary: "#4f46e5"
+typography:
+  heading-lg:
+    fontFamily: Geist Sans
+    fontSize: 2rem
+    fontWeight: 700
+    lineHeight: 1.2
+  heading-md:
+    fontFamily: Geist Sans
+    fontSize: 1.5rem
+    fontWeight: 700
+    lineHeight: 1.25
+  body-md:
+    fontFamily: Geist Sans
+    fontSize: 0.875rem
+    fontWeight: 400
+    lineHeight: 1.5
+  label-sm:
+    fontFamily: Geist Sans
+    fontSize: 0.75rem
+    fontWeight: 400
+    lineHeight: 1.4
+rounded:
+  sm: 0.375rem
+  md: 0.625rem
+  lg: 0.75rem
+  xl: 1rem
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
+components:
+  card:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.md}"
+  card-collection:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.md}"
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.background}"
+    rounded: "{rounded.md}"
+    padding: 12px
+  button-destructive:
+    backgroundColor: "{colors.destructive}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.md}"
+    padding: 12px
+  badge-type:
+    textColor: "{colors.muted-foreground}"
+    rounded: "{rounded.sm}"
+  input:
+    rounded: "{rounded.md}"
+    typography: "{typography.body-md}"
+  sidebar:
+    backgroundColor: "{colors.sidebar}"
+  sidebar-item-active:
+    backgroundColor: "{colors.sidebar-primary}"
+    textColor: "{colors.foreground}"
+---
+
 # DevStash — Design Reference
 
-## Design Philosophy
+## Overview
 
 - **Modern & minimal** — developer-focused aesthetic inspired by Linear, Notion, Raycast
 - **Dark-first** — dark mode is the default; light mode is optional
@@ -9,9 +85,9 @@
 
 ---
 
-## Color Tokens
+## Colors
 
-All tokens use **OKLCH** values via CSS custom properties, mapped in `globals.css` through the Tailwind `@theme inline` block.
+All semantic tokens use **OKLCH** values via CSS custom properties in `globals.css`. The hex values in the YAML frontmatter are sRGB approximations for spec consumers; the OKLCH values in `globals.css` are authoritative.
 
 ### Semantic Palette
 
@@ -58,12 +134,85 @@ Color usage pattern: fill backgrounds at **`color + 15` opacity** (e.g. `${color
 
 ---
 
-## Spacing & Layout
+## Layout
 
 - **Border radius** base: `0.625rem` (`--radius`). Scale: `sm` 0.375rem → `4xl` 1.625rem
 - **Max content width**: `max-w-6xl` with `lg:px-8 xl:px-12` padding
 - **Section spacing**: `space-y-8` between dashboard sections
 - **Card gap**: `gap-4` (grids), `gap-5` (feature cards), `gap-6` (pricing)
+
+---
+
+## Elevation & Depth
+
+Depth is achieved through **tonal layers** rather than heavy shadows. Visual hierarchy uses:
+
+- **Border contrast** — `border` token at 10% white opacity on dark surfaces separates layers without hard edges
+- **Surface lift** — cards sit on `--card` (`oklch(0.205 0 0)`) above `--background` (`oklch(0.145 0 0)`)
+- **Ring effects** — `ring-1 ring-border` on interactive elements communicates focus/hover state
+- **Low-opacity fills** — type-colored backgrounds at `15` hex opacity (`${color}15`) add accent without visual noise
+
+No box shadows are used. Elevation is purely tonal.
+
+---
+
+## Shapes
+
+All interactive elements, containers, and inputs use the `--radius` variable scale for consistent rounding. Base is `0.625rem`; never use sharp `0px` corners on interactive surfaces.
+
+- **Cards / Inputs / Buttons**: `rounded-md` (`0.625rem`)
+- **Badges / Tags**: `rounded-sm` (`0.375rem`)
+- **Icon boxes (type icons)**: `rounded-md` (`0.625rem`)
+- **Avatar / Pills**: `rounded-full`
+- **Collection left-border accent**: `border-l-4` — flat edge, no radius override
+
+---
+
+## Components
+
+### Cards
+
+- Base: `<Card size="sm">` with `CardContent`, `CardHeader`, `CardTitle`, `CardDescription`
+- Collection cards: `border-l-4` with left border colored by dominant item type; `bg-teal-950/20` base + `hover:bg-teal-950/30`
+- Stat cards: colored icon box (`size-10`, `rounded-md`, `color + 15` bg) + large value + label
+- Feature cards (homepage): `border-t-2` with type color; `hover:bg-muted/30`
+
+### Item Type Icon
+
+Consistent icon + color wrapper: `size-10 rounded-md flex items-center justify-center` with `backgroundColor: ${color}15` and icon at `size-5` with `color: color`.
+
+### Badges
+
+- Type badge: `variant="secondary"` with inline `backgroundColor: ${color}15` and `color: color`
+- Language / tag badge: `variant="secondary"` default styling
+- Pro "Most Popular": absolute positioned, `rounded-full bg-primary text-primary-foreground`
+
+### Drawer (ItemDrawer)
+
+Right `Sheet` — `max-w-576px`, full height, no padding on root. Two modes:
+- **View** — action bar (Favorite, Pin, Copy/Download, Edit, Delete), then scrollable content sections
+- **Edit** — Save/Cancel bar, then form fields (title, description, content, language, tags, collections)
+
+### Command Palette
+
+`⌘K` / `Ctrl+K` — `CommandDialog` with grouped results: items (by type icon) and collections (FolderOpen icon).
+
+### Skeletons
+
+Used via `<Suspense fallback={<XSkeleton />}>` for all async dashboard sections. Skeletons mirror the visual shape of the real component using `<Skeleton className="...">`.
+
+---
+
+## Do's and Don'ts
+
+- Do use type colors consistently — icon, badge, and card accent must always use the same color for a given type
+- Do apply type-colored backgrounds at `15` hex opacity only — never full opacity fills on surfaces
+- Don't use box shadows — use tonal layering and borders for depth
+- Don't mix `rounded-full` and `rounded-md` on the same card surface
+- Do maintain WCAG AA contrast (4.5:1 for normal text) — test both light and dark modes
+- Don't add more than one "primary" action per view
+- Do use `sonner` toasts for all CRUD feedback — never inline success/error banners
+- Don't import from `@radix-ui/*` — all primitives go through shadcn/ui (Base UI)
 
 ---
 
@@ -101,41 +250,6 @@ CommandPalette (⌘K modal)
 ### Auth Pages (`/(auth)/*`)
 
 Centered single-column form. `max-w-sm`, `min-h-screen` with `items-center justify-center`.
-
----
-
-## Component Patterns
-
-### Cards
-
-- Base: `<Card size="sm">` with `CardContent`, `CardHeader`, `CardTitle`, `CardDescription`
-- Collection cards: `border-l-4` with left border colored by dominant item type; `bg-teal-950/20` base + `hover:bg-teal-950/30`
-- Stat cards: colored icon box (`size-10`, `rounded-md`, `color + 15` bg) + large value + label
-- Feature cards (homepage): `border-t-2` with type color; `hover:bg-muted/30`
-
-### Item Type Icon
-
-Consistent icon + color wrapper: `size-10 rounded-md flex items-center justify-center` with `backgroundColor: ${color}15` and icon at `size-5` with `color: color`.
-
-### Badges
-
-- Type badge: `variant="secondary"` with inline `backgroundColor: ${color}15` and `color: color`
-- Language / tag badge: `variant="secondary"` default styling
-- Pro "Most Popular": absolute positioned, `rounded-full bg-primary text-primary-foreground`
-
-### Drawer (ItemDrawer)
-
-Right `Sheet` — `max-w-576px`, full height, no padding on root. Two modes:
-- **View** — action bar (Favorite, Pin, Copy/Download, Edit, Delete), then scrollable content sections
-- **Edit** — Save/Cancel bar, then form fields (title, description, content, language, tags, collections)
-
-### Command Palette
-
-`⌘K` / `Ctrl+K` — `CommandDialog` with grouped results: items (by type icon) and collections (FolderOpen icon).
-
-### Skeletons
-
-Used via `<Suspense fallback={<XSkeleton />}>` for all async dashboard sections. Skeletons mirror the visual shape of the real component using `<Skeleton className="...">`.
 
 ---
 
